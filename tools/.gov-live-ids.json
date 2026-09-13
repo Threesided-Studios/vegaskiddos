@@ -1,10 +1,8 @@
 {
-  "ranAt": "2026-09-12T17:46:48.307Z",
+  "ranAt": "2026-09-13T18:17:00.085Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12471",
-        "colv:10625",
         "colv:12415",
         "colv:12493",
         "colv:12416",
@@ -44,7 +42,6 @@
       "ids": [
         "series:Clark County|foster care information session|family services",
         "cc:/calendar/family-services/091726-foster-care-info-session-evening-with-the-stars",
-        "cc:/calendar/county-commissioners-district-f/091226-great-american-kickoff",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-1",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
@@ -55,10 +52,9 @@
     "City of Henderson": {
       "ids": [
         "series:City of Henderson|art exhibit home means nevada|city of henderson",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
-        "hen:6360:2026-09-12",
         "hen:6476:2026-09-17",
         "series:City of Henderson|henderson farmers market|fox ridge park",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
         "series:City of Henderson|henderson farmers market|army st.",
         "hen:6336:2026-09-25",
