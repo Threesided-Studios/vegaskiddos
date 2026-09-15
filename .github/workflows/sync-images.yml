@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: warp-ubuntu-2404-x64-2x
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
