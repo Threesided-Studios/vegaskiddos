@@ -15,7 +15,6 @@ export const GUIDES: GuideMeta[] = [
     title: "Fall and Halloween with kids in Las Vegas",
     description:
       "A plain parent guide to fall and Halloween around the valley: sorted by age, free vs paid, and neighborhood. Verified venue facts where noted.",
-    draftForReview: true,
   },
 ];
 

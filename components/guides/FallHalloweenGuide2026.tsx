@@ -74,14 +74,13 @@ export function FallHalloweenGuide2026() {
         <li>
           <span className="font-700">VIVA Pumpkin Patch at Craig Ranch Regional Park (North Las Vegas)</span>
           <ul className="mt-1 list-disc space-y-0.5 pl-5 text-base">
-            <li>Dates: Oct 9-30, 2026 (official page; FAQ also says Oct 10-30)</li>
+            <li>Dates: Oct 9-30, 2026 (official page)</li>
             <li>Entry: free $0 RSVP, 1 registration per group (TicketSpice)</li>
             <li>Includes: pumpkins, photo stations, hay maze, bounce houses, kids activities</li>
             <li>Not free: carnival rides, food, vendors on site</li>
             <li>Trunk or Treat: Oct 30, 2 p.m., free registration</li>
             <li>
-              Hours: confirm week-of (official FAQ still says hours announced closer; third-party
-              lists Wed-Fri 5-9, Sat-Sun noon-9)
+              Hours: Wed-Fri 5-9 p.m.; Sat-Sun noon-9 p.m. (third-party listing; confirm week-of)
             </li>
             <li>Address: 628 W Craig Road, North Las Vegas</li>
           </ul>
@@ -111,7 +110,7 @@ export function FallHalloweenGuide2026() {
           <span className="font-700">Trick or Treat Fest LV at Clark County Museum (Henderson)</span>
           . Historic homes, vendors, all-ages trick-or-treat; festive not scary
           <ul className="mt-1 list-disc space-y-0.5 pl-5 text-base">
-            <li>Dates: Oct 16-17, 2026 (fest site; Clark County page says Oct 17-18)</li>
+            <li>Dates: Oct 16-17, 2026 (fest site)</li>
             <li>
               Tickets: TBA on{" "}
               <a
@@ -160,7 +159,10 @@ export function FallHalloweenGuide2026() {
           Springs Preserve Haunted Harvest ($14 ages 3+ non-members; members cheaper or free per tier;
           advance tickets; expected to sell out)
         </li>
-        <li>Trick or Treat Fest LV (tickets TBA; county lists ~$15)</li>
+        <li>
+          Trick or Treat Fest LV (tickets TBA on fest site; county listing ~$15, confirm on fest
+          site)
+        </li>
         <li>Museum admission add-ons</li>
         <li>Carnival ride wristbands at patches</li>
       </ul>
@@ -208,7 +210,8 @@ export function FallHalloweenGuide2026() {
 
       <h2 className="mt-10 font-display text-2xl font-600 text-ink">On the board now</h2>
       <p className="mt-2 text-ink/80">
-        Free and local picks from Vegas Kiddos. Check listings the week you go, hours change.
+        A free/local slice from the Vegas Kiddos board. Not every October ticket, just the
+        reliable patterns.
       </p>
       <p className="mt-3 text-ink/80">
         <span className="font-700">Free recurring meals (Three Square Kids Cafe / Meet Up to Eat Up):</span>{" "}
@@ -229,17 +232,17 @@ export function FallHalloweenGuide2026() {
         (2nd Thursday). Create &amp; Explore STEM at Alexander and Aliante.
       </p>
       <p className="mt-3 text-ink/80">
-        <span className="font-700">October Halloween library rows</span> (from /storytime when dates
-        land): Halloween Little Makers / Halloween Storytime at Gibson, Paseo Verde, Green Valley.
+        <span className="font-700">October Halloween library rows</span> (from{" "}
+        <a href="https://vegaskiddos.com/storytime" className="font-700 text-teal-btn hover:underline">
+          /storytime
+        </a>{" "}
+        when dates land): Halloween Little Makers / Halloween Storytime at Gibson, Paseo Verde,
+        Green Valley.
         Free. Ages 0-5 / 3-5.
       </p>
       <p className="mt-3 text-ink/80">
-        Ticketed HallOVeen, VIVA, Haunted Harvest, and Trick or Treat Fest are covered in the sections
-        above with their official links. Browse{" "}
-        <a href="https://vegaskiddos.com" className="font-700 text-teal-btn hover:underline">
-          vegaskiddos.com
-        </a>{" "}
-        the week you go for the latest free library and neighborhood events.
+        Ticketed HallOVeen, VIVA, Haunted Harvest, and Trick or Treat Fest stay in the sections
+        above with their official links. Check Vegas Kiddos the week you go.
       </p>
 
       <h3 className="mt-6 font-display text-xl font-600 text-ink">Deep links</h3>
