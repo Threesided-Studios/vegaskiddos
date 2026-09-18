@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-09-14T19:53:54.111Z",
+  "ranAt": "2026-09-18T15:28:24.315Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -20,6 +20,7 @@
         "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
         "colv:12420",
         "colv:12398",
+        "colv:12522",
         "colv:12421",
         "colv:12429",
         "series:City of Las Vegas|rainbow company youth theatre presents sense sensibility|charleston heights arts center",
@@ -41,35 +42,13 @@
     "Clark County": {
       "ids": [
         "series:Clark County|foster care information session|family services",
-        "cc:/calendar/family-services/091726-foster-care-info-session-evening-with-the-stars",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-1",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
-        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura"
+        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
+        "cc:/calendar/county-commissioners-district-g/091826-hhm-gibson-event"
       ],
       "maxStart": "2026-10-17T15:00:00-07:00"
-    },
-    "City of Henderson": {
-      "ids": [
-        "series:City of Henderson|art exhibit home means nevada|city of henderson",
-        "hen:6476:2026-09-17",
-        "series:City of Henderson|henderson farmers market|fox ridge park",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
-        "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "series:City of Henderson|henderson farmers market|army st.",
-        "hen:6336:2026-09-25",
-        "hen:6358:2026-09-25",
-        "hen:6338:2026-09-26",
-        "hen:6374:2026-10-03",
-        "hen:5367:2026-10-10",
-        "hen:6402:2026-10-11",
-        "hen:6490:2026-10-12",
-        "series:City of Henderson|early voting kids vote general election|city of henderson",
-        "hen:6498:2026-10-21",
-        "hen:6388:2026-10-24",
-        "hen:6400:2026-10-24"
-      ],
-      "maxStart": "2026-10-24T19:00:00-07:00"
     }
   }
 }

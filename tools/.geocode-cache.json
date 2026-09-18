@@ -298,5 +298,9 @@
   "333 S. Valley View Blvd., Las Vegas, 89107": {
     "lat": 36.1712694,
     "lng": -115.1898566
+  },
+  "3130 McLeod Dr,, Las Vegas, 89121": {
+    "lat": 36.1442998,
+    "lng": -115.1098975
   }
 }
