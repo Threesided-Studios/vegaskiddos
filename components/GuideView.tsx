@@ -31,7 +31,7 @@ export function GuideView({
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-8">
       <JsonLd data={[articleLd, crumbs]} />
       <Link href="/" className="text-sm font-700 text-teal-btn hover:underline">
         ← All events
