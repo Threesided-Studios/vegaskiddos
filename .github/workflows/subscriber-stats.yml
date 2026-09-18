@@ -9,7 +9,7 @@ on:
 
 jobs:
   stats:
-    runs-on: warp-ubuntu-2404-x64-2x
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
