@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx --test lib/*.test.ts lib/scrape/*.test.ts",
+    "test": "tsx --test lib/*.test.ts lib/scrape/*.test.ts && node --test tools/fb-post-filter.test.mjs",
     "scrape": "tsx lib/scrape/cli.ts",
     "sweep": "tsx lib/scrape/sweep-cli.ts",
     "translate": "node tools/translate-backfill.mjs",

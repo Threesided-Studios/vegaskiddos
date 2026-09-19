@@ -26,9 +26,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "daily = post now · roundup = weekend list · schedule = queue a batch · verify = check token"
+        description: "daily = post now · roundup = weekend list · schedule = queue a batch (explicit) · verify = check token"
         type: choice
-        default: schedule
+        default: daily
         options: [schedule, daily, roundup, verify, repair-audit, repair, restore-timing]
       per_day:
         description: "Posts per day (schedule mode)"
@@ -72,7 +72,7 @@ jobs:
               *)            MODE=daily   ;;
             esac
           else
-            MODE="${{ github.event.inputs.mode }}"; MODE="${MODE:-schedule}"
+            MODE="${{ github.event.inputs.mode }}"; MODE="${MODE:-daily}"
           fi
           PER_DAY="${{ github.event.inputs.per_day || '3' }}"
           DAYS="${{ github.event.inputs.days || '30' }}"
