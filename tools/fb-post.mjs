@@ -48,23 +48,7 @@ async function ogImageOk() {
     return false;
   }
 }
-// Some auto-approved library entries aren't kid events worth promoting — adult
-// programming and branch-closure notices. Skip them when choosing what to post
-// so the Page never highlights "Adult Perler Bead Crafternight" or "CLOSED FOR
-// THANKSGIVING". Deliberately narrow: "Young Adult" (teen) is NOT excluded.
-// Positive match (not a lookbehind, which only consumed one space): skip a
-// standalone "Adult"/"Adults" unless it's "Young Adult(s)" (teen content), and
-// any closure notice. Handles odd spacing like "Young  Adult".
-const CLOSURE_RE = /^closed\b|\bclosed for\b/i;
-const ADULT_RE = /\badults?\b/i;
-const YOUNG_ADULT_RE = /\byoung[\s-]+adults?\b/i;
-function postableTitle(t) {
-  if (!t) return false;
-  const s = String(t);
-  if (CLOSURE_RE.test(s)) return false;
-  if (ADULT_RE.test(s) && !YOUNG_ADULT_RE.test(s)) return false;
-  return true;
-}
+import { isFbPostRelevant } from "./fb-post-filter.mjs";
 
 // UTC instant for a given America/Los_Angeles wall-clock date + hour. Handles
 // PST/PDT correctly (one Intl round-trip), so "9am PT" lands at the right UTC
@@ -222,9 +206,9 @@ async function runDaily() {
   if (pausedUntilResume("daily")) return;
   // First un-posted upcoming event whose OG image actually resolves (no grey box).
   let rec = null;
+  const now = new Date();
   for (const r of await unpostedEvents()) {
-    if (!r.fields.Start) continue;
-    if (!postableTitle(r.fields.Title)) continue;
+    if (!isFbPostRelevant(r.fields, now, { mode: "daily" })) continue;
     if (await ogImageOk()) { rec = r; break; }
   }
   if (!rec) { console.log("daily: no un-posted upcoming events with a working image — nothing to post."); return; }
@@ -320,10 +304,8 @@ async function runSchedule() {
     for (const r of candidates) {
       if (used.has(r.id)) continue;
       const f = r.fields;
-      if (!postableTitle(f.Title)) continue; // skip adult / closure entries
       if (usedTitles.has(String(f.Title || "").trim().toLowerCase())) continue;
-      const valid = f.Recurrence || (f.Start && new Date(f.Start).getTime() > slot.getTime());
-      if (!valid) continue;
+      if (!isFbPostRelevant(f, slot, { mode: "schedule" })) continue;
       if (!(await ogImageOk())) continue; // skip grey-box events
       chosen = r; break;
     }
@@ -358,9 +340,10 @@ async function runSchedule() {
 async function runRoundup() {
   if (pausedUntilResume("roundup")) return;
   const formula = "AND({Approved}=1, OR(NOT({Recurrence}=BLANK()), AND(IS_AFTER({Start}, DATEADD(NOW(),-1,'days')), IS_BEFORE({Start}, DATEADD(NOW(),4,'days')))))";
+  const now = new Date();
   const events = (await airtableAll("Events", `&filterByFormula=${encodeURIComponent(formula)}`))
     .map((r) => r.fields)
-    .filter((f) => f.Title && f.Start && !f.Canceled && postableTitle(f.Title))
+    .filter((f) => f.Title && f.Start && !f.Canceled && isFbPostRelevant(f, now, { mode: "roundup" }))
     .sort((a, b) => String(a.Start).localeCompare(String(b.Start)))
     .slice(0, 6);
   if (!events.length) { console.log("roundup: no events this weekend — nothing to post."); return; }
