@@ -23,12 +23,26 @@ describe("seasonallyRelevant", () => {
     assert.equal(seasonallyRelevant("4th of July Freebies and Deals", "", midSep), false);
     assert.equal(seasonallyRelevant("Red, White & Kaboom", "", midSep), false);
     assert.equal(seasonallyRelevant("Summer Tutoring at the Library", "", midSep), false);
+    assert.equal(seasonallyRelevant("Social CirKISH Summer Showcase 2026", "", midSep), false);
     assert.equal(seasonallyRelevant("Labor Day Weekend Family Fun", "", new Date("2026-10-05T12:00:00-07:00")), false);
   });
 
   it("allows the same titles in their season months", () => {
     assert.equal(seasonallyRelevant("Red, White & Kaboom", "", earlyJul), true);
     assert.equal(seasonallyRelevant("Summer Tutoring at the Library", "", new Date("2026-06-15T12:00:00-07:00")), true);
+  });
+
+  it("rejects summer showcase in September; allows May–August", () => {
+    const title = "Social CirKISH Summer Showcase 2026";
+    assert.equal(seasonallyRelevant(title, "", midSep), false);
+    assert.equal(seasonallyRelevant(title, "", new Date("2026-05-15T12:00:00-07:00")), true);
+    assert.equal(seasonallyRelevant(title, "", new Date("2026-06-15T12:00:00-07:00")), true);
+    assert.equal(seasonallyRelevant(title, "", new Date("2026-08-20T12:00:00-07:00")), true);
+  });
+
+  it("does not treat Summerlin neighborhood names as summer seasonal content", () => {
+    assert.equal(seasonallyRelevant("Storytime at Summerlin Library", "Weekly on Wednesdays", midSep), true);
+    assert.equal(seasonallyRelevant("Downtown Summerlin Kids' Market Morning", "", midSep), true);
   });
 
   it("allows year-round storytime without seasonal keywords", () => {
@@ -67,6 +81,21 @@ describe("isFbPostRelevant", () => {
     assert.equal(
       isFbPostRelevant(
         { Title: "Neighborhood Block Party", Start: "2026-06-01T18:00:00.000Z" },
+        midSep,
+        { mode: "daily" },
+      ),
+      false,
+    );
+  });
+
+  it("daily mode: skips summer showcase with a future Start but September post date", () => {
+    assert.equal(
+      isFbPostRelevant(
+        {
+          Title: "Social CirKISH Summer Showcase 2026",
+          Start: "2026-10-01T18:00:00.000Z",
+          Recurrence: "Weekly on Saturdays",
+        },
         midSep,
         { mode: "daily" },
       ),
