@@ -26,6 +26,7 @@ export function ptMonth(d) {
 
 // If title + recurrence text matches a rule, posting is only allowed in those PT months.
 // Avoid broad tokens like bare "summer" — "Summerlin" is a Vegas neighborhood.
+// Use "summer <noun>" phrases (showcase, fest, series, concert, kickoff, …).
 const SEASONAL_RULES = [
   {
     patterns: [
@@ -49,7 +50,12 @@ const SEASONAL_RULES = [
   { patterns: [/\bvalentine'?s?\b/i], months: [1, 2] },
   { patterns: [/\bnew year'?s?\b/i, /\bnye\b/i, /\bcountdown\b/i], months: [12, 1] },
   {
-    patterns: [/\bsummer tutoring\b/i, /\bsummer camp\b/i, /\bsummer reading\b/i, /\bsummer program\b/i],
+    patterns: [
+      /\bsummer tutoring\b/i, /\bsummer camp\b/i, /\bsummer reading\b/i, /\bsummer program\b/i,
+      /\bsummer showcase\b/i, /\bsummer fest(ival)?\b/i, /\bsummer series\b/i,
+      /\bsummer concert\b/i, /\bsummer kickoff\b/i, /\bsummer fun\b/i,
+      /\bend of summer\b/i, /\bbeat the heat\b/i,
+    ],
     months: [5, 6, 7, 8],
   },
   { patterns: [/\bback to school\b/i, /\bschool supply\b/i], months: [7, 8, 9] },
