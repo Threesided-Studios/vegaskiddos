@@ -12,6 +12,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { TrackedLink } from "@/components/TrackedLink";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbLd, langAlternates } from "@/lib/seo";
+import { eventOgImageMeta, eventOgImageUrl } from "@/lib/ogEvent";
 import { nextOccurrenceISO, laDateKey, eventHasEnded } from "@/lib/recurrence";
 import { AdminEventControls } from "@/components/AdminEventControls";
 import { t, ageLabel, priceLabel, hoodLabel, type Lang } from "@/lib/i18n";
@@ -41,6 +42,7 @@ export async function generateMetadata({
     (event.description || `${event.title} at ${event.venue}.`).slice(0, 155);
   const title = `${event.title} — ${event.venue}, ${hood.label}`;
   const url = eventAbsUrl(event.id, lang);
+  const ogImage = eventOgImageMeta(id, lang);
   return {
     title: `${event.title} | Vegas Kiddos`,
     description: desc,
@@ -49,9 +51,14 @@ export async function generateMetadata({
       description: desc,
       url,
       type: "website",
-      images: [event.image || `${SITE}/opengraph-image`],
+      images: [ogImage],
     },
-    twitter: { card: "summary_large_image", title, description: desc },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: desc,
+      images: [ogImage.url],
+    },
     alternates: langAlternates(lang, `/event/${id}`),
   };
 }
@@ -134,7 +141,7 @@ export default async function EventPage({
         ? { geo: { "@type": "GeoCoordinates", latitude: event.lat, longitude: event.lng } }
         : {}),
     },
-    ...(event.image ? { image: [event.image] } : {}),
+    image: [eventOgImageUrl(event.id, lang)],
     // Only emit Offer when we actually have a price — a currency/availability
     // block with no price is an incomplete Offer (Rich Results warning).
     ...(ldPrice !== undefined && !ended

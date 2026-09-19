@@ -3,6 +3,7 @@
 //
 //   node tools/fb-post.mjs daily       → one upcoming-event highlight (deduped)
 //   node tools/fb-post.mjs roundup     → "this weekend" multi-event roundup
+//   node tools/fb-post.mjs preview-og  → validate next candidate's OG image (no post)
 //   add --dry-run to compose + print without posting
 //
 // Posting is skipped (compose-only) when FB_PAGE_ID / FB_PAGE_TOKEN aren't set,
@@ -27,28 +28,14 @@ if (!AT || !BASE) { console.error("AIRTABLE_TOKEN / AIRTABLE_BASE_ID required");
 const PAGE_ID = (process.env.FB_PAGE_ID || "").trim(), PAGE_TOKEN = (process.env.FB_PAGE_TOKEN || "").trim();
 const SITE = "https://vegaskiddos.com";
 const GRAPH = "https://graph.facebook.com/v21.0";
-const IMG_CDN = "https://img.vegaskiddos.com";
-
-// Pre-post image guard: a Facebook link post renders the event page's OG image,
-// which is the type template at img.vegaskiddos.com/type/<id>/1024.webp. One
-// HEAD covers the set — if templates are up, every event page has a working image.
-let _templatesOk;
-async function ogImageOk() {
-  if (_templatesOk != null) return _templatesOk;
-  try {
-    const types = ["celebration", "food", "yoga", "market"];
-    const results = await Promise.all(
-      types.map((id) =>
-        fetch(`${IMG_CDN}/type/${id}/1024.webp`, { method: "HEAD", signal: AbortSignal.timeout(10000) })
-      )
-    );
-    _templatesOk = results.every((r) => r.ok);
-    return _templatesOk;
-  } catch {
-    return false;
-  }
-}
 import { isFbPostRelevant } from "./fb-post-filter.mjs";
+import {
+  eventOgImageUrl,
+  eventPageUrl,
+  ogImageOkForEvent,
+  scrapeOg,
+  scrapedOgImage,
+} from "./og-image.mjs";
 
 // UTC instant for a given America/Los_Angeles wall-clock date + hour. Handles
 // PST/PDT correctly (one Intl round-trip), so "9am PT" lands at the right UTC
@@ -194,26 +181,44 @@ async function unpostedEvents() {
   }
 }
 
-function preview(label, message, link) {
+function preview(label, message, link, ogMeta) {
   console.log(`\n──────── ${label} ${DRY ? "(DRY RUN — not posted)" : ""} ────────`);
   console.log(message);
   if (link) console.log(`[link card] ${link}`);
+  if (ogMeta) {
+    console.log(`[og:image] ${ogMeta.url}${ogMeta.ok ? " ✅" : ` ✗ ${ogMeta.reason || "unreachable"}`}`);
+    if (ogMeta.scraped) console.log(`[fb scrape] ${ogMeta.scraped}`);
+  }
   console.log("────────────────────────────────────────");
+}
+
+/** Pre-warm Facebook's link-preview cache for an event page. */
+async function warmOgCache(eventId) {
+  const pageUrl = eventPageUrl(eventId);
+  const ogUrl = eventOgImageUrl(eventId);
+  if (DRY || !PAGE_TOKEN) return { pageUrl, ogUrl, scraped: null };
+  const scraped = await scrapeOg(pageUrl, PAGE_TOKEN);
+  await new Promise((r) => setTimeout(r, 1500));
+  return { pageUrl, ogUrl, scraped: scrapedOgImage(scraped) };
 }
 
 // ── daily: one upcoming highlight, deduped via FBPostedAt ───────────────────
 async function runDaily() {
   if (pausedUntilResume("daily")) return;
-  // First un-posted upcoming event whose OG image actually resolves (no grey box).
+  // First un-posted upcoming event whose same-origin OG PNG resolves.
   let rec = null;
+  let ogMeta = null;
   const now = new Date();
   for (const r of await unpostedEvents()) {
     if (!isFbPostRelevant(r.fields, now, { mode: "daily" })) continue;
-    if (await ogImageOk()) { rec = r; break; }
+    const check = await ogImageOkForEvent(r);
+    if (check.ok) { rec = r; ogMeta = check; break; }
   }
-  if (!rec) { console.log("daily: no un-posted upcoming events with a working image — nothing to post."); return; }
+  if (!rec) { console.log("daily: no un-posted upcoming events with a working OG image — nothing to post."); return; }
   const { message, url } = eventPost(rec);
-  preview("DAILY HIGHLIGHT", message, url);
+  const warm = await warmOgCache(rec.id);
+  if (ogMeta) ogMeta.scraped = warm.scraped;
+  preview("DAILY HIGHLIGHT", message, url, ogMeta);
   if (DRY) return;
   const id = await publish(message, url);
   console.log(`✅ posted: ${id}`);
@@ -306,7 +311,7 @@ async function runSchedule() {
       const f = r.fields;
       if (usedTitles.has(String(f.Title || "").trim().toLowerCase())) continue;
       if (!isFbPostRelevant(f, slot, { mode: "schedule" })) continue;
-      if (!(await ogImageOk())) continue; // skip grey-box events
+      if (!(await ogImageOkForEvent(r)).ok) continue; // skip events with broken OG
       chosen = r; break;
     }
     if (!chosen) continue; // no eligible event for this slot — leave it empty, try next
@@ -324,6 +329,7 @@ async function runSchedule() {
     if (DRY) continue;
     const { message, url } = eventPost(rec);
     try {
+      await warmOgCache(rec.id);
       const id = await publish(message, url, Math.floor(slot.getTime() / 1000));
       await stampPosted(rec.id, slot);
       okCount++;
@@ -459,8 +465,25 @@ async function runVerify() {
   }
 }
 
+// ── preview-og: dry-run the next daily candidate's OG image without posting ──
+async function runPreviewOg() {
+  const now = new Date();
+  for (const r of await unpostedEvents()) {
+    if (!isFbPostRelevant(r.fields, now, { mode: "daily" })) continue;
+    const check = await ogImageOkForEvent(r);
+    const warm = await warmOgCache(r.id);
+    console.log(`Next candidate: ${r.fields.Title}`);
+    console.log(`  event page: ${eventPageUrl(r.id)}`);
+    console.log(`  og:image:   ${check.url} ${check.ok ? "✅" : `✗ ${check.reason}`}`);
+    if (warm.scraped) console.log(`  fb scrape:  ${warm.scraped}`);
+    return;
+  }
+  console.log("preview-og: no eligible un-posted events found.");
+}
+
 if (mode === "roundup") await runRoundup();
 else if (mode === "daily") await runDaily();
 else if (mode === "schedule") await runSchedule();
 else if (mode === "verify") await runVerify();
-else { console.error(`Unknown mode "${mode}". Use: daily | roundup | schedule | verify`); process.exit(1); }
+else if (mode === "preview-og") await runPreviewOg();
+else { console.error(`Unknown mode "${mode}". Use: daily | roundup | schedule | verify | preview-og`); process.exit(1); }

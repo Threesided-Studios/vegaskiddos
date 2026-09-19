@@ -9,6 +9,7 @@
 //
 // Env: AIRTABLE_TOKEN, AIRTABLE_BASE_ID, FB_PAGE_ID, FB_PAGE_TOKEN
 import fs from "node:fs";
+import { isDedicatedOgUrl } from "./og-image.mjs";
 
 try {
   for (const line of fs.readFileSync(new URL("../.env.local", import.meta.url), "utf8").split("\n")) {
@@ -25,9 +26,9 @@ const GRAPH = "https://graph.facebook.com/v21.0";
 const SITE = "https://vegaskiddos.com";
 const HASHTAGS = "#LasVegas #VegasKids #ThingsToDoInVegas #FamilyFun #VegasFamilies #KidFriendly #EventosLasVegas";
 
-// Site-wide fallback when an event has no scraped image — link shares using only
+// Site-wide fallback when an event has no dedicated art — link shares using only
 // this look "blank" or generic compared to event-specific art.
-const GENERIC_OG_PATHS = ["/opengraph-image", "/opengraph-image.png", "opengraph-image"];
+const GENERIC_OG_PATHS = ["/opengraph-image", "/opengraph-image.png"];
 
 // Original intended times from the 2026-06-02 generic-preview repair batch (audit log).
 const RESTORE_TIMINGS = {
@@ -175,14 +176,13 @@ async function airtableGetEvent(recordId) {
 
 /** True when the live event page has a dedicated image (not site default OG). */
 async function eventPageHasDedicatedImage(eventId, rec) {
-  const hasAirtableImage = Boolean(rec?.fields?.Image);
-  if (hasAirtableImage) return true;
   try {
     const html = await fetch(`${SITE}/event/${eventId}`, {
       headers: { "User-Agent": "VegasKiddos-FB-Repair/1.0" },
     }).then((r) => r.text());
     const og = html.match(/property="og:image"\s+content="([^"]+)"/i)?.[1] || "";
     if (!og) return false;
+    if (isDedicatedOgUrl(og)) return true;
     return !isGenericPreviewUrl(og);
   } catch {
     return false;

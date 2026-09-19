@@ -29,7 +29,7 @@ on:
         description: "daily = post now · roundup = weekend list · schedule = queue a batch (explicit) · verify = check token"
         type: choice
         default: daily
-        options: [schedule, daily, roundup, verify, repair-audit, repair, restore-timing]
+        options: [schedule, daily, roundup, verify, preview-og, repair-audit, repair, restore-timing]
       per_day:
         description: "Posts per day (schedule mode)"
         default: "3"
