@@ -1,0 +1,55 @@
+name: Generate social cards
+
+# GPT social-card JPEGs for Facebook link previews → R2 social/<id>/1200.jpg.
+# Idempotent via tools/.social-card-manifest.json (skips events already generated).
+# Manual only — run after deploying opengraph-image route changes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max events to generate (blank = all missing)"
+        default: "10"
+      quality:
+        description: "OpenAI image quality"
+        type: choice
+        default: medium
+        options: [low, medium, high]
+      dry_run:
+        description: "List selection only"
+        type: boolean
+        default: false
+
+jobs:
+  gen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: "22", cache: "npm" }
+      - run: npm ci
+      - name: Generate social cards
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GEN_QUALITY: ${{ github.event.inputs.quality || 'medium' }}
+        run: |
+          ARGS="batch"
+          if [ -n "${{ github.event.inputs.limit }}" ]; then ARGS="$ARGS --limit ${{ github.event.inputs.limit }}"; fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          npx tsx tools/gen-social-cards.mjs $ARGS
+      - name: Commit manifest
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          if git diff --quiet tools/.social-card-manifest.json; then
+            echo "No manifest changes."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add tools/.social-card-manifest.json
+            git commit -m "chore: update social-card manifest [skip ci]"
+            git push
+          fi
