@@ -1,9 +1,8 @@
 {
-  "ranAt": "2026-09-18T18:35:55.452Z",
+  "ranAt": "2026-09-19T18:08:43.704Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12415",
         "colv:12493",
         "colv:12416",
         "colv:12448",
@@ -45,8 +44,7 @@
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-1",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
-        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
-        "cc:/calendar/county-commissioners-district-g/091826-hhm-gibson-event"
+        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura"
       ],
       "maxStart": "2026-10-17T15:00:00-07:00"
     }
