@@ -186,7 +186,8 @@ function preview(label, message, link, ogMeta) {
   console.log(message);
   if (link) console.log(`[link card] ${link}`);
   if (ogMeta) {
-    console.log(`[og:image] ${ogMeta.url}${ogMeta.ok ? " ✅" : ` ✗ ${ogMeta.reason || "unreachable"}`}`);
+    const size = ogMeta.bytes ? ` (${ogMeta.bytes} bytes)` : "";
+    console.log(`[og:image] ${ogMeta.url}${ogMeta.ok ? ` ✅${size}` : ` ✗ ${ogMeta.reason || "unreachable"}`}`);
     if (ogMeta.scraped) console.log(`[fb scrape] ${ogMeta.scraped}`);
   }
   console.log("────────────────────────────────────────");
@@ -474,7 +475,7 @@ async function runPreviewOg() {
     const warm = await warmOgCache(r.id);
     console.log(`Next candidate: ${r.fields.Title}`);
     console.log(`  event page: ${eventPageUrl(r.id)}`);
-    console.log(`  og:image:   ${check.url} ${check.ok ? "✅" : `✗ ${check.reason}`}`);
+    console.log(`  og:image:   ${check.url} ${check.ok ? `✅ (${check.bytes} bytes)` : `✗ ${check.reason}`}`);
     if (warm.scraped) console.log(`  fb scrape:  ${warm.scraped}`);
     return;
   }

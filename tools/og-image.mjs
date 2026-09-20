@@ -5,6 +5,9 @@ export const SITE = "https://vegaskiddos.com";
 export const IMG_CDN = "https://img.vegaskiddos.com";
 export const GRAPH = "https://graph.facebook.com/v21.0";
 
+/** Reject CF Worker 1101 error bodies and other false-positive HEAD responses. */
+export const MIN_OG_BYTES = 1024;
+
 /** Canonical English OG image URL (same-origin PNG — FB-scrape friendly). */
 export function eventOgImageUrl(eventId) {
   return `${SITE}/event/${eventId}/opengraph-image`;
@@ -19,19 +22,29 @@ export function eventPageUrl(eventId) {
  * Verify the event's same-origin OG image resolves.
  * @returns {{ ok: boolean, url: string, reason?: string }}
  */
+export function validateOgBody(contentType, byteLength) {
+  const ct = (contentType || "").toLowerCase();
+  if (!ct.includes("image")) return { ok: false, reason: `content-type: ${ct || "(none)"}` };
+  if (byteLength < MIN_OG_BYTES) {
+    return { ok: false, reason: `body too small (${byteLength} bytes, need ≥${MIN_OG_BYTES})` };
+  }
+  return { ok: true, bytes: byteLength };
+}
+
 export async function ogImageOkForEvent(rec) {
   const url = eventOgImageUrl(rec.id);
   try {
     const r = await fetch(url, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(15000),
+      method: "GET",
+      signal: AbortSignal.timeout(20000),
       redirect: "follow",
       headers: { "User-Agent": "VegasKiddos-OG-Check/1.0" },
     });
-    if (!r.ok) return { ok: false, url, reason: `HEAD ${r.status}` };
-    const ct = (r.headers.get("content-type") || "").toLowerCase();
-    if (!ct.includes("image")) return { ok: false, url, reason: `content-type: ${ct || "(none)"}` };
-    return { ok: true, url };
+    if (!r.ok) return { ok: false, url, reason: `GET ${r.status}` };
+    const buf = await r.arrayBuffer();
+    const check = validateOgBody(r.headers.get("content-type"), buf.byteLength);
+    if (!check.ok) return { ok: false, url, reason: check.reason };
+    return { ok: true, url, bytes: check.bytes };
   } catch (e) {
     return { ok: false, url, reason: String(e) };
   }

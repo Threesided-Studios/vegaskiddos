@@ -4,6 +4,9 @@ import type { Lang } from "./i18n";
 /** Standard OG card dimensions (Facebook / Twitter large card). */
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 };
 
+/** Minimum valid OG body size — rejects CF Worker 1101 error pages (~17 bytes). */
+export const MIN_OG_BYTES = 1024;
+
 const IMG_CDN = "https://img.vegaskiddos.com";
 
 /** Bump when social-card JPEGs on R2 are regenerated (cache-bust ?v=). */
