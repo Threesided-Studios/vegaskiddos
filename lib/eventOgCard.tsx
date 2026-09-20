@@ -1,7 +1,10 @@
 import { ImageResponse } from "next/og";
 import { artTypeFor } from "./eventArt";
-import { OG_IMAGE_SIZE } from "./ogEvent";
+import { MIN_OG_BYTES, OG_IMAGE_SIZE } from "./ogEvent";
+import { staticOgFallbackResponse } from "./ogStaticFallback";
 import type { KidEvent } from "./types";
+
+const OG_CACHE = "public, immutable, max-age=31536000";
 
 // Tailwind gradient names → hex stops for next/og (no Tailwind in ImageResponse).
 const GRADIENT: Record<string, [string, string]> = {
@@ -30,8 +33,9 @@ function ogCardTextOverlay(event: KidEvent) {
   const title = truncate(event.title, 72);
   const venue = truncate(event.venue || "Las Vegas", 48);
 
+  // Single wrapper — React Fragments break Satori on Cloudflare Workers (VEGASKIDDOS-D).
   return (
-    <>
+    <div style={{ position: "absolute", inset: 0 }}>
       <div
         style={{
           position: "absolute",
@@ -92,7 +96,7 @@ function ogCardTextOverlay(event: KidEvent) {
           <span>{venue}</span>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -146,4 +150,32 @@ export function renderEventOgCard(event: KidEvent | null): ImageResponse {
     ),
     { ...OG_IMAGE_SIZE },
   );
+}
+
+/**
+ * Materialize ImageResponse to bytes before returning — CF Workers throw at pipe
+ * time (not construction), so returning ImageResponse directly can still 500.
+ * Falls back to a static PNG when Satori fails.
+ */
+export async function eventOgImageResponse(event: KidEvent | null): Promise<Response> {
+  const attempts: (KidEvent | null)[] = event ? [event, null] : [null];
+
+  for (const attempt of attempts) {
+    try {
+      const image = renderEventOgCard(attempt);
+      const buf = await image.arrayBuffer();
+      if (buf.byteLength >= MIN_OG_BYTES) {
+        return new Response(buf, {
+          headers: {
+            "Content-Type": "image/png",
+            "Cache-Control": OG_CACHE,
+          },
+        });
+      }
+    } catch (err) {
+      console.error("event OG ImageResponse failed:", err);
+    }
+  }
+
+  return staticOgFallbackResponse();
 }
