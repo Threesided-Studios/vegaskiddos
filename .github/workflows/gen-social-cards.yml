@@ -7,8 +7,11 @@ name: Generate social cards
 on:
   workflow_dispatch:
     inputs:
+      ids:
+        description: "Comma-separated Airtable record IDs (e.g. receTbtxNV51MSuSz) — overrides batch/limit"
+        default: ""
       limit:
-        description: "Max events to generate (blank = all missing)"
+        description: "Max events to generate (blank = all missing; ignored when ids is set)"
         default: "10"
       quality:
         description: "OpenAI image quality"
@@ -37,8 +40,12 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GEN_QUALITY: ${{ github.event.inputs.quality || 'medium' }}
         run: |
-          ARGS="batch"
-          if [ -n "${{ github.event.inputs.limit }}" ]; then ARGS="$ARGS --limit ${{ github.event.inputs.limit }}"; fi
+          if [ -n "${{ github.event.inputs.ids }}" ]; then
+            ARGS="--ids ${{ github.event.inputs.ids }}"
+          else
+            ARGS="batch"
+            if [ -n "${{ github.event.inputs.limit }}" ]; then ARGS="$ARGS --limit ${{ github.event.inputs.limit }}"; fi
+          fi
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           npx tsx tools/gen-social-cards.mjs $ARGS
       - name: Commit manifest
