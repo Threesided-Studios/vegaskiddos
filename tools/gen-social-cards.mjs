@@ -99,13 +99,65 @@ function truncate(text, max) {
   return `${t.slice(0, max - 1).trimEnd()}…`;
 }
 
+/** Word-wrap title into up to two lines for the OG overlay. */
+function wrapTitle(text, maxLineLen = 38, maxLines = 2) {
+  const t = String(text || "").trim();
+  if (!t) return [""];
+  const words = t.split(/\s+/);
+  const lines = [];
+  let cur = "";
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
+    const next = cur ? `${cur} ${w}` : w;
+    if (next.length <= maxLineLen) {
+      cur = next;
+      continue;
+    }
+    if (cur) lines.push(cur);
+    if (lines.length >= maxLines - 1) {
+      const rest = [w, ...words.slice(i + 1)].join(" ");
+      lines.push(truncate(rest, maxLineLen));
+      return lines.slice(0, maxLines);
+    }
+    cur = w;
+  }
+  if (cur) lines.push(cur);
+  return lines.slice(0, maxLines);
+}
+
 async function compositeCard(illustration, title, venue) {
   const W = 1200;
   const H = 630;
+  const MX = 56;
+  const MB = 48;
   const bg = await sharp(illustration).resize(W, H, { fit: "cover", position: "centre" }).jpeg({ quality: 88 }).toBuffer();
-  const titleText = truncate(title, 64);
-  const venueText = truncate(venue, 42);
-  const titleSize = titleText.length > 48 ? 38 : 44;
+
+  const titleText = truncate(title, 72);
+  const venueText = truncate(venue, 48);
+  const titleLines = wrapTitle(titleText);
+  const titleSize = titleText.length > 48 ? 38 : titleText.length > 32 ? 42 : 46;
+  const lineHeight = Math.round(titleSize * 1.12);
+  const venueSize = 22;
+  const gapTitleVenue = 26;
+  const gapPillTitle = 32;
+
+  const pillLabel = "vegaskiddos.com";
+  const pillFontSize = 19;
+  const pillPadX = 18;
+  const pillPadY = 9;
+  const pillH = pillFontSize + pillPadY * 2;
+  const pillW = Math.round(pillLabel.length * pillFontSize * 0.58) + pillPadX * 2;
+
+  const venueBaseline = H - MB;
+  const titleLastBaseline = venueBaseline - gapTitleVenue - venueSize;
+  const titleFirstBaseline = titleLastBaseline - (titleLines.length - 1) * lineHeight;
+  const pillY = titleFirstBaseline - Math.round(titleSize * 0.8) - gapPillTitle - pillH;
+  const pillTextY = pillY + pillPadY + Math.round(pillFontSize * 0.82);
+
+  const titleTspans = titleLines
+    .map((line, i) => `<tspan x="${MX}" dy="${i === 0 ? 0 : lineHeight}">${escapeXml(line)}</tspan>`)
+    .join("");
+
   const svg = `
     <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -116,9 +168,10 @@ async function compositeCard(illustration, title, venue) {
         </linearGradient>
       </defs>
       <rect width="${W}" height="${H}" fill="url(#shade)"/>
-      <text x="56" y="${H - 120}" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">vegaskiddos.com</text>
-      <text x="56" y="${H - 72}" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="${titleSize}" font-weight="800">${escapeXml(titleText)}</text>
-      <text x="56" y="${H - 28}" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">📍 ${escapeXml(venueText)}</text>
+      <rect x="${MX}" y="${pillY}" width="${pillW}" height="${pillH}" rx="${pillH / 2}" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+      <text x="${MX + pillPadX}" y="${pillTextY}" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="${pillFontSize}" font-weight="700">${pillLabel}</text>
+      <text x="${MX}" y="${titleFirstBaseline}" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="${titleSize}" font-weight="800">${titleTspans}</text>
+      <text x="${MX}" y="${venueBaseline}" fill="rgba(255,255,255,0.88)" font-family="Arial, Helvetica, sans-serif" font-size="${venueSize}" font-weight="600">📍 ${escapeXml(venueText)}</text>
     </svg>`;
   return sharp(bg)
     .composite([{ input: Buffer.from(svg), top: 0, left: 0 }])

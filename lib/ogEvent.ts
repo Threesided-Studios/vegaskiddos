@@ -10,7 +10,7 @@ export const MIN_OG_BYTES = 1024;
 const IMG_CDN = "https://img.vegaskiddos.com";
 
 /** Bump when social-card JPEGs on R2 are regenerated (cache-bust ?v=). */
-export const SOCIAL_CARD_VERSION = "1";
+export const SOCIAL_CARD_VERSION = "2";
 
 /** Same-origin dynamic OG route — Facebook scrapes this reliably (PNG, 1200×630). */
 export function eventOgImagePath(eventId: string, lang: Lang = "en"): string {
