@@ -1,5 +1,7 @@
+import { artTypeFor, ART_TEMPLATES_VERSION, type ArtTypeId } from "./eventArt";
 import { SITE } from "./seo";
 import type { Lang } from "./i18n";
+import type { KidEvent } from "./types";
 
 /** Standard OG card dimensions (Facebook / Twitter large card). */
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 };
@@ -8,6 +10,8 @@ export const OG_IMAGE_SIZE = { width: 1200, height: 630 };
 export const MIN_OG_BYTES = 1024;
 
 const IMG_CDN = "https://img.vegaskiddos.com";
+
+const OG_CACHE = "public, immutable, max-age=31536000";
 
 /** Bump when social-card JPEGs on R2 are regenerated (cache-bust ?v=). */
 export const SOCIAL_CARD_VERSION = "1";
@@ -34,4 +38,69 @@ export function eventOgImageMeta(eventId: string, lang: Lang = "en") {
 /** Optional GPT-generated social-card background on R2 (JPEG for FB-friendly scraping). */
 export function socialCardUrl(eventId: string): string {
   return `${IMG_CDN}/social/${eventId}/1200.jpg?v=${SOCIAL_CARD_VERSION}`;
+}
+
+/** Per-event synced art on R2 (ArtImage or scraped Image via sync-images.mjs). */
+export function eventArtCdnUrl(eventId: string, width = 1600): string {
+  return `${IMG_CDN}/event/${eventId}/${width}.webp`;
+}
+
+/** Shared type-template art on R2 (sync-art-templates.mjs). */
+export function typeArtCdnUrl(typeId: ArtTypeId, width = 1600): string {
+  return `${IMG_CDN}/type/${typeId}/${width}.webp?v=${ART_TEMPLATES_VERSION}`;
+}
+
+/** CDN URLs to try when no GPT social card exists (largest first). */
+export function ogFallbackArtUrls(event: KidEvent): string[] {
+  const typeId = artTypeFor(event.title, event.description).id;
+  return [
+    eventArtCdnUrl(event.id, 1600),
+    eventArtCdnUrl(event.id, 1024),
+    typeArtCdnUrl(typeId, 1600),
+    typeArtCdnUrl(typeId, 1024),
+  ];
+}
+
+export function isValidOgImageBody(contentType: string | null, byteLength: number): boolean {
+  const ct = (contentType || "").toLowerCase();
+  if (!ct.includes("image")) return false;
+  return byteLength >= MIN_OG_BYTES;
+}
+
+/** Fetch pre-rendered CDN image bytes (Worker-safe — no ImageResponse remote embed). */
+export async function fetchCdnImage(
+  url: string,
+  timeoutMs = 5000,
+): Promise<{ buf: ArrayBuffer; contentType: string } | null> {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    const contentType = res.headers.get("content-type") || "image/webp";
+    if (!isValidOgImageBody(contentType, buf.byteLength)) return null;
+    return { buf, contentType };
+  } catch {
+    return null;
+  }
+}
+
+/** Inline data URL for ImageResponse (fetched bytes — not a remote src). */
+export function bytesToDataUrl(buf: ArrayBuffer, contentType: string): string {
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  const base64 = btoa(binary);
+  const mime = contentType.split(";")[0].trim() || "image/webp";
+  return `data:${mime};base64,${base64}`;
+}
+
+/** Return fetched image bytes as an OG response (no compositing). */
+export function proxyImageBytes(buf: ArrayBuffer, contentType: string): Response {
+  const mime = contentType.split(";")[0].trim() || "image/webp";
+  return new Response(buf, {
+    headers: {
+      "Content-Type": mime,
+      "Cache-Control": OG_CACHE,
+    },
+  });
 }

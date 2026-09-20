@@ -25,6 +25,112 @@ function truncate(text: string, max: number): string {
   return `${t.slice(0, max - 1).trimEnd()}…`;
 }
 
+function ogCardTextOverlay(event: KidEvent) {
+  const art = artTypeFor(event.title, event.description);
+  const title = truncate(event.title, 72);
+  const venue = truncate(event.venue || "Las Vegas", 48);
+
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to top, rgba(45,42,50,0.92) 0%, rgba(45,42,50,0.45) 55%, rgba(45,42,50,0.15) 100%)",
+        }}
+      />
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          height: "100%",
+          padding: "48px 56px",
+          color: "white",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
+          <span style={{ fontSize: 56 }}>{art.emoji}</span>
+          <span
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              background: "rgba(255,255,255,0.22)",
+              padding: "8px 20px",
+              borderRadius: 999,
+            }}
+          >
+            vegaskiddos.com
+          </span>
+        </div>
+        <div
+          style={{
+            fontSize: title.length > 48 ? 44 : 52,
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: -1,
+            textShadow: "0 4px 24px rgba(0,0,0,0.35)",
+            maxWidth: 1050,
+          }}
+        >
+          {title}
+        </div>
+        <div
+          style={{
+            fontSize: 30,
+            fontWeight: 700,
+            marginTop: 16,
+            opacity: 0.95,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <span>📍</span>
+          <span>{venue}</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/**
+ * OG card with inline (base64) art background + title/venue overlay.
+ * Uses fetched bytes as a data URL — not a remote src (Worker-safe).
+ */
+export function renderEventOgCardWithArt(event: KidEvent, imageDataUrl: string): ImageResponse {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          fontFamily: "sans-serif",
+        }}
+      >
+        <img
+          src={imageDataUrl}
+          alt=""
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+        {ogCardTextOverlay(event)}
+      </div>
+    ),
+    { ...OG_IMAGE_SIZE },
+  );
+}
+
 /** Worker-safe OG card — gradients + text only (no remote image embeds). */
 export function renderEventOgCard(event: KidEvent | null): ImageResponse {
   if (!event) {
@@ -56,8 +162,6 @@ export function renderEventOgCard(event: KidEvent | null): ImageResponse {
 
   const art = artTypeFor(event.title, event.description);
   const [c1, c2] = gradientFor(art.gradient);
-  const title = truncate(event.title, 72);
-  const venue = truncate(event.venue || "Las Vegas", 48);
 
   return new ImageResponse(
     (
@@ -72,66 +176,7 @@ export function renderEventOgCard(event: KidEvent | null): ImageResponse {
           background: `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`,
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(to top, rgba(45,42,50,0.92) 0%, rgba(45,42,50,0.45) 55%, rgba(45,42,50,0.15) 100%)",
-          }}
-        />
-        <div
-          style={{
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            height: "100%",
-            padding: "48px 56px",
-            color: "white",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-            <span style={{ fontSize: 56 }}>{art.emoji}</span>
-            <span
-              style={{
-                fontSize: 22,
-                fontWeight: 700,
-                background: "rgba(255,255,255,0.22)",
-                padding: "8px 20px",
-                borderRadius: 999,
-              }}
-            >
-              vegaskiddos.com
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize: title.length > 48 ? 44 : 52,
-              fontWeight: 800,
-              lineHeight: 1.1,
-              letterSpacing: -1,
-              textShadow: "0 4px 24px rgba(0,0,0,0.35)",
-              maxWidth: 1050,
-            }}
-          >
-            {title}
-          </div>
-          <div
-            style={{
-              fontSize: 30,
-              fontWeight: 700,
-              marginTop: 16,
-              opacity: 0.95,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <span>📍</span>
-            <span>{venue}</span>
-          </div>
-        </div>
+        {ogCardTextOverlay(event)}
       </div>
     ),
     { ...OG_IMAGE_SIZE },

@@ -1,14 +1,22 @@
 import { lookupEvent } from "@/lib/data";
-import { renderEventOgCard } from "@/lib/eventOgCard";
-import { socialCardUrl, MIN_OG_BYTES } from "@/lib/ogEvent";
+import { renderEventOgCard, renderEventOgCardWithArt } from "@/lib/eventOgCard";
+import {
+  bytesToDataUrl,
+  fetchCdnImage,
+  MIN_OG_BYTES,
+  ogFallbackArtUrls,
+  proxyImageBytes,
+  socialCardUrl,
+} from "@/lib/ogEvent";
 
 const CACHE = "public, immutable, max-age=31536000";
 
 /**
  * Same-origin OG image for Facebook link previews.
- * Cloudflare Workers cannot reliably embed remote WebP/JPEG inside
- * ImageResponse, so we either proxy a pre-rendered R2 social card or
- * render a gradient+text PNG with no external assets.
+ * 1. GPT social card on R2 (JPEG) — proxied bytes.
+ * 2. Event or type-template art on R2 — composited with title/venue via inline
+ *    data URL (Worker-safe; no remote <img src>), or proxied raw if composite fails.
+ * 3. Gradient + text PNG (last resort).
  */
 export async function GET(
   _req: Request,
@@ -31,12 +39,28 @@ export async function GET(
       }
     }
   } catch {
-    /* fall through to dynamic PNG */
+    /* fall through to CDN art / dynamic PNG */
   }
 
   try {
     const hit = await lookupEvent(id, "en");
     const event = hit.kind === "ok" ? hit.event : null;
+
+    if (event) {
+      for (const url of ogFallbackArtUrls(event)) {
+        const art = await fetchCdnImage(url);
+        if (!art) continue;
+
+        try {
+          const dataUrl = bytesToDataUrl(art.buf, art.contentType);
+          return renderEventOgCardWithArt(event, dataUrl);
+        } catch (err) {
+          console.warn("event OG art composite failed, proxying CDN bytes:", err);
+          return proxyImageBytes(art.buf, art.contentType);
+        }
+      }
+    }
+
     return renderEventOgCard(event);
   } catch (err) {
     console.error("event OG image failed:", err);
