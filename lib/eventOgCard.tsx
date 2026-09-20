@@ -96,41 +96,6 @@ function ogCardTextOverlay(event: KidEvent) {
   );
 }
 
-/**
- * OG card with inline (base64) art background + title/venue overlay.
- * Uses fetched bytes as a data URL — not a remote src (Worker-safe).
- */
-export function renderEventOgCardWithArt(event: KidEvent, imageDataUrl: string): ImageResponse {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-          fontFamily: "sans-serif",
-        }}
-      >
-        <img
-          src={imageDataUrl}
-          alt=""
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-        {ogCardTextOverlay(event)}
-      </div>
-    ),
-    { ...OG_IMAGE_SIZE },
-  );
-}
-
 /** Worker-safe OG card — gradients + text only (no remote image embeds). */
 export function renderEventOgCard(event: KidEvent | null): ImageResponse {
   if (!event) {

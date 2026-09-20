@@ -9,7 +9,6 @@ import {
   typeArtCdnUrl,
   ogFallbackArtUrls,
   isValidOgImageBody,
-  bytesToDataUrl,
   OG_IMAGE_SIZE,
   MIN_OG_BYTES,
 } from "./ogEvent";
@@ -39,10 +38,11 @@ describe("ogEvent", () => {
 
   it("builds event and type art CDN URLs", () => {
     assert.equal(eventArtCdnUrl("recXYZ", 1600), "https://img.vegaskiddos.com/event/recXYZ/1600.webp");
+    assert.equal(eventArtCdnUrl("recXYZ", 1600, "jpg"), "https://img.vegaskiddos.com/event/recXYZ/1600.jpg");
     assert.match(typeArtCdnUrl("storytime", 1600), /type\/storytime\/1600\.webp/);
   });
 
-  it("orders fallback art URLs event-first then type", () => {
+  it("orders fallback art URLs jpeg-first, event before type", () => {
     const event = {
       id: "recTest12345",
       title: "Storytime at the Library",
@@ -58,8 +58,10 @@ describe("ogEvent", () => {
       source: "Library",
     } satisfies KidEvent;
     const urls = ogFallbackArtUrls(event);
-    assert.equal(urls[0], eventArtCdnUrl(event.id, 1600));
-    assert.match(urls[2], /type\/storytime\/1600\.webp/);
+    assert.equal(urls[0], eventArtCdnUrl(event.id, 1600, "jpg"));
+    assert.equal(urls[1], eventArtCdnUrl(event.id, 1600, "webp"));
+    assert.match(urls[4], /type\/storytime\/1600\.jpg/);
+    assert.match(urls[5], /type\/storytime\/1600\.webp/);
   });
 
   it("validates OG image bodies", () => {
@@ -69,8 +71,4 @@ describe("ogEvent", () => {
     assert.equal(isValidOgImageBody("text/plain", 5000).valueOf(), false);
   });
 
-  it("encodes bytes as a data URL", () => {
-    const buf = new TextEncoder().encode("hello").buffer as ArrayBuffer;
-    assert.match(bytesToDataUrl(buf, "image/webp"), /^data:image\/webp;base64,/);
-  });
 });
