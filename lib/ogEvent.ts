@@ -14,7 +14,7 @@ const IMG_CDN = "https://img.vegaskiddos.com";
 const OG_CACHE = "public, immutable, max-age=31536000";
 
 /** Bump when social-card JPEGs on R2 are regenerated (cache-bust ?v=). */
-export const SOCIAL_CARD_VERSION = "1";
+export const SOCIAL_CARD_VERSION = "2";
 
 /** Same-origin dynamic OG route — Facebook scrapes this reliably (PNG, 1200×630). */
 export function eventOgImagePath(eventId: string, lang: Lang = "en"): string {
