@@ -1,5 +1,5 @@
 import { lookupEvent } from "@/lib/data";
-import { renderEventOgCard } from "@/lib/eventOgCard";
+import { eventOgImageResponse } from "@/lib/eventOgCard";
 import {
   fetchCdnImage,
   MIN_OG_BYTES,
@@ -7,6 +7,7 @@ import {
   proxyImageBytes,
   socialCardUrl,
 } from "@/lib/ogEvent";
+import { staticOgFallbackResponse } from "@/lib/ogStaticFallback";
 
 const CACHE = "public, immutable, max-age=31536000";
 
@@ -53,9 +54,13 @@ export async function GET(
       }
     }
 
-    return renderEventOgCard(event);
+    return eventOgImageResponse(event);
   } catch (err) {
     console.error("event OG image failed:", err);
-    return renderEventOgCard(null);
+    try {
+      return await eventOgImageResponse(null);
+    } catch {
+      return staticOgFallbackResponse();
+    }
   }
 }
