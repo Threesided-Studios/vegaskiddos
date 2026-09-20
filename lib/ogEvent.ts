@@ -40,25 +40,44 @@ export function socialCardUrl(eventId: string): string {
   return `${IMG_CDN}/social/${eventId}/1200.jpg?v=${SOCIAL_CARD_VERSION}`;
 }
 
+const OG_FALLBACK_WIDTHS = [1600, 1024] as const;
+const OG_FALLBACK_FORMATS = ["jpg", "webp"] as const;
+
+export type OgImageFormat = (typeof OG_FALLBACK_FORMATS)[number];
+
 /** Per-event synced art on R2 (ArtImage or scraped Image via sync-images.mjs). */
-export function eventArtCdnUrl(eventId: string, width = 1600): string {
-  return `${IMG_CDN}/event/${eventId}/${width}.webp`;
+export function eventArtCdnUrl(
+  eventId: string,
+  width = 1600,
+  format: OgImageFormat = "webp",
+): string {
+  return `${IMG_CDN}/event/${eventId}/${width}.${format}`;
 }
 
 /** Shared type-template art on R2 (sync-art-templates.mjs). */
-export function typeArtCdnUrl(typeId: ArtTypeId, width = 1600): string {
-  return `${IMG_CDN}/type/${typeId}/${width}.webp?v=${ART_TEMPLATES_VERSION}`;
+export function typeArtCdnUrl(
+  typeId: ArtTypeId,
+  width = 1600,
+  format: OgImageFormat = "webp",
+): string {
+  return `${IMG_CDN}/type/${typeId}/${width}.${format}?v=${ART_TEMPLATES_VERSION}`;
 }
 
-/** CDN URLs to try when no GPT social card exists (largest first). */
+/** CDN URLs to try when no GPT social card exists (JPEG first, then WebP; event before type). */
 export function ogFallbackArtUrls(event: KidEvent): string[] {
   const typeId = artTypeFor(event.title, event.description).id;
-  return [
-    eventArtCdnUrl(event.id, 1600),
-    eventArtCdnUrl(event.id, 1024),
-    typeArtCdnUrl(typeId, 1600),
-    typeArtCdnUrl(typeId, 1024),
-  ];
+  const urls: string[] = [];
+  for (const w of OG_FALLBACK_WIDTHS) {
+    for (const fmt of OG_FALLBACK_FORMATS) {
+      urls.push(eventArtCdnUrl(event.id, w, fmt));
+    }
+  }
+  for (const w of OG_FALLBACK_WIDTHS) {
+    for (const fmt of OG_FALLBACK_FORMATS) {
+      urls.push(typeArtCdnUrl(typeId, w, fmt));
+    }
+  }
+  return urls;
 }
 
 export function isValidOgImageBody(contentType: string | null, byteLength: number): boolean {
@@ -82,16 +101,6 @@ export async function fetchCdnImage(
   } catch {
     return null;
   }
-}
-
-/** Inline data URL for ImageResponse (fetched bytes — not a remote src). */
-export function bytesToDataUrl(buf: ArrayBuffer, contentType: string): string {
-  const bytes = new Uint8Array(buf);
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-  const base64 = btoa(binary);
-  const mime = contentType.split(";")[0].trim() || "image/webp";
-  return `data:${mime};base64,${base64}`;
 }
 
 /** Return fetched image bytes as an OG response (no compositing). */

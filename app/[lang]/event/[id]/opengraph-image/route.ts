@@ -1,7 +1,6 @@
 import { lookupEvent } from "@/lib/data";
-import { renderEventOgCard, renderEventOgCardWithArt } from "@/lib/eventOgCard";
+import { renderEventOgCard } from "@/lib/eventOgCard";
 import {
-  bytesToDataUrl,
   fetchCdnImage,
   MIN_OG_BYTES,
   ogFallbackArtUrls,
@@ -14,9 +13,9 @@ const CACHE = "public, immutable, max-age=31536000";
 /**
  * Same-origin OG image for Facebook link previews.
  * 1. GPT social card on R2 (JPEG) — proxied bytes.
- * 2. Event or type-template art on R2 — composited with title/venue via inline
- *    data URL (Worker-safe; no remote <img src>), or proxied raw if composite fails.
- * 3. Gradient + text PNG (last resort).
+ * 2. Event or type-template art on R2 — proxied bytes (no ImageResponse; CF Workers
+ *    crash on large data-URL composites the same way they do on remote embeds).
+ * 3. Gradient + text PNG (last resort when CDN has no art).
  */
 export async function GET(
   _req: Request,
@@ -50,14 +49,7 @@ export async function GET(
       for (const url of ogFallbackArtUrls(event)) {
         const art = await fetchCdnImage(url);
         if (!art) continue;
-
-        try {
-          const dataUrl = bytesToDataUrl(art.buf, art.contentType);
-          return renderEventOgCardWithArt(event, dataUrl);
-        } catch (err) {
-          console.warn("event OG art composite failed, proxying CDN bytes:", err);
-          return proxyImageBytes(art.buf, art.contentType);
-        }
+        return proxyImageBytes(art.buf, art.contentType);
       }
     }
 
