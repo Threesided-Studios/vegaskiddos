@@ -5,6 +5,8 @@ import {
   eventPageUrl,
   isDedicatedOgUrl,
   scrapedOgImage,
+  validateOgBody,
+  MIN_OG_BYTES,
 } from "./og-image.mjs";
 
 describe("og-image helpers", () => {
@@ -23,5 +25,12 @@ describe("og-image helpers", () => {
   it("extracts scraped OG image from Graph API shape", () => {
     const data = { image: [{ url: "https://vegaskiddos.com/event/recX/opengraph-image" }] };
     assert.equal(scrapedOgImage(data), "https://vegaskiddos.com/event/recX/opengraph-image");
+  });
+
+  it("rejects tiny or non-image OG bodies", () => {
+    assert.equal(validateOgBody("image/png", 50000).ok, true);
+    assert.equal(validateOgBody("image/jpeg", MIN_OG_BYTES).ok, true);
+    assert.equal(validateOgBody("image/png", 17).ok, false);
+    assert.equal(validateOgBody("text/plain", 5000).ok, false);
   });
 });
