@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-09-20T18:14:43.836Z",
+  "ranAt": "2026-09-21T20:04:12.967Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -43,9 +43,32 @@
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-1",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
-        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura"
+        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
+        "cc:/calendar/county-commission-district-a/100326-fall-festival"
       ],
       "maxStart": "2026-10-17T15:00:00-07:00"
+    },
+    "City of Henderson": {
+      "ids": [
+        "series:City of Henderson|art exhibit home means nevada|city of henderson",
+        "series:City of Henderson|art exhibit henderson creates|city of henderson",
+        "series:City of Henderson|henderson farmers market|army st.",
+        "hen:6336:2026-09-25",
+        "hen:6358:2026-09-25",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
+        "hen:6338:2026-09-26",
+        "series:City of Henderson|henderson farmers market|fox ridge park",
+        "hen:6374:2026-10-03",
+        "hen:5367:2026-10-10",
+        "hen:6402:2026-10-11",
+        "hen:6490:2026-10-12",
+        "series:City of Henderson|early voting kids vote general election|city of henderson",
+        "hen:6498:2026-10-21",
+        "hen:6509:2026-10-23",
+        "hen:6388:2026-10-24",
+        "hen:6400:2026-10-24"
+      ],
+      "maxStart": "2026-10-24T19:00:00-07:00"
     }
   }
 }
