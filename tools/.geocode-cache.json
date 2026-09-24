@@ -302,5 +302,21 @@
   "3130 McLeod Dr,, Las Vegas, 89121": {
     "lat": 36.1442998,
     "lng": -115.1098975
+  },
+  "1980 Festival Plaza Dr,, Las Vegas, NV, 89135": {
+    "lat": 36.1512956,
+    "lng": -115.3338901
+  },
+  "900 Galleria Drive, Henderson, 89011": {
+    "lat": 36.070985,
+    "lng": -115.024851
+  },
+  "1130 University Rd, Las Vegas, 89119": {
+    "lat": 36.104473,
+    "lng": -115.1380859
+  },
+  "6520 N. Dapple Gray Rd,, Las Vegas, 89149": {
+    "lat": 36.2816896,
+    "lng": -115.2945908
   }
 }

@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-09-23T19:09:04.452Z",
+  "ranAt": "2026-09-24T19:21:39.184Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -44,9 +44,26 @@
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
         "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
-        "cc:/calendar/county-commission-district-a/100326-fall-festival"
+        "cc:/calendar/county-commission-district-a/100326-fall-festival",
+        "cc:/calendar/parks-and-recreation/101626-hall-o-breeze",
+        "cc:/calendar/parks-and-recreation/101626-trick-or-treat-fest-day-1",
+        "cc:/calendar/parks-and-recreation/101726-trick-or-treat-fest-day-2",
+        "cc:/calendar/parks-and-recreation/102226-wicked-whitney",
+        "cc:/calendar/parks-and-recreation/102326-haunt-the-wetlands",
+        "cc:/calendar/parks-and-recreation/102326-monster-mash-trunk-or-treat",
+        "cc:/calendar/parks-and-recreation/102326-hollyween-adventures",
+        "cc:/calendar/parks-and-recreation/102326-spooky-trails",
+        "cc:/calendar/parks-and-recreation/102426-monster-mash-movie-bash",
+        "cc:/calendar/parks-and-recreation/102426-paradise-patch",
+        "cc:/calendar/parks-and-recreation/102626-boo-bridge",
+        "cc:/calendar/parks-and-recreation/102626-moapa-valley-halloween-party",
+        "cc:/calendar/parks-and-recreation/102826-helen-meyer-trunk-or-treat",
+        "cc:/calendar/parks-and-recreation/102826-tales-from-the-dales",
+        "cc:/calendar/parks-and-recreation/102926-hallow-harvest-festival",
+        "cc:/calendar/parks-and-recreation/102926-silver-bowl-trunk-or-treat",
+        "cc:/calendar/parks-and-recreation/110726-fall-o-ween"
       ],
-      "maxStart": "2026-10-17T15:00:00-07:00"
+      "maxStart": "2026-11-07T13:00:00-07:00"
     },
     "City of Henderson": {
       "ids": [
