@@ -322,5 +322,9 @@
   "361 Symphony Park Ave., Las Vegas, 89106": {
     "lat": 36.1701586,
     "lng": -115.1524348
+  },
+  "Las Vegas City Hall, 495 S. Main St.": {
+    "lat": 36.1672954,
+    "lng": -115.1484965
   }
 }

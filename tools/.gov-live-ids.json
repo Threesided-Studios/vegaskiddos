@@ -1,14 +1,16 @@
 {
-  "ranAt": "2026-09-29T20:05:49.925Z",
+  "ranAt": "2026-09-30T20:11:05.315Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
         "series:City of Las Vegas|rainbow company youth theatre presents disney s high school musical show|charleston heights arts center",
         "colv:12411",
         "colv:12462",
+        "colv:12579",
         "colv:12418",
         "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12441",
+        "colv:12580",
         "series:City of Las Vegas|vegas city opera presents the mad mind of shakespeare|charleston heights arts center",
         "colv:12464",
         "colv:12419",
@@ -36,7 +38,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/family-services/092926-foster-care-info-session",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-1",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
         "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
@@ -67,8 +68,8 @@
         "series:City of Henderson|art exhibit home means nevada|city of henderson",
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",
-        "hen:6374:2026-10-03",
         "series:City of Henderson|henderson farmers market|cornerstone park",
+        "hen:6374:2026-10-03",
         "hen:5367:2026-10-10",
         "hen:6402:2026-10-11",
         "hen:6490:2026-10-12",
