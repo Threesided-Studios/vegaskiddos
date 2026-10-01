@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-09-30T20:11:05.315Z",
+  "ranAt": "2026-10-01T20:24:58.905Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -72,15 +72,21 @@
         "hen:6374:2026-10-03",
         "hen:5367:2026-10-10",
         "hen:6402:2026-10-11",
-        "hen:6490:2026-10-12",
+        "series:City of Henderson|50 day trip destinations southpoint senior movie day|city of henderson",
         "series:City of Henderson|early voting kids vote general election|city of henderson",
         "hen:6498:2026-10-21",
         "hen:6509:2026-10-23",
         "hen:6388:2026-10-24",
         "hen:6400:2026-10-24",
-        "hen:6292:2026-10-30"
+        "series:City of Henderson|henderson farmers market|army st.",
+        "hen:6462:2026-11-03",
+        "hen:6500:2026-11-04",
+        "hen:6416:2026-11-07",
+        "hen:6512:2026-11-15",
+        "hen:6414:2026-11-20",
+        "hen:6418:2026-11-21"
       ],
-      "maxStart": "2026-10-30T16:00:00-07:00"
+      "maxStart": "2026-11-21T09:00:00-07:00"
     }
   }
 }
