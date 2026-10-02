@@ -37,8 +37,9 @@ jobs:
 
       # Fetch-based adapters (WP calendars, library iCal feeds, Nevada Moms).
       # always() so a gov-scrape failure above doesn't skip these.
-      # Vegas Family Guide / Nevada Moms WAF errors are soft-fail inside cli.ts
-      # so Library/Henderson/Family Fun Vegas going dark still turns the job red.
+      # WAF/HTML-challenge errors (Vegas Family Guide, Communico library feeds, etc.)
+      # are soft-fail inside cli.ts. A core source that *successfully* fetches but
+      # returns zero events still fails the job (markup/endpoint break).
       - name: Run fetch scraper (library + WP calendars)
         if: ${{ always() }}
         env:
