@@ -326,5 +326,9 @@
   "Las Vegas City Hall, 495 S. Main St.": {
     "lat": 36.1672954,
     "lng": -115.1484965
+  },
+  "900 Las Vegas Blvd N": {
+    "lat": 36.1798986,
+    "lng": -115.1338175
   }
 }
