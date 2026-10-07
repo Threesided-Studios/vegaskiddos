@@ -330,5 +330,13 @@
   "900 Las Vegas Blvd N": {
     "lat": 36.1798986,
     "lng": -115.1338175
+  },
+  "2100 W Warm Springs Rd, Henderson, 89014": {
+    "lat": 36.0613587,
+    "lng": -115.0780569
+  },
+  "382 Bruner Ave, Henderson, 89044": {
+    "lat": 35.970123,
+    "lng": -115.1560723
   }
 }
