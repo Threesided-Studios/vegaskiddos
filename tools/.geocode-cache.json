@@ -338,5 +338,9 @@
   "382 Bruner Ave, Henderson, 89044": {
     "lat": 35.970123,
     "lng": -115.1560723
+  },
+  "628 W Craig Road, North Las Vegas, NV 89032": {
+    "lat": 36.2393649,
+    "lng": -115.1723638
   }
 }

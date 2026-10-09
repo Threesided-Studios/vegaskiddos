@@ -1,10 +1,8 @@
 {
-  "ranAt": "2026-10-08T20:45:32.574Z",
+  "ranAt": "2026-10-09T20:11:43.385Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12418",
-        "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12441",
         "colv:12585",
         "colv:12580",
@@ -12,6 +10,7 @@
         "colv:12464",
         "colv:12419",
         "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
+        "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12420",
         "colv:12398",
         "colv:12522",
