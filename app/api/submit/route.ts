@@ -74,14 +74,19 @@ export async function POST(req: Request) {
     }
     const saved = (await res.json().catch(() => ({}))) as { records?: { id?: string }[] };
     const recId = saved.records?.[0]?.id;
+    // The form's datetime-local input sends a zone-less Las Vegas wall-clock
+    // time ("2026-10-23T17:00"), which Airtable stores in Pacific time. Parsing
+    // that on the Worker (UTC) and re-zoning to LA shifted the email by 7h, so
+    // show a zone-less value exactly as entered.
+    const zoneless = !/(Z|[+-]\d\d:?\d\d)$/i.test(fields.Start);
     const when = fields.Start
-      ? new Date(fields.Start).toLocaleString("en-US", {
+      ? new Date(zoneless ? `${fields.Start}Z` : fields.Start).toLocaleString("en-US", {
           weekday: "short",
           month: "short",
           day: "numeric",
           hour: "numeric",
           minute: "2-digit",
-          timeZone: "America/Los_Angeles",
+          timeZone: zoneless ? "UTC" : "America/Los_Angeles",
         })
       : "";
     const submitter = fields.SubmitterEmail || "not given";
