@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getEvents } from "@/lib/data";
+import { toClientEvents } from "@/lib/clientEvents";
 import { EventBrowser } from "@/components/EventBrowser";
 import { ThisWeekNearYou } from "@/components/ThisWeekNearYou";
 import { Reveal } from "@/components/Reveal";
@@ -12,7 +13,7 @@ import { WeatherPill } from "@/components/WeatherPill";
 import { t, type Lang } from "@/lib/i18n";
 import { SITE, langAlternates } from "@/lib/seo";
 
-export const revalidate = 600;
+export const revalidate = 300;
 
 const siteLd = [
   {
@@ -57,7 +58,8 @@ export default async function HomePage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = (await params) as { lang: Lang };
-  const events = await getEvents(lang);
+  // Slimmed copy for the client components (see lib/clientEvents.ts).
+  const events = toClientEvents(await getEvents(lang));
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

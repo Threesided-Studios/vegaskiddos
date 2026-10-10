@@ -11,7 +11,7 @@ import { homePath } from "@/lib/eventUrl";
 import type { Lang } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 
-export const revalidate = 600;
+export const revalidate = 300;
 export const dynamicParams = true;
 export function generateStaticParams() {
   return [];
@@ -62,7 +62,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <JsonLd data={[venueLd, crumbs]} />
-      <Link href={homePath(lang)} className="text-sm font-700 text-teal-btn hover:underline">{t(lang, "ev_back")}</Link>
+      <Link href={homePath(lang)} className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline">{t(lang, "ev_back")}</Link>
       <h1 className="mt-3 font-display text-4xl font-700">{name}</h1>
       <p className="mt-1 text-ink/70">
         {upcoming.length

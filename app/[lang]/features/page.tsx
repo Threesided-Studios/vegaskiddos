@@ -82,7 +82,7 @@ export default function FeaturesPage() {
 
   return (
     <div className="relative mx-auto max-w-2xl px-4 py-10">
-      <Star className="pointer-events-none absolute -right-4 top-8 h-16 w-16 animate-bob opacity-70" />
+      <Star className="pointer-events-none absolute right-2 top-8 h-16 w-16 animate-bob opacity-70" />
       <h1 className="font-display text-4xl font-700 sm:text-5xl">{tr("ft_h")}</h1>
       <p className="mt-3 text-lg text-ink/70">{tr("ft_intro")}</p>
 
