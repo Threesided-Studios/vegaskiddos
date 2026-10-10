@@ -162,3 +162,9 @@ or hard reloads get the fresh deploy immediately.
   failed" email still appears, disconnect it (CF dashboard → vegaskiddos →
   Settings → Builds). The Workers-Builds API isn't reachable with the standard
   CF API token, so this stays a dashboard step.
+
+## Home page startup budget (2026-10)
+- The home page server-renders only the first 12 events + the default "this week" strip. The full list comes from `/api/events/all/[lang]` (ISR, 5 min) via `lib/allEvents.ts`, fetched on the first filter/search/view switch/scroll-to-end or when saved prefs need it. Don't pass the whole event list to client components on `/`.
+- Browser Sentry is lazy: `instrumentation-client.ts` buffers uncaught errors and `lib/sentryClient.ts` imports `@sentry/nextjs` on the first error. Never `import * as Sentry` in client code (it puts ~80 KB in the shared chunk).
+- gtag.js loads on first interaction or 4 s after `load` (`components/DeferredGtag.tsx`); the inline dataLayer init still queues consent + config immediately.
+- The English catch-all rewrite's lookahead must end at a segment boundary (`(?:/|$)`), otherwise dynamic API routes like `/api/admin/events/[id]` get rewritten into the page tree and 404.

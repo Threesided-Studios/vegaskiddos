@@ -9,6 +9,7 @@ import { PWARegister } from "@/components/PWARegister";
 import { ChunkErrorGuard } from "@/components/ChunkErrorGuard";
 import { LangToggle } from "@/components/LangToggle";
 import { ConsentBanner } from "@/components/ConsentBanner";
+import { DeferredGtag } from "@/components/DeferredGtag";
 import { CookieSettingsLink } from "@/components/CookieSettingsLink";
 import { t, type Lang } from "@/lib/i18n";
 import { SITE } from "@/lib/seo";
@@ -101,10 +102,7 @@ export default async function RootLayout({
         >
           {lang === "es" ? "Saltar al contenido" : "Skip to content"}
         </a>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
+        <DeferredGtag id={GA_ID} />
         <Script id="ga4-init" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});gtag('js',new Date());gtag('config','${GA_ID}');`}
         </Script>
