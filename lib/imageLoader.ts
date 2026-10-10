@@ -27,7 +27,10 @@ export default function imageLoader({
   // Durable R2 image: .../(type|event)/<id>/<size>.webp → swap <size> for the
   // nearest generated width (clamped to the largest available).
   if (cdn && src.startsWith(cdn) && /\/\d+\.webp(\?|$)/.test(src)) {
-    const pick = SIZES.find((s) => s >= width) ?? SIZES[SIZES.length - 1];
+    // ~15% tolerance: next/image asks for 750w on a typical phone (412 px ×
+    // 1.75 DPR); the 640 file is visually identical in a 120 px-tall crop and
+    // ~35% lighter than jumping to 1024.
+    const pick = SIZES.find((s) => s >= width * 0.85) ?? SIZES[SIZES.length - 1];
     // Non-anchored so any ?v= cache-busting query after .webp is preserved.
     return src.replace(/\/\d+\.webp/, `/${pick}.webp`);
   }
