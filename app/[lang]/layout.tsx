@@ -113,7 +113,7 @@ export default async function RootLayout({
         <NavProgress />
         <Header lang={lang} />
         <main id="main">{children}</main>
-        <footer className="mt-16 border-t-2 border-dashed border-ink/15 bg-white/70">
+        <footer className="cv-auto mt-16 border-t-2 border-dashed border-ink/15 bg-white/70" style={{ containIntrinsicSize: "auto 520px" }}>
           <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 sm:grid-cols-3">
             <div>
               <p className="font-display text-xl font-700">

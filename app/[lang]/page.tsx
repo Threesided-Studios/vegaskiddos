@@ -139,7 +139,7 @@ export default async function HomePage({
       <ThisWeekNearYou events={strip} partial lang={lang} />
 
       {/* Browser */}
-      <section className="mt-8">
+      <section className="cv-auto mt-8">
         <EventBrowser events={firstBatch} total={events.length} lang={lang} />
       </section>
 
