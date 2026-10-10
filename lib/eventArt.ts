@@ -24,7 +24,13 @@ export type ArtTypeId =
   | "baby"
   | "nature"
   | "festival"
-  | "celebration";
+  | "celebration"
+  | "halloween"
+  | "harvest"
+  | "holiday"
+  | "muertos"
+  | "run"
+  | "renaissance";
 
 export type ArtType = {
   id: ArtTypeId;
@@ -154,12 +160,75 @@ export const ART_TYPES: Record<ArtTypeId, ArtType> = {
     emoji: "🎈",
     gradient: "from-coral to-sunny",
   },
+  // Seasonal/theme templates added 2026-10 (art sweep). Generated in the same
+  // round-scene-on-cream style with the existing art as reference.
+  halloween: {
+    id: "halloween",
+    subject: "friendly jack-o'-lanterns, a cute ghost, a candy bucket, bats and kids in costumes",
+    emoji: "🎃",
+    gradient: "from-coral to-grape",
+  },
+  harvest: {
+    id: "harvest",
+    subject: "a pumpkin patch with hay bales, apples, a friendly scarecrow and kids with a wagon",
+    emoji: "🍂",
+    gradient: "from-sunny to-coral",
+  },
+  holiday: {
+    id: "holiday",
+    subject: "a winter holiday scene with string lights, a decorated tree, gifts and kids with cocoa",
+    emoji: "✨",
+    gradient: "from-teal to-coral",
+  },
+  muertos: {
+    id: "muertos",
+    subject: "a kid-friendly Día de los Muertos table with papel picado, marigolds and a sugar-skull",
+    emoji: "🌼",
+    gradient: "from-coral to-sunny",
+  },
+  run: {
+    id: "run",
+    subject: "a family fun run with kids crossing a finish ribbon, medals and balloons",
+    emoji: "🏃",
+    gradient: "from-teal to-sunny",
+  },
+  renaissance: {
+    id: "renaissance",
+    subject: "a Renaissance-fair scene with a striped tent, a kid knight, a princess and a little dragon",
+    emoji: "🏰",
+    gradient: "from-grape to-sunny",
+  },
 };
 
 export const ART_TYPE_IDS = Object.keys(ART_TYPES) as ArtTypeId[];
 
+// Seasonal / theme rules. A 5K or walk is a run whatever the costume; a Day
+// of the Dead or Halloween event gets its own art even when it's also a
+// storytime, craft or concert (that's what the card should signal).
+const RUN = /\b\d+k\b|fun run|glow run|color run|marathon|walk-?a-?thon|\bwalk\s+(for|to|against)\b|(?<!(art|story|nature|history|museum|night|ghost|boo)\s)\bwalk\s*$/;
+const MUERTOS = /muert|day of the dead|ofrenda|calavera/;
+const HALLOWEEN = /hallo|hollyween|-o-?ween|spook|trick.or.treat|trunk.or.treat|\bboo(\b|-|gie|levard)|haunt|zombie|monster mash|\bghosts?\b|creepy|mischief/;
+const HARVEST = /pumpkin|harvest|hay\s*ride|corn maze|orchard|\bfall fest|autumn|apple picking|thanksgiving|turkey/;
+const HOLIDAY = /christmas|holiday|santa|winter wonder|(holiday|christmas|festive|winter|magical)\s+lights|light (show|display)|festival of lights|hanukkah|menorah|kwanzaa|gingerbread|tree lighting|nutcracker|winter fest/;
+const RENAISSANCE = /renaissance|medieval|chivalry|\bknights?\b|castle|jousting|\bfaire\b/;
+
 // Title is matched first (specific activity beats a word in the blurb).
 const TITLE_RULES: [RegExp, ArtTypeId][] = [
+  [RUN, "run"],
+  [MUERTOS, "muertos"],
+  [HALLOWEEN, "halloween"],
+  [RENAISSANCE, "renaissance"],
+  [HOLIDAY, "holiday"],
+  // Book festivals / clubs are reading events, not carnivals.
+  [/\bbook\s*(club|fest|fair)|bookapalooza|\bbooks?\b.*\bfestival\b|library after.?hours/, "storytime"],
+  // Tabletop RPGs are board games, not video games or dragons.
+  [/dungeons|tabletop|\brpg\b/, "boardgame"],
+  [/\bsteam\b|3d print|scientist|\bslime\b/, "stem"],
+  [/potion bottles|sand art|jewelry|charms/, "art"],
+  [/\b(crafts?|gift)\b[^.]{0,20}\b(market|bazaar)\b/, "market"],
+  [/\bbig play\b|stage show|live show/, "theater"],
+  [/\bpets?\b|\bdogs?\b|pupp(y|ies)|kittens?/, "animals"],
+  [HARVEST, "harvest"],
   [/\byoga\b/, "yoga"],
   [/kids?\s*cafe|\bcafe\b/, "food"],
   [/farmer['’]?s?\s*market/, "market"],
@@ -209,6 +278,9 @@ const DESC_RULES: [RegExp, ArtTypeId][] = [
   [/\bmarkets?\b/, "market"],
   [/lapsit|toddler\s*time|infant/, "baby"],
   [/nature|garden|hike|trail|butterfly|preserve/, "nature"],
+  [MUERTOS, "muertos"],
+  [HALLOWEEN, "halloween"],
+  [HARVEST, "harvest"],
   [/festival|parade|\bfair\b|carnival|fiesta/, "festival"],
 ];
 

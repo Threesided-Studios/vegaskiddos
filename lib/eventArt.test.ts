@@ -74,4 +74,28 @@ describe("artTypeFor", () => {
       "market",
     );
   });
+  it("uses the seasonal/theme templates (2026-10 art sweep)", () => {
+    assert.equal(typeId("Trick or Treat Fest"), "halloween");
+    assert.equal(typeId("Windmill Boo Bash"), "halloween");
+    assert.equal(typeId("Haunted Harvest | Springs Preserve Halloween Event"), "halloween");
+    assert.equal(typeId("VIVA Pumpkin Patch"), "harvest");
+    assert.equal(typeId("Fall Harvest 2026 at Gilcrease Orchard"), "harvest");
+    assert.equal(typeId("Kwanzaa Celebration"), "holiday");
+    assert.equal(typeId("Día de los Muertos: Celebration & Concert"), "muertos");
+    assert.equal(typeId("Walk For ALS"), "run");
+    assert.equal(typeId("Zombie Run 5K and 1-Mile Walk"), "run");
+    assert.equal(typeId("Age of Chivalry Renaissance Festival 2026"), "renaissance");
+  });
+
+  it("keeps lookalike words on their real type", () => {
+    assert.equal(typeId("Kids Markets at Las Vegas Lights FC"), "market");
+    assert.equal(typeId("Lake Las Vegas Dragon Boat Festival"), "festival");
+    assert.equal(typeId("Wetlands Story Walk"), "storytime");
+    assert.equal(typeId("Las Vegas Book Festival"), "storytime");
+    assert.equal(typeId("Kids' Bookapalooza"), "storytime");
+    assert.equal(typeId("Tween Dungeons & Dragons"), "boardgame");
+    assert.equal(typeId("Club STEAM"), "stem");
+    assert.equal(typeId("Un-Leashed Pet Market"), "animals");
+    assert.equal(typeId("Handmade Crafts & Gift Market"), "market");
+  });
 });

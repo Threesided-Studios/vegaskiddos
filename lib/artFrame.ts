@@ -27,6 +27,13 @@ const BOX: Record<string, [number, number, number, number]> = {
   swim: [72, 590, 68, 407],
   theater: [44, 569, 42, 386],
   yoga: [59, 573, 52, 381],
+  // 2026-10 seasonal/theme templates.
+  halloween: [98, 530, 49, 407],
+  harvest: [63, 578, 39, 409],
+  holiday: [103, 532, 30, 408],
+  muertos: [111, 525, 47, 407],
+  renaissance: [125, 506, 36, 394],
+  run: [60, 559, 29, 405],
 };
 
 export function artTypeFromSrc(src: string): string | undefined {
