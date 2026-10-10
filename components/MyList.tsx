@@ -49,7 +49,10 @@ export function MyList({ events, lang = "en" }: { events: KidEvent[]; lang?: Lan
     };
   }, [ids, events, lang]);
 
-  if (ids === null) return <p className="py-16 text-center text-ink/70">{t(lang, "list_loading")}</p>;
+  // My List renders client-side (favorites live in localStorage). Every state
+  // reserves at least a screen of height so the footer starts below the fold
+  // and doesn't jump when "Loading…" is replaced (was CLS ~0.4–0.6).
+  if (ids === null) return <p className="min-h-[80vh] py-16 text-center text-ink/70">{t(lang, "list_loading")}</p>;
 
   const byId = new Map([...events, ...extra].map((e) => [e.id, e]));
   const mine = ids.map((id) => byId.get(id)).filter(Boolean) as KidEvent[];
@@ -57,7 +60,7 @@ export function MyList({ events, lang = "en" }: { events: KidEvent[]; lang?: Lan
 
   if (!mine.length) {
     return (
-      <div className="mx-auto max-w-md px-4 py-20 text-center">
+      <div className="mx-auto min-h-[80vh] max-w-md px-4 py-20 text-center">
         <p className="text-5xl">❤️</p>
         <h1 className="mt-3 font-display text-3xl font-700">{t(lang, "list_empty_h")}</h1>
         <p className="mt-2 text-ink/70">{t(lang, "list_empty_p")}</p>
@@ -67,7 +70,7 @@ export function MyList({ events, lang = "en" }: { events: KidEvent[]; lang?: Lan
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto min-h-[80vh] max-w-6xl px-4 py-8">
       <Link href={homePath(lang)} className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline">{t(lang, "ev_back")}</Link>
       <header className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
