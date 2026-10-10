@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, isValidSession } from "@/lib/adminAuth";
+import { refreshEventSnapshot } from "@/lib/snapshot";
 
 const API = "https://api.airtable.com/v0";
 
@@ -52,7 +53,10 @@ export async function PATCH(
       body: JSON.stringify({ fields, typecast: true }),
     });
     if (!res.ok) throw new Error(await res.text());
-    return NextResponse.json({ ok: true });
+    // Re-import the public snapshot so the approval/rejection/edit reaches the
+    // site on the next page regeneration instead of at the daily import.
+    const snapshot = await refreshEventSnapshot(`admin:${body.action ?? "edit"}:${id}`);
+    return NextResponse.json({ ok: true, snapshot });
   } catch (err) {
     console.error("admin patch error:", err);
     return NextResponse.json({ error: "Update failed" }, { status: 502 });

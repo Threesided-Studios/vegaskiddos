@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, isValidSession } from "@/lib/adminAuth";
 import { runScrape } from "@/lib/scrape/run";
+import { refreshEventSnapshot } from "@/lib/snapshot";
 
 // Admin-triggered on-demand scrape. Runs all source adapters and inserts new
 // events into the review queue (Approved=false). Returns a summary.
@@ -12,7 +13,8 @@ export async function POST() {
   }
   try {
     const summary = await runScrape({ dryRun: false });
-    return NextResponse.json(summary);
+    const snapshot = await refreshEventSnapshot("admin:scrape");
+    return NextResponse.json({ ...summary, snapshot });
   } catch (err) {
     console.error("admin scrape error:", err);
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
