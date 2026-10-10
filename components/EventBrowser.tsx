@@ -17,6 +17,7 @@ import {
 } from "@/lib/constants";
 import { getFavorites, getSavedAges, saveAges } from "@/lib/favorites";
 import { eventEnv } from "@/lib/env";
+import { loadAllEvents } from "@/lib/allEvents";
 
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), {
   ssr: false,
@@ -154,7 +155,25 @@ function withBigIcon(text: string) {
   return <>{text}</>;
 }
 
-export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang?: Lang }) {
+// `events` is the server-rendered first batch (default order); `total` is the
+// size of the full listed set. The rest is fetched on demand (lib/allEvents).
+// Pages that already pass the whole list just omit `total`.
+export function EventBrowser({ events: initialEvents, total, lang = "en" }: { events: KidEvent[]; total?: number; lang?: Lang }) {
+  const [allEvents, setAllEvents] = useState<KidEvent[] | null>(
+    total === undefined || total <= initialEvents.length ? initialEvents : null
+  );
+  const full = allEvents !== null;
+  const events = allEvents ?? initialEvents;
+  const [loadFailed, setLoadFailed] = useState(false);
+  const loadingRef = useRef(false);
+  function ensureAll() {
+    if (full || loadingRef.current) return;
+    loadingRef.current = true;
+    loadAllEvents(lang)
+      .then((list) => { setAllEvents(list); setLoadFailed(false); })
+      .catch(() => setLoadFailed(true))
+      .finally(() => { loadingRef.current = false; });
+  }
   const tr = (k: StringKey) => i18nT(lang, k);
   // Localized label for a date-range chip (maps id → "d_*" string key).
   const dateLabel = (id: DateRangeId) => tr(`d_${id.replace(/-/g, "_")}` as StringKey);
@@ -281,13 +300,23 @@ export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang
     if (!el || view !== "list") return;
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) setVisible((v) => v + PAGE);
+        if (!entries[0].isIntersecting) return;
+        if (!full) ensureAll();
+        setVisible((v) => v + PAGE);
       },
       { rootMargin: "600px 0px" } // prefetch before it's actually visible
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [view, filtered.length]);
+  }, [view, filtered.length, full]);
+
+  // Anything beyond the default first screen needs the full list.
+  const needsAll = ages.size + prices.size + hoods.size > 0 || dateRange !== "any" || env !== "any" ||
+    !!q.trim() || onlyFavs || coords !== null || view !== "list";
+  useEffect(() => {
+    if (needsAll) ensureAll();
+  }, [needsAll]);
+  const pending = !full && needsAll; // filtered view not trustworthy yet
 
   const activeCount =
     ages.size + prices.size + hoods.size + (dateRange !== "any" ? 1 : 0) +
@@ -445,7 +474,7 @@ export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang
       {/* Results header + view toggle */}
       <div className="mt-6 flex items-center justify-between">
         <p className="font-700 text-ink/70">
-          {filtered.length} {filtered.length === 1 ? tr("event_1") : tr("events_n")}
+          {pending ? "…" : (() => { const n = full || total === undefined ? filtered.length : total; return <>{n} {n === 1 ? tr("event_1") : tr("events_n")}</>; })()}
         </p>
         <div className="flex rounded-full border-2 border-ink/15 bg-white p-1">
           {(["list", "calendar", "map"] as View[]).map((v) => (
@@ -465,7 +494,22 @@ export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang
 
       {/* Results */}
       <div className="mt-4">
-        {filtered.length === 0 ? (
+        {pending ? (
+          <div className="flex items-center justify-center gap-2 py-16 text-ink/70" role="status">
+            {loadFailed ? (
+              <button onClick={ensureAll} className="min-h-[44px] rounded-full bg-white px-5 font-800 text-coral-btn shadow-pop">
+                {lang === "es" ? "No se pudo cargar — reintentar" : "Couldn't load — tap to retry"}
+              </button>
+            ) : (
+              <>
+                <span className="h-3 w-3 animate-bounce rounded-full bg-coral" />
+                <span className="h-3 w-3 animate-bounce rounded-full bg-sunny" style={{ animationDelay: "0.15s" }} />
+                <span className="h-3 w-3 animate-bounce rounded-full bg-teal" style={{ animationDelay: "0.3s" }} />
+                <span className="ml-2 text-sm font-700">{tr("loading_more")}</span>
+              </>
+            )}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="rounded-blob border border-dashed border-ink/20 bg-white py-16 text-center text-ink/70">
             <p className="text-2xl">🔍</p>
             <p className="mt-2 font-700">{tr("no_match")}</p>
@@ -485,7 +529,7 @@ export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang
                 />
               ))}
             </div>
-            {visible < filtered.length && (
+            {(visible < filtered.length || !full) && (
               <div ref={sentinelRef} className="mt-8 flex items-center justify-center gap-2 py-4 text-ink/70">
                 <span className="h-3 w-3 animate-bounce rounded-full bg-coral" />
                 <span className="h-3 w-3 animate-bounce rounded-full bg-sunny" style={{ animationDelay: "0.15s" }} />

@@ -9,6 +9,7 @@ import { getHood, saveHood } from "@/lib/favorites";
 import { track } from "@/lib/track";
 import { EventCard } from "./EventCard";
 import { Star } from "./Doodles";
+import { loadAllEvents } from "@/lib/allEvents";
 
 const WEEK_MS = 7 * 86_400_000;
 const MAX = 10;
@@ -20,10 +21,14 @@ function milesBetween(a: { lat: number; lng: number }, b: { lat: number; lng: nu
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
-// Personalized "what's on this week near me" strip. Pure progressive
-// enhancement: it renders nothing on the server (personalization needs
-// localStorage / geolocation), then resolves on the client after mount.
-export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; lang?: Lang }) {
+// Personalized "what's on this week near me" strip. With `partial`, the server
+// passes just the default (all-areas) strip, already filtered and sorted, and
+// it is server-rendered as-is; the full list is fetched only once the visitor
+// has a saved/picked area or shares their location. Without `partial` it gets
+// the whole list and renders on the client only (the original behaviour).
+export function ThisWeekNearYou({ events: initial, partial = false, lang = "en" }: { events: KidEvent[]; partial?: boolean; lang?: Lang }) {
+  const [allEvents, setAllEvents] = useState<KidEvent[] | null>(partial ? null : initial);
+  const events = allEvents ?? initial;
   const [mounted, setMounted] = useState(false);
   const [hood, setHood] = useState<NeighborhoodId | "">("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -40,14 +45,25 @@ export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; l
     return () => window.removeEventListener("vk-prefs", sync);
   }, []);
 
+  // Personalizing needs every event, not just the default top few.
+  useEffect(() => {
+    if (allEvents || (!hood && !coords)) return;
+    let live = true;
+    loadAllEvents(lang).then((list) => { if (live) setAllEvents(list); }).catch(() => {});
+    return () => { live = false; };
+  }, [allEvents, hood, coords, lang]);
+
   // Events occurring within the next 7 days (next occurrence for recurring).
   const thisWeek = useMemo(() => {
+    // Server-picked strip: already this week and in order. Using it verbatim
+    // keeps the server and client render identical (no clock-edge mismatch).
+    if (!allEvents) return initial.map((e) => ({ e, occ: 0 }));
     const now = Date.now();
     return events
       .map((e) => ({ e, occ: Date.parse(nextOccurrenceISO(e.start, e.recurrence, e.canceledDates)) }))
       .filter((x) => !Number.isNaN(x.occ) && x.occ >= now - 6 * 3_600_000 && x.occ <= now + WEEK_MS)
       .sort((a, b) => a.occ - b.occ);
-  }, [events]);
+  }, [events, allEvents, initial]);
 
   function useMyLocation() {
     if (!navigator.geolocation) { setGeoMsg(t(lang, "tw_geo_off")); return; }
@@ -71,7 +87,7 @@ export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; l
     track("This Week Area", { area: id || "all" });
   }
 
-  if (!mounted || !thisWeek.length) return null;
+  if ((!mounted && !partial) || !thisWeek.length) return null;
 
   // Build the personalized list.
   let list = thisWeek;
@@ -86,7 +102,7 @@ export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; l
         (b.e.lat ? milesBetween(c, { lat: b.e.lat, lng: b.e.lng }) : Infinity)
     );
     near = true;
-  } else if (hood) {
+  } else if (hood && allEvents) {
     const areas = new Set(nearbyHoods(hood));
     const local = thisWeek.filter((x) => areas.has(x.e.neighborhood));
     if (local.length >= 3) { list = local; near = true; }

@@ -12,6 +12,24 @@ import { Cloud, Star, Underline, Scribble } from "@/components/Doodles";
 import { WeatherPill } from "@/components/WeatherPill";
 import { t, type Lang } from "@/lib/i18n";
 import { SITE, langAlternates } from "@/lib/seo";
+import { nextOccurrenceISO } from "@/lib/recurrence";
+import type { KidEvent } from "@/lib/types";
+
+// Only the first screenful goes into the HTML; the rest loads on demand (see
+// lib/allEvents.ts). Keeps the mobile document small and hydration cheap.
+const INITIAL_EVENTS = 12;
+const STRIP_MAX = 10;
+
+// Default "this week" strip: next occurrence within 7 days, soonest first.
+function thisWeekStrip(events: KidEvent[]): KidEvent[] {
+  const now = Date.now();
+  return events
+    .map((e) => ({ e, occ: Date.parse(nextOccurrenceISO(e.start, e.recurrence, e.canceledDates)) }))
+    .filter((x) => !Number.isNaN(x.occ) && x.occ >= now - 6 * 3_600_000 && x.occ <= now + 7 * 86_400_000)
+    .sort((a, b) => a.occ - b.occ)
+    .slice(0, STRIP_MAX)
+    .map((x) => x.e);
+}
 
 export const revalidate = 300;
 
@@ -60,6 +78,8 @@ export default async function HomePage({
   const { lang } = (await params) as { lang: Lang };
   // Slimmed copy for the client components (see lib/clientEvents.ts).
   const events = toClientEvents(await getEvents(lang));
+  const firstBatch = events.slice(0, INITIAL_EVENTS);
+  const strip = thisWeekStrip(events);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -116,11 +136,11 @@ export default async function HomePage({
       </Reveal>
 
       {/* Personalized "this week near you" strip (client-only, progressive) */}
-      <ThisWeekNearYou events={events} lang={lang} />
+      <ThisWeekNearYou events={strip} partial lang={lang} />
 
       {/* Browser */}
       <section className="mt-8">
-        <EventBrowser events={events} lang={lang} />
+        <EventBrowser events={firstBatch} total={events.length} lang={lang} />
       </section>
 
       {/* Friendly footer nudge */}

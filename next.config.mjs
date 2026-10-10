@@ -28,7 +28,11 @@ const nextConfig = {
         // with a dot), the remainder as a repeat param. OpenNext compiles the
         // destination with path-to-regexp, which rejects a single param that
         // spans several segments.
-        { source: "/:first((?!api$|_next$|es$|en$)[^/.]+)/:rest*", destination: "/en/:first/:rest*" },
+        // The lookahead must stop at the segment boundary ("/" or end): a bare
+        // `api$` only excluded the single-segment "/api", so dynamic API routes
+        // such as /api/admin/events/[id] were rewritten into the page tree and
+        // 404'd.
+        { source: "/:first((?!(?:api|_next|es|en)(?:/|$))[^/.]+)/:rest*", destination: "/en/:first/:rest*" },
       ],
     };
   },

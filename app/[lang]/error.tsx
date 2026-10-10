@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@/lib/sentryClient";
 import { isChunkLoadError, reloadOnChunkError, retryReload } from "@/lib/chunkReload";
 import { isTransientNetworkError } from "@/lib/networkError";
 
@@ -25,7 +25,7 @@ export default function Error({
   useEffect(() => {
     if (reloadOnChunkError(error)) return; // document is being replaced
     setRecovering(false);
-    if (!networkError) Sentry.captureException(error);
+    if (!networkError) captureException(error);
   }, [error, networkError]);
 
   // Blank for the split second before the reload takes over.

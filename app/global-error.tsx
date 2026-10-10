@@ -1,6 +1,6 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@/lib/sentryClient';
 import NextError from 'next/error';
 import { useEffect, useState } from 'react';
 import { isChunkLoadError, reloadOnChunkError } from '@/lib/chunkReload';
@@ -16,7 +16,7 @@ export default function GlobalError({ error }: { error: Error & { digest?: strin
   useEffect(() => {
     if (reloadOnChunkError(error)) return; // document is being replaced
     setRecovering(false);
-    if (!isTransientNetworkError(error)) Sentry.captureException(error);
+    if (!isTransientNetworkError(error)) captureException(error);
   }, [error]);
 
   return (
