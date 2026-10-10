@@ -62,7 +62,7 @@ export function ShareButtons({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <button onClick={nativeShare}
-        className="hover-pop inline-flex items-center gap-1.5 rounded-full bg-teal-btn px-4 py-2 text-sm font-800 text-white shadow-pop">
+        className="hover-pop inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-teal-btn px-4 py-2 text-sm font-800 text-white shadow-pop">
         ↗ Share
       </button>
       <button onClick={copyLink}
@@ -73,7 +73,7 @@ export function ShareButtons({
         <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
           onClick={() => track("Share", { method: l.label })}
           aria-label={`Share on ${l.label}`}
-          className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink/15 bg-white text-base transition-colors hover:border-teal">
+          className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-ink/15 bg-white text-lg transition-colors hover:border-teal">
           {l.emoji}
         </a>
       ))}

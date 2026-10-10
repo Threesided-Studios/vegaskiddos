@@ -59,7 +59,8 @@ export function SubscribeBox({ compact = false, stacked = false, lang = "en" }: 
       </select>
       <button
         type="submit"
-        disabled={status === "sending"}
+        aria-busy={status === "sending"}
+          disabled={status === "sending"}
         className={`hover-pop rounded-full bg-coral-btn font-800 text-white shadow-pop disabled:opacity-50 ${stacked ? "w-full py-2.5 text-sm" : compact ? "px-4 py-2 text-sm" : "px-5 py-2.5"}`}
       >
         {status === "sending" ? "…" : tr("nl_button")}

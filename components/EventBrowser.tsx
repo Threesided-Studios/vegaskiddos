@@ -111,7 +111,7 @@ function Chip({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`border-l border-ink/25 px-2.5 py-2 text-center text-xs font-700 shadow-[inset_7px_0_6px_-7px_rgba(45,42,50,0.22)] transition first:border-l-0 first:rounded-l-full first:shadow-none last:rounded-r-full sm:text-sm ${
+      className={`min-h-[44px] border-l border-ink/25 px-2.5 py-2 text-center text-xs font-700 shadow-[inset_7px_0_6px_-7px_rgba(45,42,50,0.22)] transition first:border-l-0 first:rounded-l-full first:shadow-none last:rounded-r-full sm:text-sm ${
         scroll ? "flex-none whitespace-nowrap sm:flex-1 sm:truncate" : "flex-1 truncate"
       } ${
         active
@@ -352,7 +352,7 @@ export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang
         <button
           onClick={() => { if (!showFilters) track("Filters Opened"); setShowFilters((v) => !v); }}
           aria-expanded={showFilters}
-          className={`ml-auto inline-flex items-center gap-1.5 rounded-full border-2 px-4 py-1.5 text-sm font-800 transition ${
+          className={`ml-auto inline-flex min-h-[44px] items-center gap-1.5 rounded-full border-2 px-4 py-1.5 text-sm font-800 transition ${
             showFilters || activeCount
               ? "border-grape bg-grape text-white"
               : "border-ink/15 bg-white text-ink/70 hover:border-grape"
@@ -453,7 +453,7 @@ export function EventBrowser({ events, lang = "en" }: { events: KidEvent[]; lang
               key={v}
               onClick={() => setView(v)}
               aria-pressed={view === v}
-              className={`rounded-full px-3 py-1.5 text-sm font-800 capitalize transition sm:px-4 ${
+              className={`inline-flex min-h-[44px] items-center rounded-full px-3 py-1.5 text-sm font-800 capitalize transition sm:px-4 ${
                 view === v ? "bg-teal-btn text-white" : "text-ink/70"
               }`}
             >

@@ -27,7 +27,7 @@ export function CollectionView({ meta, events, lang = "en" }: { meta: Collection
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <JsonLd data={[ld, crumbs]} />
-      <Link href="/" className="text-sm font-700 text-teal-btn hover:underline">← All events</Link>
+      <Link href="/" className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline">← All events</Link>
       <header className="mt-3">
         <h1 className="font-display text-3xl font-700 sm:text-4xl">
           {meta.emoji} {meta.heading}
