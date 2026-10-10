@@ -52,3 +52,10 @@ jobs:
           AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
           NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
         run: npm run cf:deploy
+      # OpenNext's ISR cache is per-build, so every page is cold right after a
+      # deploy. Pre-render them so visitors don't pay 4–10 s first-hit renders.
+      - name: Warm page cache
+        if: success()
+        continue-on-error: true
+        timeout-minutes: 20
+        run: node tools/warm-cache.mjs https://vegaskiddos.com 6
