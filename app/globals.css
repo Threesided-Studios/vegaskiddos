@@ -378,3 +378,14 @@ select:focus-visible,
 .nf-lang-es { display: none; }
 html[lang="es"] .nf-lang-en { display: none; }
 html[lang="es"] .nf-lang-es { display: block; }
+
+/* Below-the-fold home sections: let the browser skip their style/layout/paint
+   until they approach the viewport (most of the first-load main-thread time
+   was style+layout for content nobody can see yet). The intrinsic size is a
+   placeholder estimate; "auto" remembers the real size once rendered, so the
+   scrollbar doesn't jump on the way back up. Purely a rendering hint — no
+   visual change. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1400px;
+}
