@@ -10,7 +10,9 @@ export function EventThumb({ event, priority = false }: { event: KidEvent; prior
           src={event.image}
           alt={event.venue ? `${event.title} — ${event.venue}` : event.title}
           fill
-          sizes="(max-width: 640px) 100vw, 50vw"
+          // The thumb is a 120px-tall strip in a 1–3 column grid; "100vw" pulled
+          // 1024–1600px files onto phones for a ~350px slot.
+          sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 360px"
           className="object-cover transition group-hover:scale-105"
           // The first card on a collection/venue page can be the LCP element;
           // priority preloads it instead of lazy-loading the thing on screen.

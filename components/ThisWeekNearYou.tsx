@@ -105,13 +105,13 @@ export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; l
           </h2>
           <p className="mt-0.5 text-sm text-ink/70">{t(lang, "tw_sub")}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="tw-area">{t(lang, "tw_pick")}</label>
           <select
             id="tw-area"
             value={hood}
             onChange={(e) => pick(e.target.value as NeighborhoodId | "")}
-            className="rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-sm font-700 text-ink/80 focus:border-teal focus:outline-none"
+            className="min-h-[44px] max-w-full rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-sm font-700 text-ink/80 focus:border-teal focus:outline-none"
           >
             <option value="">{t(lang, "tw_all")}</option>
             {NEIGHBORHOODS.map((n) => (
@@ -121,7 +121,7 @@ export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; l
           <button
             type="button"
             onClick={useMyLocation}
-            className="hover-pop whitespace-nowrap rounded-full bg-teal-btn px-3 py-1.5 text-sm font-800 text-white shadow-pop"
+            className="hover-pop min-h-[44px] whitespace-nowrap rounded-full bg-teal-btn px-4 py-1.5 text-sm font-800 text-white shadow-pop"
           >
             {geoMsg || t(lang, "tw_loc")}
           </button>
@@ -147,7 +147,7 @@ export function ThisWeekNearYou({ events, lang = "en" }: { events: KidEvent[]; l
       </div>
 
       <div className="mt-1">
-        <a href="/this-weekend" className="text-sm font-800 text-coral-btn hover:underline">
+        <a href="/this-weekend" className="inline-flex min-h-[44px] items-center text-sm font-800 text-coral-btn hover:underline">
           {t(lang, "tw_see_all")}
         </a>
       </div>

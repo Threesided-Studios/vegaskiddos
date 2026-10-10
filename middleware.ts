@@ -48,10 +48,9 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Rewrite the un-prefixed English path onto the [lang]=en tree, URL unchanged.
-  const url = req.nextUrl.clone();
-  url.pathname = pathname === "/" ? "/en" : `/en${pathname}`;
-  return NextResponse.rewrite(url);
+  // Un-prefixed English path: the [lang]=en rewrite is done by next.config.mjs
+  // (see the comment there for why it moved out of middleware).
+  return NextResponse.next();
 }
 
 export const config = {

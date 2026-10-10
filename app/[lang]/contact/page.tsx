@@ -56,7 +56,7 @@ export default function ContactPage() {
 
   return (
     <div className="relative mx-auto max-w-xl px-4 py-10">
-      <Cloud className="pointer-events-none absolute -left-4 top-4 h-16 w-24 animate-float opacity-70" />
+      <Cloud className="pointer-events-none absolute left-0 top-4 h-16 w-24 animate-float opacity-70" />
       <h1 className="font-display text-4xl font-700">{tr("ct_h")}</h1>
       <p className="mt-2 text-ink/70">{tr("ct_intro")}</p>
 
@@ -95,7 +95,8 @@ export default function ContactPage() {
             {tr("ct_err")}
           </p>
         )}
-        <button type="submit" disabled={status === "sending"}
+        <button type="submit" aria-busy={status === "sending"}
+          disabled={status === "sending"}
           className="hover-pop w-full rounded-full bg-coral-btn px-5 py-4 font-800 text-white shadow-pop disabled:opacity-50">
           {status === "sending" ? tr("ct_sending") : tr("ct_send")}
         </button>

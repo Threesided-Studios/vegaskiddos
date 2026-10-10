@@ -30,7 +30,7 @@ export function FavButton({ id, className = "" }: { id: string; className?: stri
         e.stopPropagation();
         setFav(toggleFavorite(id));
       }}
-      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-lg shadow-pop transition-transform hover:scale-105 ${className}`}
+      className={`flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-xl shadow-pop transition-transform hover:scale-105 ${className}`}
     >
       <span className={fav ? "" : "grayscale"}>{fav ? "❤️" : "🤍"}</span>
     </button>

@@ -10,6 +10,28 @@
 const imageCdn = process.env.NEXT_PUBLIC_IMAGE_CDN;
 
 const nextConfig = {
+  // English lives at the root but is rendered by the app/[lang] tree with
+  // lang="en". This rewrite used to happen in middleware, but Next decides
+  // "is this a prerendered/ISR route?" from the URL *before* a middleware
+  // rewrite: "/event/rec…" doesn't match "/[lang]/event/[id]", so every English
+  // event and venue page was rendered dynamically ("private, no-store", ~10 s
+  // with the Airtable fetch). A config rewrite is resolved before that check,
+  // so these pages are cached like their /es twins. afterFiles: real files and
+  // static routes (sitemap, robots, icons, API) win first; /es, /en, /api and
+  // /_next are excluded explicitly. Middleware still handles the vk_lang=es
+  // redirect and the /en → / canonical redirect.
+  async rewrites() {
+    return {
+      afterFiles: [
+        { source: "/", destination: "/en" },
+        // First segment as its own param (excluding api/_next/es/en and anything
+        // with a dot), the remainder as a repeat param. OpenNext compiles the
+        // destination with path-to-regexp, which rejects a single param that
+        // spans several segments.
+        { source: "/:first((?!api$|_next$|es$|en$)[^/.]+)/:rest*", destination: "/en/:first/:rest*" },
+      ],
+    };
+  },
   images: {
     ...(imageCdn
       ? { loader: "custom", loaderFile: "./lib/imageLoader.ts" }

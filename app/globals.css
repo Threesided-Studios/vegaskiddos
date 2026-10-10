@@ -13,6 +13,14 @@
   font-size: 17px;
 }
 
+/* Last-resort guard against sideways scrolling on phones. The real causes
+   (header row too wide, unwrapped control rows, decorations poking past the
+   edge) are fixed at the source; `clip` doesn't create a scroll container, so
+   the sticky header keeps working. */
+html {
+  overflow-x: clip;
+}
+
 body {
   /* Subtle warm gradient wash so the page has depth behind the cards. */
   background:
@@ -88,7 +96,11 @@ body {
 .hover-wobble:hover { animation: wiggle 0.5s ease-in-out; }
 .hover-shake:hover { animation: shake 0.5s ease-in-out; }
 .hover-pop { transition: transform 0.2s cubic-bezier(.34,1.56,.64,1); }
-.hover-pop:hover { transform: scale(1.05) rotate(-1deg); }
+/* Hover-capable pointers only: on phones a tap left the button stuck in its
+   hover pose, which read as "did that work?". */
+@media (hover: hover) {
+  .hover-pop:hover { transform: scale(1.05) rotate(-1deg); }
+}
 
 /* Fun "pop + glow" when a filter chip or pill becomes selected. Combines a
    bouncy scale overshoot, a brightness flash, a bright inner glow, and a
@@ -263,6 +275,79 @@ body {
     box-shadow: 0 0 6px 0 var(--halo, transparent); }
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .hover-pop:hover { transform: none; }
+}
+
+/* ============================================================
+   Touch feedback — every tap should visibly land.
+   ============================================================ */
+/* No double-tap-to-zoom wait (the old ~300ms click delay) and a soft brand
+   tint instead of the default grey flash. */
+a, button, summary, label, select,
+[role="button"], input[type="checkbox"], input[type="radio"], input[type="submit"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(255, 107, 94, 0.2);
+}
+/* Pressed state for buttons and pill/card links: an instant press-in. */
+button:not(:disabled):active,
+[role="button"]:active,
+a[class*="rounded-full"]:active,
+a[class*="rounded-xl"]:active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
+}
+a[class*="rounded-blob"]:active {
+  transform: scale(0.98);
+  filter: brightness(0.96);
+}
+/* A link that was tapped and is loading its page (set by NavProgress). */
+a[data-pending] {
+  opacity: 0.7;
+  cursor: progress;
+}
+/* Busy buttons (form submits) get a small spinner after their label. */
+button[aria-busy="true"]::after {
+  content: "";
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.5em;
+  vertical-align: -0.12em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  animation: spin-slow 0.7s linear infinite;
+}
+/* Top-of-page navigation progress bar (components/NavProgress.tsx). */
+.nav-progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 3000;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, theme("colors.coral.btn"), theme("colors.sunny.DEFAULT"));
+  box-shadow: 0 0 8px rgba(255, 107, 94, 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-progress[data-state="loading"] {
+  opacity: 1;
+  width: 85%;
+  transition: width 8s cubic-bezier(.1, .7, .2, 1);
+}
+.nav-progress[data-state="done"] {
+  opacity: 0;
+  width: 100%;
+  transition: width 0.15s ease-out, opacity 0.3s ease 0.15s;
+}
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):active,
+  [role="button"]:active,
+  a[class*="rounded-full"]:active,
+  a[class*="rounded-xl"]:active,
+  a[class*="rounded-blob"]:active { transform: none; }
+  .nav-progress[data-state="loading"] { width: 100%; transition: none; }
+  .nav-progress[data-state="done"] { transition: none; }
+  button[aria-busy="true"]::after { animation: none; border-right-color: currentColor; opacity: 0.6; }
 }
 
 /* Keyboard accessibility: clear focus ring on interactive elements. */

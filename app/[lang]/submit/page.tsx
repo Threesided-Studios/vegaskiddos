@@ -134,7 +134,7 @@ export default function SubmitPage() {
                 key={a.id}
                 onClick={() => toggleAge(a.id)}
                 aria-pressed={ages.includes(a.id)}
-                className={`rounded-full border-2 px-3.5 py-1.5 text-sm font-700 transition ${
+                className={`min-h-[44px] rounded-full border-2 px-3.5 py-1.5 text-sm font-700 transition ${
                   ages.includes(a.id)
                     ? "border-teal bg-teal-btn text-white"
                     : "border-ink/15 bg-white text-ink/70"
@@ -183,6 +183,7 @@ export default function SubmitPage() {
 
         <button
           type="submit"
+          aria-busy={status === "sending"}
           disabled={status === "sending" || ages.length === 0}
           className="w-full rounded-full bg-coral-btn px-5 py-4 font-800 text-white shadow-pop transition hover:bg-coral-btnHover disabled:opacity-50"
         >

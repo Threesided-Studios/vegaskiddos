@@ -24,4 +24,5 @@ export interface KidEvent {
   canceled?: boolean; // whole one-time event cancelled; still shown, with a banner
   canceledReason?: string; // why the sweep marked it (audit / tooltip)
   canceledDates?: string[]; // for a recurring series: individual cancelled occurrences ("YYYY-MM-DD" LA days)
+  scrapedAt?: string; // last time a scraper re-saw this record (drives recurring-series expiry)
 }

@@ -6,7 +6,7 @@ import { getAllGuideSlugs, getGuideMeta } from "@/lib/guides";
 import { langAlternates } from "@/lib/seo";
 import type { Lang } from "@/lib/i18n";
 
-export const revalidate = 600;
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return getAllGuideSlugs().flatMap((slug) => [

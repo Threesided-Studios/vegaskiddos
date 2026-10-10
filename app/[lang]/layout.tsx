@@ -3,6 +3,7 @@ import { Fredoka, Nunito } from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import { Header } from "@/components/Header";
+import { NavProgress } from "@/components/NavProgress";
 import { CrayonDefs, Heart } from "@/components/Doodles";
 import { PWARegister } from "@/components/PWARegister";
 import { ChunkErrorGuard } from "@/components/ChunkErrorGuard";
@@ -111,6 +112,7 @@ export default async function RootLayout({
         <PWARegister />
         <ConsentBanner lang={lang} />
         <CrayonDefs />
+        <NavProgress />
         <Header lang={lang} />
         <main id="main">{children}</main>
         <footer className="mt-16 border-t-2 border-dashed border-ink/15 bg-white/70">
@@ -132,7 +134,7 @@ export default async function RootLayout({
             </div>
             <nav className="text-sm">
               <p className="font-display font-600 text-ink/80">{t(lang, "foot_explore")}</p>
-              <ul className="mt-2 space-y-1.5 text-ink/70">
+              <ul className="mt-1 text-ink/70">
                 {[
                   ["/", "All events"],
                   ["/this-weekend", "This weekend"],
@@ -147,14 +149,14 @@ export default async function RootLayout({
                   ["/about", "About"],
                 ].map(([href, label]) => (
                   <li key={href}>
-                    <Link href={href} className="hover:text-coral">{label}</Link>
+                    <Link href={href} className="inline-flex min-h-[44px] items-center hover:text-coral">{label}</Link>
                   </li>
                 ))}
               </ul>
             </nav>
             <nav className="text-sm">
               <p className="font-display font-600 text-ink/80">{t(lang, "foot_more")}</p>
-              <ul className="mt-2 space-y-1.5 text-ink/70">
+              <ul className="mt-1 text-ink/70">
                 {[
                   ["/submit", "Add an event"],
                   ["/contact", "Contact & feedback"],
@@ -162,7 +164,7 @@ export default async function RootLayout({
                   ["/admin", "Admin"],
                 ].map(([href, label]) => (
                   <li key={href}>
-                    <Link href={href} className="hover:text-coral">{label}</Link>
+                    <Link href={href} className="inline-flex min-h-[44px] items-center hover:text-coral">{label}</Link>
                   </li>
                 ))}
                 <li>

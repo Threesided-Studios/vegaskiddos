@@ -130,6 +130,24 @@ or hard reloads get the fresh deploy immediately.
 
 ## Other gotchas
 
+- **English routing = next.config `rewrites()` (afterFiles), not middleware.**
+  A middleware rewrite made every on-demand ISR page (English `/event/*`,
+  `/venue/*`) render dynamically with `no-store` (~10 s TTFB), because Next
+  matches prerender/ISR routes on the pre-rewrite URL. Middleware now only does
+  the `vk_lang=es` and `/en/*` redirects.
+- **Edge HTML cache in `worker.mjs`:** anonymous HTML GETs of ISR/static pages
+  are kept in `caches.default` for 120 s (`x-vk-edge: HIT|MISS`). ISR window is
+  5 min (`PAGE_REVALIDATE`), so an approval shows within ~7 min worst case.
+  The worker also 404s file-looking misses (`/x.php`, `/apple-touch-icon.png`)
+  cheaply instead of rendering the whole `[lang]` tree.
+- **Recurring series expire** (`lib/recurrence.ts` `seriesExpired`): not
+  re-seen by a scraper for 30 days, holiday-named and >14 days old, or a past
+  year in the title. The scraper no longer turns a back-to-back multi-day event
+  (e.g. Sat+Sun July 4th) into a "Weekly · Sun / Sat" series
+  (`lib/scrape/recurring.ts` `isMultiDayRun`).
+- **Client payload:** pass `toClientEvents()` (lib/clientEvents.ts) to any
+  "use client" component that takes the event list.
+
 - **Deploy CI is live again (see Working rule #1).** `.github/workflows/deploy.yml`
   runs on push to `main` (+ `workflow_dispatch`). It was paused 2026-06-27→07-13
   because the R2 cache pre-warm failed with "Premature close" on the runner. That

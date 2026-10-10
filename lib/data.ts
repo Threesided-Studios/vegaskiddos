@@ -72,6 +72,7 @@ function mapRecord(rec: AirtableRecord): KidEvent | null {
     canceledDates: f.CanceledDates
       ? String(f.CanceledDates).split(/[\s,]+/).map((s) => s.trim()).filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s))
       : undefined,
+    scrapedAt: f.ScrapedAt ? String(f.ScrapedAt) : undefined,
   };
 }
 
@@ -84,6 +85,22 @@ function localize(events: KidEvent[], lang: Lang): KidEvent[] {
   );
 }
 
+// Only the columns mapRecord reads. Pulling every column (art attachments,
+// submitter emails, FB bookkeeping…) tripled the payload for nothing.
+const PUBLIC_FIELDS = [
+  "Title", "Description", "TitleEs", "DescriptionEs", "Venue", "Address",
+  "Neighborhood", "Lat", "Lng", "Start", "End", "AgeTiers", "PriceTier",
+  "PriceText", "Url", "Source", "Indoor", "Recurrence", "Canceled",
+  "CanceledReason", "CanceledDates", "ScrapedAt",
+];
+
+// Approved events that could still be listed: every recurring series (expiry is
+// decided in code, see lib/recurrence.ts) plus one-time events whose start/end
+// is within the last couple of days or in the future. Past one-offs (the bulk
+// of the table) never leave Airtable for listing pages.
+const LISTABLE_FORMULA =
+  "AND({Approved}=1, OR(LEN({Recurrence}&'')>0, IS_AFTER(IF({End}, {End}, {Start}), DATEADD(NOW(), -2, 'days'))))";
+
 async function fetchAirtableRecords(formula: string): Promise<AirtableRecord[]> {
   const records: AirtableRecord[] = [];
   let offset: string | undefined;
@@ -93,6 +110,7 @@ async function fetchAirtableRecords(formula: string): Promise<AirtableRecord[]> 
     );
     url.searchParams.set("filterByFormula", formula);
     url.searchParams.set("pageSize", "100");
+    for (const f of PUBLIC_FIELDS) url.searchParams.append("fields[]", f);
     if (offset) url.searchParams.set("offset", offset);
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
@@ -137,8 +155,17 @@ export const getApprovedEvents = cache(async (lang: Lang = "en"): Promise<KidEve
   }
 });
 
+// Listing pages: only events that can actually be shown right now.
 export const getEvents = cache(async (lang: Lang = "en"): Promise<KidEvent[]> => {
-  return (await getApprovedEvents(lang)).filter((e) => isListedEvent(e));
+  if (!isAirtableConfigured()) return mockEvents(lang).filter((e) => isListedEvent(e));
+  try {
+    const records = await fetchAirtableRecords(LISTABLE_FORMULA);
+    return toEvents(records, lang).filter((e) => isListedEvent(e));
+  } catch (err) {
+    console.error("Airtable listable fetch failed:", err);
+    if (failClosed()) return [];
+    return mockEvents(lang).filter((e) => isListedEvent(e));
+  }
 });
 
 const AIRTABLE_ID = /^rec[a-zA-Z0-9]{10,}$/;

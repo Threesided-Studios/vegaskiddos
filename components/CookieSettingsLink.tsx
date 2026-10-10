@@ -8,7 +8,7 @@ export function CookieSettingsLink({ label }: { label: string }) {
     <button
       type="button"
       onClick={() => window.dispatchEvent(new Event("vk:cookie-settings"))}
-      className="text-left hover:text-coral"
+      className="inline-flex min-h-[44px] items-center text-left hover:text-coral"
     >
       {label}
     </button>

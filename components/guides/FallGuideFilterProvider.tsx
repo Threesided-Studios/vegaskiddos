@@ -121,7 +121,7 @@ export function FallGuideFilterBar() {
         <button
           type="button"
           onClick={resetFilters}
-          className="text-sm font-700 text-teal-btn hover:underline"
+          className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline"
         >
           Reset all filters
         </button>

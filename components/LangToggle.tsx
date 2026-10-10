@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import { track } from "@/lib/track";
+import { startNavProgress } from "./NavProgress";
 
 // EN/ES toggle. Language lives in the URL (/es/*), so switching navigates to
 // the equivalent path in the other tree and sets the preference cookie. The
@@ -19,6 +20,7 @@ export function LangToggle({ lang }: { lang: Lang }) {
     const visible = window.location.pathname;
     const bare = visible === "/es" ? "/" : visible.replace(/^\/es(?=\/)/, "");
     const target = next === "es" ? (bare === "/" ? "/es" : `/es${bare}`) : bare;
+    startNavProgress();
     router.push(target);
     router.refresh();
   }
@@ -30,7 +32,8 @@ export function LangToggle({ lang }: { lang: Lang }) {
           key={l}
           onClick={() => set(l)}
           aria-label={l === "en" ? "English" : "Español"}
-          className={`rounded-full px-2.5 py-1 transition ${lang === l ? "bg-teal-btn text-white" : "text-ink/70"}`}
+          aria-pressed={lang === l}
+          className={`inline-flex min-h-[40px] min-w-[44px] items-center justify-center rounded-full px-3 transition ${lang === l ? "bg-teal-btn text-white" : "text-ink/70"}`}
         >
           {l === "en" ? "EN" : "ES"}
         </button>
