@@ -36,6 +36,12 @@ function toFields(e: ScrapedEvent) {
   if (e.url) f.Url = e.url;
   if (e.image) f.Image = e.image;
   if (e.recurrence) f.Recurrence = e.recurrence;
+  // A "series:" record that collapseRecurring now recognises as one multi-day
+  // event must lose its old weekly label, or the site keeps projecting dates.
+  else if (e.externalId.startsWith("series:")) {
+    f.Recurrence = "";
+    f.CanceledDates = "";
+  }
   if (typeof e.lat === "number") f.Lat = e.lat;
   if (typeof e.lng === "number") f.Lng = e.lng;
   // Cancellations. For a recurring SERIES, keep CanceledDates in sync with the

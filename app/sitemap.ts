@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getApprovedEvents } from "@/lib/data";
+import { getEvents } from "@/lib/data";
 import { COLLECTIONS } from "@/lib/collections";
 import { GUIDES } from "@/lib/guides";
 import { venueSlug } from "@/lib/constants";
@@ -11,7 +11,7 @@ const BASE = "https://vegaskiddos.com";
 // is plenty for crawlers and keeps the Airtable-backed render off the hot path
 // (was hourly — more function compute than the crawl cadence warrants).
 
-export const revalidate = 600;
+export const revalidate = 300;
 
 // Each content URL exists in English (canonical) and Spanish (/es). Emit the
 // English URL with an `es` alternate so Google indexes both — matches the
@@ -33,7 +33,9 @@ function entry(
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const events = await getApprovedEvents();
+  // Only events that are still listed: past one-offs and expired series are
+  // left out so crawlers aren't sent to stale pages.
+  const events = await getEvents();
   const venueSlugs = [...new Set(events.map((e) => venueSlug(e.venue || "")).filter(Boolean))];
 
   return [

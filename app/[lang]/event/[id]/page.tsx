@@ -20,7 +20,7 @@ import { t, ageLabel, priceLabel, hoodLabel, type Lang } from "@/lib/i18n";
 // ISR on demand (revalidate 10 min). Do not prebuild every event permalink:
 // hundreds of pages × locales made CI hang on OpenNext's R2 cache populate.
 // First visitor generates the page; after that the Worker serves the cache.
-export const revalidate = 600;
+export const revalidate = 300;
 export const dynamicParams = true;
 export function generateStaticParams() {
   return [];
@@ -90,8 +90,9 @@ export default async function EventPage({
     event.address || event.venue
   )}`;
 
-  const whenStart = nextOccurrenceISO(event.start, event.recurrence, event.canceledDates);
-  const ended = eventHasEnded(event.start, event.recurrence);
+  const ended = eventHasEnded(event);
+  // An expired series keeps its last real date instead of a projected phantom one.
+  const whenStart = ended ? event.start : nextOccurrenceISO(event.start, event.recurrence, event.canceledDates);
   // Upcoming individually-cancelled occurrences of a recurring series (the series
   // itself keeps running) — shown as a heads-up note.
   const todayKey = laDateKey(new Date());
@@ -174,7 +175,7 @@ export default async function EventPage({
           ])]} />
       <Link
         href={homePath(lang)}
-        className="text-sm font-700 text-teal-btn hover:underline"
+        className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline"
       >
         {t(lang, "ev_back")}
       </Link>

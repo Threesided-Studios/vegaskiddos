@@ -61,17 +61,74 @@ export function isRecurring(recurrence?: string): boolean {
   return Boolean(recurrence && recurrence.trim());
 }
 
-export function isListedEvent(
-  event: { start: string; recurrence?: string },
-  now: Date = new Date(),
-): boolean {
-  if (isRecurring(event.recurrence)) return true;
-  return new Date(event.start).getTime() > now.getTime() - 86_400_000;
+// ── Listing / expiry rules ─────────────────────────────────────────────────
+// A recurring series stores ONE instance's Start plus a label; the app projects
+// the next weekly occurrence forever. That is right for a live storytime, but
+// it made dead series (e.g. a July 4th weekend scraped as "Weekly · Sun / Sat")
+// resurface with phantom future dates months later. A series therefore expires
+// when ANY of these is true:
+//  • the scraper hasn't re-seen it for SERIES_STALE_DAYS (sources are scraped
+//    daily and refresh ScrapedAt on every sighting, so a series that vanished
+//    from its feed is over), and its stored start is that old too;
+//  • its title names a date-bound holiday/observance and it started more than
+//    HOLIDAY_SERIES_DAYS ago (a "4th of July" event can't recur in October);
+//  • its title carries a year that is already over ("… Festival 2025").
+// Manually-entered series (no ScrapedAt) only expire via the last two rules.
+export const SERIES_STALE_DAYS = 30;
+export const HOLIDAY_SERIES_DAYS = 14;
+const DAY_MS = 86_400_000;
+
+export const DATED_HOLIDAY_RE =
+  /\b(4th of july|fourth of july|july 4(th)?|4th july|independence day|halloween|trick[- ]or[- ]treat|thanksgiving|christmas|xmas|new year'?s|valentine'?s|st\.? patrick'?s|easter|cinco de mayo|memorial day|labor day|mother'?s day|father'?s day|juneteenth|flag day|veterans day|world oceans day|earth day|d[ií]a de (los )?muertos|day of the dead)\b/i;
+
+export interface ListableEvent {
+  start: string;
+  end?: string;
+  recurrence?: string;
+  title?: string;
+  scrapedAt?: string;
 }
 
-export function eventHasEnded(startIso: string, recurrence?: string, now: Date = new Date()): boolean {
-  if (isRecurring(recurrence)) return false;
-  return !isListedEvent({ start: startIso, recurrence }, now);
+function laYear(d: Date): number {
+  return Number(new Intl.DateTimeFormat("en-US", { timeZone: LA, year: "numeric" }).format(d));
+}
+
+export function seriesExpired(event: ListableEvent, now: Date = new Date()): boolean {
+  const startMs = Date.parse(event.start);
+  const nowMs = now.getTime();
+  const title = event.title || "";
+  if (Number.isFinite(startMs) && DATED_HOLIDAY_RE.test(title) && nowMs - startMs > HOLIDAY_SERIES_DAYS * DAY_MS) {
+    return true;
+  }
+  const yr = title.match(/\b(20\d\d)\b/);
+  if (yr && Number(yr[1]) < laYear(now)) return true;
+  if (event.scrapedAt) {
+    const seenMs = Date.parse(event.scrapedAt);
+    if (
+      Number.isFinite(seenMs) &&
+      nowMs - seenMs > SERIES_STALE_DAYS * DAY_MS &&
+      Number.isFinite(startMs) &&
+      nowMs - startMs > SERIES_STALE_DAYS * DAY_MS
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// A one-time event stays listed until ~a day after it starts, or until its End
+// for multi-day events (festivals, exhibits). Ends more than 180 days after the
+// start are treated as bad data and ignored.
+export function isListedEvent(event: ListableEvent, now: Date = new Date()): boolean {
+  if (isRecurring(event.recurrence)) return !seriesExpired(event, now);
+  const startMs = Date.parse(event.start);
+  if (startMs > now.getTime() - DAY_MS) return true;
+  const endMs = event.end ? Date.parse(event.end) : NaN;
+  return Number.isFinite(endMs) && endMs > startMs && endMs - startMs <= 180 * DAY_MS && endMs > now.getTime();
+}
+
+export function eventHasEnded(event: ListableEvent, now: Date = new Date()): boolean {
+  return !isListedEvent(event, now);
 }
 
 export function isDateCanceled(canceledDates: string[] | undefined, key: string): boolean {

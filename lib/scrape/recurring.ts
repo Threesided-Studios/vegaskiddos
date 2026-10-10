@@ -40,7 +40,30 @@ function fill(primary: ScrapedEvent, other: ScrapedEvent): ScrapedEvent {
   };
 }
 
+const DAY_MS = 86_400_000;
+
+// Whole LA calendar days between two "YYYY-MM-DD" keys.
+function dayGap(a: string, b: string): number {
+  return Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / DAY_MS);
+}
+
+// True when a group's dates are one short, back-to-back run (e.g. Sat Jul 4 +
+// Sun Jul 5) AND the feed clearly covers the following week too (it lists other
+// events 7+ days past the run's last day). A real weekly series would have shown
+// another instance by then, so this is ONE multi-day event, not "Weekly · Sun /
+// Sat". Treating it as weekly is what projected a July 4th weekend onto Oct 10.
+export function isMultiDayRun(dateKeys: string[], feedLastKey: string): boolean {
+  const keys = [...new Set(dateKeys)].sort();
+  if (keys.length < 2 || keys.length > 4) return false;
+  for (let i = 1; i < keys.length; i++) if (dayGap(keys[i - 1], keys[i]) !== 1) return false;
+  return dayGap(keys[keys.length - 1], feedLastKey) >= 7;
+}
+
 export function collapseRecurring(events: ScrapedEvent[]): ScrapedEvent[] {
+  const feedLastKey = events.reduce((max, e) => {
+    const k = laDateKey(new Date(e.start));
+    return k > max ? k : max;
+  }, "");
   const groups = new Map<string, ScrapedEvent[]>();
   for (const e of events) {
     const key = `${norm(e.title)}|${norm(e.venue)}`; // cross-source: no source in key
@@ -83,7 +106,25 @@ export function collapseRecurring(events: ScrapedEvent[]): ScrapedEvent[] {
       continue;
     }
 
-    // 2b) multiple distinct days -> recurring series. The label reflects the full
+    // 2b) a single multi-day event listed once per day (festival weekend, a
+    //     holiday Sat+Sun) -> one-time event spanning first..last day. Keeps the
+    //     series externalId so the upsert updates (and de-recurs) the same record.
+    const runKeys = allInstances.map((e) => laDateKey(new Date(e.start)));
+    if (isMultiDayRun(runKeys, feedLastKey)) {
+      const first = liveInstances[0] || allInstances[0];
+      const last = allInstances[allInstances.length - 1];
+      out.push({
+        ...first,
+        end: last.end || last.start,
+        recurrence: undefined,
+        externalId: `series:${key}`,
+        canceledDates: [],
+        canceled: liveInstances.length === 0,
+      });
+      continue;
+    }
+
+    // 2c) multiple distinct days -> recurring series. The label reflects the full
     //     schedule (incl. cancelled days); canceledDates carries the cancelled
     //     occurrences; the representative instance is a LIVE one when possible.
     const days = [...new Set(allInstances.map((e) => laWeekday(e.start)))].sort();
