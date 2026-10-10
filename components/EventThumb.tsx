@@ -10,7 +10,7 @@ export function EventThumb({ event, priority = false }: { event: KidEvent; prior
           src={event.image}
           alt={event.venue ? `${event.title} — ${event.venue}` : event.title}
           fill
-          // The thumb is a 120px-tall strip in a 1–3 column grid; "100vw" pulled
+          // The thumb is a 16:9 header in a 1–3 column grid; "100vw" pulled
           // 1024–1600px files onto phones for a ~350px slot.
           sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 360px"
           className="object-cover transition group-hover:scale-105"
@@ -21,7 +21,10 @@ export function EventThumb({ event, priority = false }: { event: KidEvent; prior
         />
     );
     return (
-      <div className="relative h-[120px] w-full overflow-hidden bg-sand">
+      // 16:9 frame (was a fixed 120px band, which showed only a thin middle
+      // slice of the 3:2 art). aspect-ratio reserves the height before the
+      // image arrives, so deferred/lazy thumbs cause no layout shift.
+      <div className="relative aspect-video w-full overflow-hidden bg-sand">
         {/* Priority thumbs (possible LCP) render immediately; the rest wait
             for window load so they never delay the first screen. */}
         {priority ? img : <AfterLoad>{img}</AfterLoad>}
@@ -31,7 +34,7 @@ export function EventThumb({ event, priority = false }: { event: KidEvent; prior
   const v = artTypeFor(event.title, event.description);
   return (
     <div
-      className={`flex h-[120px] w-full items-center justify-center bg-gradient-to-br ${v.gradient}`}
+      className={`flex aspect-video w-full items-center justify-center bg-gradient-to-br ${v.gradient}`}
       aria-hidden
     >
       <span className="text-5xl drop-shadow-sm transition group-hover:scale-110">{v.emoji}</span>
