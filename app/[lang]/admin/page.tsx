@@ -68,7 +68,12 @@ export default function AdminPage() {
       body: JSON.stringify({ email, password: pw }),
     });
     if (res.ok) { setPw(""); if (queue === "subscribers") loadSubs(); else load(queue); }
-    else setErr("Wrong email or password.");
+    else if (res.status === 401) setErr("Wrong email or password.");
+    else {
+      // Rate limit (429) or server trouble: say so instead of blaming the password.
+      const d = (await res.json().catch(() => ({}))) as { error?: string };
+      setErr(d.error || `Sign-in failed (${res.status}). Try again in a minute.`);
+    }
   }
 
   async function runScrape() {

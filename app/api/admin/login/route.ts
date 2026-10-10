@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     email?: string;
     password?: string;
   };
-  const result = await authenticate(email || "", password || "");
+  const result = await authenticate((email || "").trim(), password || "");
   if (!result) {
     return NextResponse.json({ error: "Wrong email or password" }, { status: 401 });
   }
