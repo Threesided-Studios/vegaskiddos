@@ -12,7 +12,11 @@
     { "binding": "WORKER_SELF_REFERENCE", "service": "vegaskiddos" }
   ],
   "r2_buckets": [
-    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "vegaskiddos-cache" }
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "vegaskiddos-cache" },
+    // Daily Airtable → event snapshot that every public page reads (lib/snapshotStore.mjs).
+    { "binding": "DATA_BUCKET", "bucket_name": "vegaskiddos-data" }
   ],
+  // Daily import at 17:00 UTC (10:00 PDT / 09:00 PST), after the 08:30 PT scrape.
+  "triggers": { "crons": ["0 17 * * *"] },
   "observability": { "enabled": true }
 }

@@ -25,6 +25,7 @@
 // seconds; bots and browsers' automatic icon probes hit that constantly. Only
 // the real dynamic metadata routes below are let through.
 import handler from "./.open-next/worker.js";
+import { refreshSnapshot } from "./lib/snapshotStore.mjs";
 
 const FILE_ROUTES = new Set(["/sitemap.xml", "/robots.txt", "/manifest.webmanifest", "/icon.svg", "/favicon.ico"]);
 
@@ -109,5 +110,19 @@ export default {
     stored.headers.delete("set-cookie");
     ctx.waitUntil(cache.put(key, stored).catch(() => {}));
     return out;
+  },
+
+  // Daily Airtable import (wrangler.jsonc triggers.crons). Public pages read
+  // only this R2 snapshot; admin approve/reject also refreshes it on demand.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(
+      refreshSnapshot(
+        env.DATA_BUCKET,
+        { token: env.AIRTABLE_TOKEN, base: env.AIRTABLE_BASE_ID, table: env.AIRTABLE_TABLE_NAME || "Events" },
+        `cron:${event.cron}`,
+      )
+        .then((s) => console.log(`event snapshot imported: ${s.count} events at ${s.generatedAt}`))
+        .catch((err) => console.error("daily event snapshot import failed:", err)),
+    );
   },
 };

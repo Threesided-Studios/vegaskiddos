@@ -168,3 +168,13 @@ or hard reloads get the fresh deploy immediately.
 - Browser Sentry is lazy: `instrumentation-client.ts` buffers uncaught errors and `lib/sentryClient.ts` imports `@sentry/nextjs` on the first error. Never `import * as Sentry` in client code (it puts ~80 KB in the shared chunk).
 - gtag.js loads on first interaction or 4 s after `load` (`components/DeferredGtag.tsx`); the inline dataLayer init still queues consent + config immediately.
 - The English catch-all rewrite's lookahead must end at a segment boundary (`(?:/|$)`), otherwise dynamic API routes like `/api/admin/events/[id]` get rewritten into the page tree and 404.
+
+## Data flow: Airtable → daily R2 snapshot → pages (2026-10)
+- Public pages never call Airtable. `lib/data.ts` reads `lib/snapshot.ts`, which reads `events/approved-v1.json` from the `vegaskiddos-data` R2 bucket (binding `DATA_BUCKET`), memoized 60 s per isolate. Listing/expiry filters run at render time against "now".
+- The snapshot (every Approved event, public columns only) is written by `lib/snapshotStore.mjs`:
+  - daily by the Worker cron (`wrangler.jsonc` triggers, 17:00 UTC, `worker.mjs` `scheduled`), after the 08:30 PT scrape;
+  - on demand after admin approve/reject/edit (`/api/admin/events/[id]`), admin scrape, and `POST /api/admin/snapshot` (manual "refresh now"; GET shows when it was last imported);
+  - `tools/seed-snapshot.mjs` + `wrangler r2 object put` for a manual seed.
+- Edits made directly in the Airtable UI show up after the next daily import, or immediately after `POST /api/admin/snapshot`.
+- If the snapshot is missing the first request imports one (bootstrap); during `next build` (no R2) pages import directly from Airtable.
+- Pages still ISR-regenerate every 5 min, but that now only re-reads R2.

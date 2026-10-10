@@ -5,7 +5,7 @@ import { NEIGHBORHOODS, type AgeTierId, type PriceTierId, type NeighborhoodId } 
 import { nextOccurrenceISO, isListedEvent } from "./recurrence";
 import type { Lang } from "./i18n";
 import { artTemplateSrc, artTypeFor } from "./eventArt";
-import { PAGE_REVALIDATE } from "./pageCache";
+import { getSnapshotRecords } from "./snapshot";
 import { safeHttpUrl } from "./httpUrl";
 
 function byNextOccurrence(a: KidEvent, b: KidEvent) {
@@ -16,7 +16,6 @@ function byNextOccurrence(a: KidEvent, b: KidEvent) {
 
 const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN;
 const AIRTABLE_BASE = process.env.AIRTABLE_BASE_ID;
-const AIRTABLE_TABLE = process.env.AIRTABLE_TABLE_NAME || "Events";
 
 const IMG_CDN = "https://img.vegaskiddos.com";
 
@@ -85,43 +84,16 @@ function localize(events: KidEvent[], lang: Lang): KidEvent[] {
   );
 }
 
-// Only the columns mapRecord reads. Pulling every column (art attachments,
-// submitter emails, FB bookkeeping…) tripled the payload for nothing.
-const PUBLIC_FIELDS = [
-  "Title", "Description", "TitleEs", "DescriptionEs", "Venue", "Address",
-  "Neighborhood", "Lat", "Lng", "Start", "End", "AgeTiers", "PriceTier",
-  "PriceText", "Url", "Source", "Indoor", "Recurrence", "Canceled",
-  "CanceledReason", "CanceledDates", "ScrapedAt",
-];
+// Public pages read the daily Airtable snapshot (lib/snapshot.ts), never
+// Airtable itself. The snapshot holds every approved event; listing pages keep
+// the ones that can still be shown, evaluated against "now" at render time.
+const LISTABLE_PAST_MS = 2 * 86_400_000;
 
-// Approved events that could still be listed: every recurring series (expiry is
-// decided in code, see lib/recurrence.ts) plus one-time events whose start/end
-// is within the last couple of days or in the future. Past one-offs (the bulk
-// of the table) never leave Airtable for listing pages.
-const LISTABLE_FORMULA =
-  "AND({Approved}=1, OR(LEN({Recurrence}&'')>0, IS_AFTER(IF({End}, {End}, {Start}), DATEADD(NOW(), -2, 'days'))))";
-
-async function fetchAirtableRecords(formula: string): Promise<AirtableRecord[]> {
-  const records: AirtableRecord[] = [];
-  let offset: string | undefined;
-  do {
-    const url = new URL(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(AIRTABLE_TABLE)}`
-    );
-    url.searchParams.set("filterByFormula", formula);
-    url.searchParams.set("pageSize", "100");
-    for (const f of PUBLIC_FIELDS) url.searchParams.append("fields[]", f);
-    if (offset) url.searchParams.set("offset", offset);
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
-      next: { revalidate: PAGE_REVALIDATE },
-    });
-    if (!res.ok) throw new Error(`Airtable ${res.status}`);
-    const data = (await res.json()) as { records: AirtableRecord[]; offset?: string };
-    records.push(...data.records);
-    offset = data.offset;
-  } while (offset);
-  return records;
+function listableRecord(rec: AirtableRecord, now: number): boolean {
+  const f = rec.fields;
+  if (String(f.Recurrence ?? "").length > 0) return true; // series expiry: lib/recurrence.ts
+  const last = Date.parse(String(f.End || f.Start || ""));
+  return Number.isFinite(last) && last > now - LISTABLE_PAST_MS;
 }
 
 function toEvents(records: AirtableRecord[], lang: Lang): KidEvent[] {
@@ -135,37 +107,35 @@ function mockEvents(lang: Lang): KidEvent[] {
   return localize([...MOCK_EVENTS].sort(byNextOccurrence), lang);
 }
 
-export const getApprovedEvents = cache(async (lang: Lang = "en"): Promise<KidEvent[]> => {
-  if (!isAirtableConfigured()) {
-    return mockEvents(lang);
-  }
+// Snapshot records, or null when there is no data source / it failed.
+async function snapshotRecords(): Promise<AirtableRecord[] | null> {
+  if (!isAirtableConfigured()) return null;
   try {
-    const records = await fetchAirtableRecords("{Approved}=1");
-    const events = toEvents(records, lang);
-    if (events.length) return events;
-    if (failClosed()) {
-      console.error("Airtable returned zero approved events — failing closed");
-      return [];
-    }
-    return mockEvents(lang);
+    return await getSnapshotRecords();
   } catch (err) {
-    console.error("Airtable fetch failed:", err);
-    if (failClosed()) return [];
-    return mockEvents(lang);
+    console.error("Event snapshot unavailable:", err);
+    return null;
   }
+}
+
+export const getApprovedEvents = cache(async (lang: Lang = "en"): Promise<KidEvent[]> => {
+  const records = await snapshotRecords();
+  if (records === null) return failClosed() ? [] : mockEvents(lang);
+  const events = toEvents(records, lang);
+  if (events.length) return events;
+  if (failClosed()) {
+    console.error("Snapshot has zero approved events — failing closed");
+    return [];
+  }
+  return mockEvents(lang);
 });
 
 // Listing pages: only events that can actually be shown right now.
 export const getEvents = cache(async (lang: Lang = "en"): Promise<KidEvent[]> => {
-  if (!isAirtableConfigured()) return mockEvents(lang).filter((e) => isListedEvent(e));
-  try {
-    const records = await fetchAirtableRecords(LISTABLE_FORMULA);
-    return toEvents(records, lang).filter((e) => isListedEvent(e));
-  } catch (err) {
-    console.error("Airtable listable fetch failed:", err);
-    if (failClosed()) return [];
-    return mockEvents(lang).filter((e) => isListedEvent(e));
-  }
+  const records = await snapshotRecords();
+  if (records === null) return failClosed() ? [] : mockEvents(lang).filter((e) => isListedEvent(e));
+  const now = Date.now();
+  return toEvents(records.filter((r) => listableRecord(r, now)), lang).filter((e) => isListedEvent(e));
 });
 
 const AIRTABLE_ID = /^rec[a-zA-Z0-9]{10,}$/;
@@ -175,18 +145,6 @@ export type EventLookup =
   | { kind: "gone" }
   | { kind: "missing" };
 
-async function fetchRecordById(id: string): Promise<{ status: number; rec?: AirtableRecord }> {
-  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE}/${encodeURIComponent(AIRTABLE_TABLE)}/${id}`;
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
-    next: { revalidate: PAGE_REVALIDATE },
-  });
-  if (res.status === 404) return { status: 404 };
-  if (!res.ok) throw new Error(`Airtable ${res.status}`);
-  const rec = (await res.json()) as AirtableRecord;
-  return { status: 200, rec };
-}
-
 export const lookupEvent = cache(async (id: string, lang: Lang = "en"): Promise<EventLookup> => {
   if (!AIRTABLE_ID.test(id)) return { kind: "missing" };
 
@@ -195,19 +153,13 @@ export const lookupEvent = cache(async (id: string, lang: Lang = "en"): Promise<
     return event ? { kind: "ok", event } : { kind: "missing" };
   }
 
-  try {
-    const { status, rec } = await fetchRecordById(id);
-    if (status === 404 || !rec) return { kind: "gone" };
-    if (!rec.fields?.Approved) return { kind: "gone" };
-    const event = mapRecord(rec);
-    if (!event) return { kind: "gone" };
-    return { kind: "ok", event: localize([event], lang)[0] };
-  } catch (err) {
-    console.error("Airtable lookupEvent failed:", err);
-    const cached = (await getApprovedEvents(lang)).find((e) => e.id === id);
-    if (cached) return { kind: "ok", event: cached };
-    return { kind: "missing" };
-  }
+  const records = await snapshotRecords();
+  if (records === null) return { kind: "missing" };
+  const rec = records.find((r) => r.id === id);
+  if (!rec) return { kind: "gone" }; // deleted, rejected, archived or unapproved
+  const event = mapRecord(rec);
+  if (!event) return { kind: "gone" };
+  return { kind: "ok", event: localize([event], lang)[0] };
 });
 
 export const getEvent = cache(async (id: string, lang: Lang = "en"): Promise<KidEvent | undefined> => {
@@ -224,11 +176,8 @@ export const getEventsByIds = cache(async (ids: string[], lang: Lang = "en"): Pr
     return localize(MOCK_EVENTS.filter((e) => want.has(e.id)), lang);
   }
 
-  const formula = `AND({Approved}=1, OR(${uniq.map((id) => `RECORD_ID()='${id}'`).join(",")}))`;
-  try {
-    return toEvents(await fetchAirtableRecords(formula), lang);
-  } catch (err) {
-    console.error("Airtable getEventsByIds failed:", err);
-    return [];
-  }
+  const records = await snapshotRecords();
+  if (records === null) return [];
+  const want = new Set(uniq);
+  return toEvents(records.filter((r) => want.has(r.id)), lang);
 });
