@@ -1,10 +1,8 @@
 {
-  "ranAt": "2026-10-10T19:25:03.875Z",
+  "ranAt": "2026-10-11T19:37:51.003Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12441",
-        "colv:12585",
         "colv:12580",
         "series:City of Las Vegas|vegas city opera presents the mad mind of shakespeare|charleston heights arts center",
         "colv:12464",
@@ -34,8 +32,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/parks-and-recreation/100926-ren-fair-day-2",
-        "cc:/calendar/parks-and-recreation/100926-ren-fair-day-3",
         "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
         "cc:/calendar/parks-and-recreation/101626-hall-o-breeze",
         "cc:/calendar/parks-and-recreation/101626-trick-or-treat-fest-day-1",
@@ -60,12 +56,11 @@
     "City of Henderson": {
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
-        "hen:5367:2026-10-10",
         "hen:6402:2026-10-11",
         "series:City of Henderson|50 day trip destinations southpoint senior movie day|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",
         "series:City of Henderson|early voting kids vote general election|city of henderson",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6498:2026-10-21",
         "hen:6509:2026-10-23",
         "hen:6388:2026-10-24",
