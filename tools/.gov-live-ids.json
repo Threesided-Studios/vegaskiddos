@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-10-11T19:37:51.003Z",
+  "ranAt": "2026-10-12T22:33:00.822Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -9,7 +9,6 @@
         "colv:12419",
         "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
         "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
-        "colv:12420",
         "colv:12398",
         "colv:12522",
         "colv:12421",
@@ -49,23 +48,23 @@
         "cc:/calendar/parks-and-recreation/102826-tales-from-the-dales",
         "cc:/calendar/parks-and-recreation/102926-hallow-harvest-festival",
         "cc:/calendar/parks-and-recreation/102926-silver-bowl-trunk-or-treat",
-        "cc:/calendar/parks-and-recreation/110726-fall-o-ween"
+        "cc:/calendar/parks-and-recreation/110726-fall-o-ween",
+        "cc:/calendar/county-commission-district-b/101426-giant-student-farmers-market"
       ],
       "maxStart": "2026-11-07T13:00:00-07:00"
     },
     "City of Henderson": {
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "hen:6402:2026-10-11",
         "series:City of Henderson|50 day trip destinations southpoint senior movie day|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",
         "series:City of Henderson|early voting kids vote general election|city of henderson",
         "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6498:2026-10-21",
+        "series:City of Henderson|henderson farmers market|army st.",
         "hen:6509:2026-10-23",
         "hen:6388:2026-10-24",
         "hen:6400:2026-10-24",
-        "series:City of Henderson|henderson farmers market|army st.",
         "hen:6462:2026-11-03",
         "hen:6500:2026-11-04",
         "hen:6416:2026-11-07",
