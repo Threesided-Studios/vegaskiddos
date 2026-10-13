@@ -346,5 +346,9 @@
   "📍 709 Valle Verde Ct., Henderson, NV 89014": {
     "lat": 36.0688687,
     "lng": -115.066877
+  },
+  "2250 Las Vegas Blvd North North Las Vegas, Nevada 89030": {
+    "lat": 36.2013211,
+    "lng": -115.1216192
   }
 }
