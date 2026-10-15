@@ -350,5 +350,9 @@
   "2250 Las Vegas Blvd North North Las Vegas, Nevada 89030": {
     "lat": 36.2013211,
     "lng": -115.1216192
+  },
+  "The Assembly, Las Vegas, NV": {
+    "lat": 36.0647783,
+    "lng": -115.2761748
   }
 }
