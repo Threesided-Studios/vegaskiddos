@@ -1,9 +1,9 @@
 {
-  "ranAt": "2026-10-16T18:52:50.560Z",
+  "ranAt": "2026-10-17T17:54:10.805Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "series:City of Las Vegas|vegas city opera presents the mad mind of shakespeare|charleston heights arts center",
+        "colv:12397",
         "colv:12464",
         "colv:12419",
         "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
@@ -32,8 +32,6 @@
     "Clark County": {
       "ids": [
         "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
-        "cc:/calendar/parks-and-recreation/101626-hall-o-breeze",
-        "cc:/calendar/parks-and-recreation/101626-trick-or-treat-fest-day-1",
         "cc:/calendar/parks-and-recreation/101726-trick-or-treat-fest-day-2",
         "cc:/calendar/parks-and-recreation/102226-wicked-whitney",
         "cc:/calendar/parks-and-recreation/102326-haunt-the-wetlands",
@@ -55,7 +53,6 @@
     "City of Henderson": {
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "series:City of Henderson|henderson farmers market|fox ridge park",
         "series:City of Henderson|early voting kids vote general election|city of henderson",
         "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6498:2026-10-21",
@@ -65,6 +62,7 @@
         "hen:6400:2026-10-24",
         "hen:6462:2026-11-03",
         "hen:6500:2026-11-04",
+        "series:City of Henderson|henderson farmers market|fox ridge park",
         "hen:6416:2026-11-07",
         "hen:6512:2026-11-15",
         "hen:6492:2026-11-16",
