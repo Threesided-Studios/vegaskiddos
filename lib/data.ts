@@ -4,7 +4,7 @@ import { MOCK_EVENTS } from "./mock-events";
 import { NEIGHBORHOODS, type AgeTierId, type PriceTierId, type NeighborhoodId } from "./constants";
 import { nextOccurrenceISO, isListedEvent } from "./recurrence";
 import type { Lang } from "./i18n";
-import { artTemplateSrc, artTypeFor } from "./eventArt";
+import { artTypeFor, eventArtSrc } from "./eventArt";
 import { getSnapshotRecords } from "./snapshot";
 import { safeHttpUrl } from "./httpUrl";
 
@@ -62,7 +62,7 @@ function mapRecord(rec: AirtableRecord): KidEvent | null {
     priceTier: (f.PriceTier as PriceTierId) || "free",
     priceText: f.PriceText ? String(f.PriceText) : undefined,
     url: safeHttpUrl(f.Url ? String(f.Url) : undefined),
-    image: `${IMG_CDN}${artTemplateSrc(art.id)}`,
+    image: `${IMG_CDN}${eventArtSrc(rec.id, art.id)}`,
     source: String(f.Source || "Community"),
     indoor: f.Indoor == null ? undefined : Boolean(f.Indoor),
     recurrence: f.Recurrence ? String(f.Recurrence) : undefined,
