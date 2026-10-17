@@ -304,3 +304,18 @@ export function subjectFor(title: string, description = ""): string {
 export function artTemplateSrc(typeId: ArtTypeId): string {
   return `/type/${typeId}/1024.webp?v=${ART_TEMPLATES_VERSION}`;
 }
+
+// Hand-picked per-event art, e.g. a fresh GPT illustration made for a
+// community submission. The file lives in the event's Airtable ArtImage and is
+// pushed to R2 by tools/sync-images.mjs (img.vegaskiddos.com/event/<id>/<w>.webp).
+// The value is the ArtImage attachment id, used as the ?v= cache-bust key, so a
+// regenerated file gets a fresh URL. Every other event uses its type template.
+export const EVENT_ART_OVERRIDES: Record<string, string> = {
+  recuRIY1VF7NOn8ig: "att3U30ddqqcMUmaE", // Mommy, Me & Tea (Thelu Tea Room), community submission
+};
+
+/** Path (relative to the image CDN) of an event's card art. */
+export function eventArtSrc(eventId: string, typeId: ArtTypeId): string {
+  const v = EVENT_ART_OVERRIDES[eventId];
+  return v ? `/event/${eventId}/1024.webp?v=${v}` : artTemplateSrc(typeId);
+}
