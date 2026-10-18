@@ -1,10 +1,8 @@
 {
-  "ranAt": "2026-10-17T17:54:10.805Z",
+  "ranAt": "2026-10-18T18:14:21.541Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12397",
-        "colv:12464",
         "colv:12419",
         "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
         "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
@@ -31,8 +29,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/county-commissioners-district-e/101726-celebrando-nuestra-cultura",
-        "cc:/calendar/parks-and-recreation/101726-trick-or-treat-fest-day-2",
         "cc:/calendar/parks-and-recreation/102226-wicked-whitney",
         "cc:/calendar/parks-and-recreation/102326-haunt-the-wetlands",
         "cc:/calendar/parks-and-recreation/102326-monster-mash-trunk-or-treat",
@@ -54,10 +50,10 @@
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
         "series:City of Henderson|early voting kids vote general election|city of henderson",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6498:2026-10-21",
         "series:City of Henderson|henderson farmers market|army st.",
         "hen:6509:2026-10-23",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6388:2026-10-24",
         "hen:6400:2026-10-24",
         "hen:6462:2026-11-03",
