@@ -72,12 +72,62 @@ export function seasonallyRelevant(title, recurrence, postAt) {
   return true;
 }
 
-const PAST_GRACE_MS = 24 * 60 * 60 * 1000; // one-time: still OK the day after start (daily)
 const MAX_AHEAD_MS = 60 * 24 * 60 * 60 * 1000; // don't promote events >60d out on daily/roundup
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Pacific-time calendar date ("YYYY-MM-DD") for an instant. */
+export function ptDateKey(d) {
+  const p = new Intl.DateTimeFormat("en-CA", { timeZone: LA, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(d);
+  const m = {};
+  for (const x of p) m[x.type] = x.value;
+  return `${m.year}-${m.month}-${m.day}`;
+}
+
+/**
+ * Normalise an Airtable Start/End value. Date-only values ("2026-10-16") are
+ * all-day on that PT date — `new Date("2026-10-16")` would be UTC midnight,
+ * i.e. 5 PM PT the day BEFORE, so they must never be compared as instants.
+ * @returns {{ allDay: boolean, day: string, ms: number } | null}
+ */
+export function parseEventTime(v) {
+  if (v == null || v === "") return null;
+  const s = String(v).trim();
+  if (DATE_ONLY_RE.test(s)) return { allDay: true, day: s, ms: NaN };
+  const ms = new Date(s).getTime();
+  if (Number.isNaN(ms)) return null;
+  return { allDay: false, day: ptDateKey(new Date(ms)), ms };
+}
+
+/**
+ * True when a one-time event is already over (or already started) at `at`,
+ * judged in America/Los_Angeles:
+ *  • timed event: past once its start time has passed — even if that was
+ *    earlier today — unless it is multi-day (End on a later PT date) and
+ *    still ongoing;
+ *  • date-only event: all-day on its PT date, so it stays current through
+ *    the end of that day (or through its End date if multi-day).
+ */
+export function eventIsPast(fields, at) {
+  const start = parseEventTime(fields?.Start);
+  if (!start) return true;
+  const today = ptDateKey(at);
+  const atMs = at.getTime();
+
+  const end = parseEventTime(fields?.End);
+  const multiDay = Boolean(end && end.day > start.day);
+  if (multiDay) {
+    // Ongoing until End: an end instant, or the end of an all-day End date.
+    if (end.allDay ? today <= end.day : atMs < end.ms) return false;
+    return true;
+  }
+
+  if (start.allDay) return today > start.day;
+  return start.ms <= atMs;
+}
 
 /**
  * Whether an event should be eligible for FB posting at `postAt` (PT-aware month gate).
- * @param {object} fields — Airtable Events fields (Title, Start, Recurrence, …)
+ * @param {object} fields — Airtable Events fields (Title, Start, End, Recurrence, …)
  * @param {Date} postAt — slot time (schedule) or now (daily/roundup)
  * @param {{ mode?: "daily"|"schedule"|"roundup" }} [opts]
  */
@@ -89,15 +139,15 @@ export function isFbPostRelevant(fields, postAt, opts = {}) {
   const rec = fields.Recurrence && String(fields.Recurrence).trim();
   if (rec) return true; // year-round recurring; seasonal keywords gated above
 
-  const start = fields.Start;
-  if (!start) return false;
-  const startMs = new Date(start).getTime();
-  const postMs = postAt.getTime();
-  if (Number.isNaN(startMs)) return false;
+  // Never promote an event that has already happened / started (PT).
+  // (Previously daily/roundup allowed a 24h grace after Start, so a Fri 6 PM
+  // event was still "upcoming" on Sat afternoon.)
+  if (eventIsPast(fields, postAt)) return false;
 
-  if (mode === "schedule") return startMs > postMs;
+  if (mode === "schedule") return true;
 
-  if (startMs < postMs - PAST_GRACE_MS) return false;
-  if (startMs > postMs + MAX_AHEAD_MS) return false;
+  const start = parseEventTime(fields.Start);
+  const startMs = start.allDay ? Date.parse(`${start.day}T00:00:00-08:00`) : start.ms;
+  if (startMs > postAt.getTime() + MAX_AHEAD_MS) return false;
   return true;
 }
