@@ -111,7 +111,7 @@ describe("past-event guard (America/Los_Angeles)", () => {
   // after Start, plus a UTC calendar date of 10/17, made it look current.
   const trickOrTreat = { Title: "Trick or Treat Fest", Start: "2026-10-17T01:00:00.000Z" };
 
-  it("yesterday-evening PT event is past even though its UTC date is today", () => {
+  it("yesterday-evening PT event is past today even though its UTC date is today", () => {
     const satMorning = new Date("2026-10-17T11:00:00-07:00"); // cron slot
     const satEvening = new Date("2026-10-17T17:40:00-07:00"); // the actual re-run
     const satEarly = new Date("2026-10-17T00:30:00-07:00"); // 07:30Z — same UTC date as the event
@@ -122,11 +122,20 @@ describe("past-event guard (America/Los_Angeles)", () => {
     }
   });
 
-  it("an event earlier today that already started is past", () => {
+  it("an event that started earlier today is still eligible (people can join)", () => {
     const at = new Date("2026-10-18T11:00:00-07:00");
     const f = { Title: "Pumpkin Storytime", Start: "2026-10-18T10:00:00-07:00", End: "2026-10-18T12:00:00-07:00" };
-    assert.equal(isFbPostRelevant(f, at, { mode: "daily" }), false);
-    assert.equal(isFbPostRelevant(f, at, { mode: "schedule" }), false);
+    assert.equal(eventIsPast(f, at), false);
+    assert.equal(isFbPostRelevant(f, at, { mode: "daily" }), true);
+    // …through 11:59 PM PT on its date.
+    assert.equal(isFbPostRelevant(f, new Date("2026-10-18T23:59:00-07:00"), { mode: "daily" }), true);
+  });
+
+  it("yesterday 6 PM event is past at 12:01 AM PT today", () => {
+    const f = { Title: "Movie Night", Start: "2026-10-17T18:00:00-07:00" };
+    assert.equal(isFbPostRelevant(f, new Date("2026-10-17T23:59:00-07:00"), { mode: "daily" }), true);
+    assert.equal(eventIsPast(f, new Date("2026-10-18T00:01:00-07:00")), true);
+    assert.equal(isFbPostRelevant(f, new Date("2026-10-18T00:01:00-07:00"), { mode: "daily" }), false);
   });
 
   it("a future event (later today or later this month) is eligible", () => {
@@ -140,10 +149,11 @@ describe("past-event guard (America/Los_Angeles)", () => {
     assert.equal(isFbPostRelevant({ Title: "Spring Fair", Start: "2027-03-01T10:00:00-08:00" }, at, { mode: "daily" }), false);
   });
 
-  it("a multi-day event that is still ongoing is eligible; once it ends it is not", () => {
+  it("a multi-day event is eligible through the end of its End date (PT)", () => {
     const f = { Title: "Fall Harvest Festival", Start: "2026-10-16T10:00:00-07:00", End: "2026-10-19T18:00:00-07:00" };
     assert.equal(isFbPostRelevant(f, new Date("2026-10-18T11:00:00-07:00"), { mode: "daily" }), true);
-    assert.equal(isFbPostRelevant(f, new Date("2026-10-19T19:00:00-07:00"), { mode: "daily" }), false);
+    assert.equal(isFbPostRelevant(f, new Date("2026-10-19T23:30:00-07:00"), { mode: "daily" }), true); // end date, after End time
+    assert.equal(isFbPostRelevant(f, new Date("2026-10-20T00:01:00-07:00"), { mode: "daily" }), false);
     const allDay = { Title: "Pumpkin Patch", Start: "2026-10-10", End: "2026-10-31" };
     assert.equal(isFbPostRelevant(allDay, new Date("2026-10-31T21:00:00-07:00"), { mode: "daily" }), true);
     assert.equal(isFbPostRelevant(allDay, new Date("2026-11-01T08:00:00-07:00"), { mode: "daily" }), false);
