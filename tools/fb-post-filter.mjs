@@ -99,30 +99,19 @@ export function parseEventTime(v) {
 }
 
 /**
- * True when a one-time event is already over (or already started) at `at`,
- * judged in America/Los_Angeles:
- *  • timed event: past once its start time has passed — even if that was
- *    earlier today — unless it is multi-day (End on a later PT date) and
- *    still ongoing;
- *  • date-only event: all-day on its PT date, so it stays current through
- *    the end of that day (or through its End date if multi-day).
+ * True when a one-time event is over at `at`, judged by America/Los_Angeles
+ * calendar date. An event stays eligible through 11:59 PM PT on its last day,
+ * even if it already started earlier that day (people can still join):
+ *  • single-day (timed or date-only): last day = its Start PT date;
+ *  • multi-day (End on a later PT date): last day = its End PT date.
+ * It becomes past at midnight PT after that day.
  */
 export function eventIsPast(fields, at) {
   const start = parseEventTime(fields?.Start);
   if (!start) return true;
-  const today = ptDateKey(at);
-  const atMs = at.getTime();
-
   const end = parseEventTime(fields?.End);
-  const multiDay = Boolean(end && end.day > start.day);
-  if (multiDay) {
-    // Ongoing until End: an end instant, or the end of an all-day End date.
-    if (end.allDay ? today <= end.day : atMs < end.ms) return false;
-    return true;
-  }
-
-  if (start.allDay) return today > start.day;
-  return start.ms <= atMs;
+  const lastDay = end && end.day > start.day ? end.day : start.day;
+  return ptDateKey(at) > lastDay;
 }
 
 /**
@@ -139,9 +128,8 @@ export function isFbPostRelevant(fields, postAt, opts = {}) {
   const rec = fields.Recurrence && String(fields.Recurrence).trim();
   if (rec) return true; // year-round recurring; seasonal keywords gated above
 
-  // Never promote an event that has already happened / started (PT).
-  // (Previously daily/roundup allowed a 24h grace after Start, so a Fri 6 PM
-  // event was still "upcoming" on Sat afternoon.)
+  // Never promote an event whose last PT date is already over. (Previously a
+  // 24h grace after Start let a Fri 6 PM event through on Sat afternoon.)
   if (eventIsPast(fields, postAt)) return false;
 
   if (mode === "schedule") return true;
