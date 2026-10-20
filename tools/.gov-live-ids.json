@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-10-19T20:40:16.204Z",
+  "ranAt": "2026-10-20T19:26:32.411Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -45,27 +45,6 @@
         "cc:/calendar/parks-and-recreation/110726-fall-o-ween"
       ],
       "maxStart": "2026-11-07T13:00:00-07:00"
-    },
-    "City of Henderson": {
-      "ids": [
-        "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "series:City of Henderson|early voting kids vote general election|city of henderson",
-        "hen:6498:2026-10-21",
-        "series:City of Henderson|henderson farmers market|army st.",
-        "hen:6509:2026-10-23",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
-        "hen:6388:2026-10-24",
-        "hen:6400:2026-10-24",
-        "hen:6462:2026-11-03",
-        "hen:6500:2026-11-04",
-        "series:City of Henderson|henderson farmers market|fox ridge park",
-        "hen:6416:2026-11-07",
-        "hen:6512:2026-11-15",
-        "hen:6492:2026-11-16",
-        "hen:6414:2026-11-20",
-        "hen:6418:2026-11-21"
-      ],
-      "maxStart": "2026-11-21T09:00:00-07:00"
     }
   }
 }
