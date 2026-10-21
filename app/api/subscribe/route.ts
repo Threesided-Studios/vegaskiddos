@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { unsubToken } from "@/lib/unsubToken";
 import { allowRequest } from "@/lib/rateLimit";
+import { hasBadTld, suggestEmail } from "@/lib/emailTypo";
 
 const SITE = "https://vegaskiddos.com";
 
@@ -65,6 +66,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
   }
   const lang = body.lang === "es" ? "es" : "en";
+  // ".con" / ".cmo" etc. can never receive mail; reject with a correction hint
+  // instead of storing an address that bounces every week.
+  if (hasBadTld(email)) {
+    const suggestion = suggestEmail(email);
+    const error = lang === "es"
+      ? `Ese correo no parece correcto.${suggestion ? ` ¿Quisiste decir ${suggestion}?` : ""}`
+      : `That email doesn't look right.${suggestion ? ` Did you mean ${suggestion}?` : ""}`;
+    return NextResponse.json({ error, suggestion }, { status: 400 });
+  }
   const token = process.env.AIRTABLE_TOKEN;
   const base = process.env.AIRTABLE_BASE_ID;
   if (!token || !base) return NextResponse.json({ ok: true, stored: "log" });
