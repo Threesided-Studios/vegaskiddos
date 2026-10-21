@@ -29,9 +29,9 @@
     "sync-art-templates": "tsx tools/sync-art-templates.mjs",
     "ensure-reminders-table": "node tools/ensure-reminders-table.mjs",
     "send-reminders": "node tools/send-reminders.mjs",
-    "cf:build": "NEXT_PUBLIC_IMAGE_CDN=https://img.vegaskiddos.com opennextjs-cloudflare build",
-    "cf:preview": "NEXT_PUBLIC_IMAGE_CDN=https://img.vegaskiddos.com opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "cf:deploy": "NEXT_PUBLIC_IMAGE_CDN=https://img.vegaskiddos.com opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf:build": "NEXT_PUBLIC_IMAGE_CDN=https://img.vegaskiddos.com opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion",
+    "cf:preview": "NEXT_PUBLIC_IMAGE_CDN=https://img.vegaskiddos.com opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && opennextjs-cloudflare preview",
+    "cf:deploy": "NEXT_PUBLIC_IMAGE_CDN=https://img.vegaskiddos.com opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
