@@ -115,6 +115,8 @@ export const STRINGS = {
   nl_note: { en: "One email a week. No spam, ever.", es: "Un correo por semana. Nada de spam, nunca." },
   nl_done: { en: "🎉 You're in! Watch your inbox each week.", es: "🎉 ¡Listo! Revisa tu correo cada semana." },
   nl_err_again: { en: "Try again.", es: "Inténtalo de nuevo." },
+  nl_did_you_mean: { en: "Did you mean", es: "¿Quisiste decir" },
+  nl_use_it: { en: "Yes, fix it", es: "Sí, corregir" },
   nl_err_generic: { en: "Something went wrong.", es: "Algo salió mal." },
 
   // ── About page ──

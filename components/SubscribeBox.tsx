@@ -4,11 +4,15 @@ import { useState } from "react";
 import { NEIGHBORHOODS } from "@/lib/constants";
 import { t, hoodLabel, type Lang } from "@/lib/i18n";
 import { track } from "@/lib/track";
+import { suggestEmail } from "@/lib/emailTypo";
 
 // Email capture for the weekly digest. Posts to /api/subscribe.
 export function SubscribeBox({ compact = false, stacked = false, lang = "en" }: { compact?: boolean; stacked?: boolean; lang?: Lang }) {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [msg, setMsg] = useState("");
+  const [email, setEmail] = useState("");
+  // Non-blocking "Did you mean …@gmail.com?" hint for mistyped domains.
+  const suggestion = suggestEmail(email);
   const tr = (k: Parameters<typeof t>[1]) => t(lang, k);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -44,8 +48,23 @@ export function SubscribeBox({ compact = false, stacked = false, lang = "en" }: 
         type="email"
         required
         placeholder={tr("nl_email_ph")}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        aria-describedby={suggestion ? "nl-email-suggest" : undefined}
         className={`rounded-full border-2 border-ink/15 bg-white px-4 outline-none focus:border-teal ${stacked ? field : `w-full min-w-[12rem] flex-1 basis-full sm:basis-0 ${field}`}`}
       />
+      {suggestion && (
+        <p id="nl-email-suggest" role="status" aria-live="polite" className={`w-full text-sm text-ink/80 ${stacked ? "text-center" : "px-2"}`}>
+          {tr("nl_did_you_mean")} <strong className="font-800 text-ink">{suggestion}</strong>?{" "}
+          <button
+            type="button"
+            onClick={() => setEmail(suggestion)}
+            className="ml-1 rounded-full bg-teal-btn px-3 py-1 text-xs font-800 text-white hover-pop"
+          >
+            {tr("nl_use_it")}
+          </button>
+        </p>
+      )}
       <select
         name="neighborhood"
         aria-label={tr("nl_area_label")}
