@@ -354,5 +354,9 @@
   "The Assembly, Las Vegas, NV": {
     "lat": 36.0647783,
     "lng": -115.2761748
+  },
+  "240 S Water St. Henderson, NV, 89015": {
+    "lat": 36.0297535,
+    "lng": -114.9825517
   }
 }
