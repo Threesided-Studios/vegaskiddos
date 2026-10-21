@@ -20,6 +20,11 @@ import { NextResponse, type NextRequest } from "next/server";
 //    keep them in Spanish. Crawlers send no cookie → they stay on the canonical
 //    English tree and discover /es via hreflang + the sitemap.
 
+// Next 16 note: the "middleware" convention is deprecated in favour of proxy.ts,
+// but proxy always runs on the Node.js runtime, which OpenNext Cloudflare only
+// supports experimentally. This file stays an Edge middleware on purpose (the
+// Next 16 upgrade guide: keep middleware.ts if you need the edge runtime).
+
 const COOKIE = "vk_lang";
 const COOKIE_OPTS = { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" as const };
 

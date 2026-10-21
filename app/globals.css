@@ -1,10 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* CSS @import must precede every other rule (Turbopack enforces this; the
+   @tailwind directives expand into rules). css-loader used to hoist these. */
 @import "leaflet/dist/leaflet.css";
 @import "leaflet.markercluster/dist/MarkerCluster.css";
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   color-scheme: light;
