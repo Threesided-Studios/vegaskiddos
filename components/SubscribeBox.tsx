@@ -51,10 +51,10 @@ export function SubscribeBox({ compact = false, stacked = false, lang = "en" }: 
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         aria-describedby={suggestion ? "nl-email-suggest" : undefined}
-        className={`rounded-full border-2 border-ink/15 bg-white px-4 outline-none focus:border-teal ${stacked ? field : `w-full min-w-[12rem] flex-1 basis-full sm:basis-0 ${field}`}`}
+        className={`rounded-full border-2 border-ink/15 bg-white px-4 text-ink placeholder:text-ink/45 outline-none focus:border-teal ${stacked ? field : `w-full min-w-[12rem] flex-1 basis-full sm:basis-0 ${field}`}`}
       />
       {suggestion && (
-        <p id="nl-email-suggest" role="status" aria-live="polite" className={`w-full text-sm text-ink/80 ${stacked ? "text-center" : "px-2"}`}>
+        <p id="nl-email-suggest" role="status" aria-live="polite" className={`w-full rounded-2xl bg-white/95 px-3 py-1.5 text-sm text-ink/80 shadow-sm ${stacked ? "text-center" : ""}`}>
           {tr("nl_did_you_mean")} <strong className="font-800 text-ink">{suggestion}</strong>?{" "}
           <button
             type="button"
