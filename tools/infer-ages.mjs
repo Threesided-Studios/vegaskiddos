@@ -1,7 +1,8 @@
+import { DEFAULT_TEXT_MODEL } from "../lib/openai-models.mjs";
 // Backfill missing AgeTiers on approved events so they show up under the right
 // age filter and carry age tags. Many scraped events arrive untagged.
 //
-// Uses gpt-4o-mini to read title + description and pick from the fixed taxonomy
+// Uses gpt-6-luna to read title + description and pick from the fixed taxonomy
 // (baby 0-1, toddler 1-3, kids 3-12, tweens 12+). Conservative: tags only the
 // ages an event genuinely serves; falls back to ["kids"] when unsure rather than
 // over-claiming. Idempotent — only touches events with no AgeTiers.
@@ -27,7 +28,7 @@ const TOKEN = process.env.AIRTABLE_TOKEN;
 const BASE = process.env.AIRTABLE_BASE_ID;
 const TABLE = process.env.AIRTABLE_TABLE_NAME || "Events";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
-const MODEL = process.env.OPENAI_TEXT_MODEL || "gpt-4o-mini";
+const MODEL = process.env.OPENAI_TEXT_MODEL || DEFAULT_TEXT_MODEL;
 const DRY = process.argv.includes("--dry");
 
 if (!TOKEN || !BASE) { console.error("Missing AIRTABLE_TOKEN / AIRTABLE_BASE_ID"); process.exit(1); }
@@ -67,6 +68,7 @@ async function infer(ev) {
     headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model: MODEL,
+      ...(/^gpt-6-(?:luna|sol)(?:-|$)/.test(MODEL) ? { reasoning_effort: "none" } : {}),
       temperature: 0.2,
       response_format: { type: "json_object" },
       messages: [{ role: "system", content: SYS }, { role: "user", content: user }],

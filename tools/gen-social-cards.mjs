@@ -1,3 +1,4 @@
+import { IMAGE_MODEL } from "../lib/openai-models.mjs";
 // Generate per-event social-card JPEGs for Facebook link previews.
 // Illustrations are GPT-generated (bounded, cached per event), composited with
 // title/venue text, then uploaded to R2 at social/<id>/1200.jpg. The site's
@@ -84,7 +85,7 @@ async function generateIllustration(prompt) {
   const r = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: { Authorization: `Bearer ${OPENAI}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "gpt-image-1", prompt, size: "1536x1024", quality: QUALITY, n: 1 }),
+    body: JSON.stringify({ model: IMAGE_MODEL, prompt, size: "1536x1024", quality: QUALITY, n: 1 }),
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(`OpenAI ${r.status}: ${JSON.stringify(data).slice(0, 300)}`);

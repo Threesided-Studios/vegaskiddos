@@ -1,3 +1,4 @@
+import { IMAGE_MODEL } from "../lib/openai-models.mjs";
 // AI event artwork generator. For scheduled + recurring events that lack an
 // image, generate an on-brand flat illustration with OpenAI and upload it into
 // the Events table's `ArtImage` attachment field (Airtable hosts it).
@@ -8,7 +9,7 @@
 //   add --dry-run to list the selection + prompts only
 //
 // Env: OPENAI_API_KEY, AIRTABLE_TOKEN, AIRTABLE_BASE_ID, [GEN_QUALITY], [GEN_SIZE].
-// gpt-image-1 sizes: 1024x1024 | 1536x1024 (landscape) | 1024x1536 — no true 16:9.
+// Keep the existing 1536x1024 landscape output for downstream crops.
 import { subjectFor } from "../lib/eventArt.ts";
 import fs from "node:fs";
 
@@ -128,7 +129,7 @@ async function generate(prompt) {
   const r = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: { Authorization: `Bearer ${OPENAI}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "gpt-image-1", prompt, size: SIZE, quality: QUALITY, n: 1 }),
+    body: JSON.stringify({ model: IMAGE_MODEL, prompt, size: SIZE, quality: QUALITY, n: 1 }),
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(`OpenAI ${r.status}: ${JSON.stringify(data).slice(0, 300)}`);
