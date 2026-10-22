@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-10-21T19:26:22.767Z",
+  "ranAt": "2026-10-22T19:19:46.887Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -22,7 +22,8 @@
         "colv:12435",
         "colv:12491",
         "series:City of Las Vegas|phantom of charleston heights arts center a night of sir andrew lloyd webber|charleston heights arts center",
-        "colv:12399",
+        "series:City of Las Vegas|rainbow company youth theatre presents shrek the musical|charleston heights arts center",
+        "series:City of Las Vegas|rainbow company youth theatre presents she kills monsters|charleston heights arts center",
         "colv:12461"
       ],
       "maxStart": "2027-05-01T19:30:00-07:00"
