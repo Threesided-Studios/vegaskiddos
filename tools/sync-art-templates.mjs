@@ -1,3 +1,4 @@
+import { IMAGE_MODEL } from "../lib/openai-models.mjs";
 // Build one illustration per event type and upload to R2 as
 //   img.vegaskiddos.com/type/<id>/<width>.webp
 //
@@ -121,7 +122,7 @@ async function generatePng(subject) {
   const r = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: { Authorization: `Bearer ${OPENAI}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "gpt-image-1", prompt: templatePrompt(subject), size: SIZE, quality: QUALITY, n: 1 }),
+    body: JSON.stringify({ model: IMAGE_MODEL, prompt: templatePrompt(subject), size: SIZE, quality: QUALITY, n: 1 }),
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(`OpenAI ${r.status}: ${JSON.stringify(data).slice(0, 300)}`);

@@ -1,3 +1,4 @@
+import { DEFAULT_TEXT_MODEL } from "./../openai-models.mjs";
 import { DESCRIPTION_MIN_LEN } from "./description";
 
 const API = "https://api.airtable.com/v0";
@@ -31,7 +32,7 @@ function cfg() {
   const base = process.env.AIRTABLE_BASE_ID;
   const table = process.env.AIRTABLE_TABLE_NAME || "Events";
   const openaiKey = process.env.OPENAI_API_KEY;
-  const model = process.env.OPENAI_TEXT_MODEL || "gpt-4o-mini";
+  const model = process.env.OPENAI_TEXT_MODEL || DEFAULT_TEXT_MODEL;
   if (!token || !base) throw new Error("AIRTABLE_TOKEN/AIRTABLE_BASE_ID not set");
   return { token, base, table, openaiKey, model };
 }
@@ -71,6 +72,7 @@ async function generate(
     headers: { Authorization: `Bearer ${openaiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model,
+      ...(/^gpt-6-(?:luna|sol)(?:-|$)/.test(model) ? { reasoning_effort: "none" } : {}),
       temperature: 0.5,
       response_format: { type: "json_object" },
       messages: [{ role: "system", content: SYS }, { role: "user", content: facts }],
