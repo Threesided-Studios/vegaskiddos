@@ -1,18 +1,18 @@
 {
-  "ranAt": "2026-10-22T19:19:46.887Z",
+  "ranAt": "2026-10-23T19:23:34.038Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12419",
         "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
-        "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12603",
         "colv:12398",
+        "colv:12621",
         "colv:12522",
         "colv:12421",
         "colv:12429",
         "series:City of Las Vegas|rainbow company youth theatre presents sense sensibility|charleston heights arts center",
         "colv:12430",
+        "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12433",
         "colv:12434",
         "colv:12413",
@@ -30,7 +30,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/parks-and-recreation/102226-wicked-whitney",
         "cc:/calendar/parks-and-recreation/102326-haunt-the-wetlands",
         "cc:/calendar/parks-and-recreation/102326-monster-mash-trunk-or-treat",
         "cc:/calendar/parks-and-recreation/102326-hollyween-adventures",
