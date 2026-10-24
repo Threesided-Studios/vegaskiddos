@@ -1,11 +1,10 @@
 {
-  "ranAt": "2026-10-23T19:23:34.038Z",
+  "ranAt": "2026-10-24T18:16:26.409Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "series:City of Las Vegas|nevada shakespeare festival presents the taming of the shrew|sammy davis jr. festival plaza in lorenzi park",
-        "colv:12603",
         "colv:12398",
+        "colv:12440",
         "colv:12621",
         "colv:12522",
         "colv:12421",
@@ -30,10 +29,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/parks-and-recreation/102326-haunt-the-wetlands",
-        "cc:/calendar/parks-and-recreation/102326-monster-mash-trunk-or-treat",
-        "cc:/calendar/parks-and-recreation/102326-hollyween-adventures",
-        "cc:/calendar/parks-and-recreation/102326-spooky-trails",
         "cc:/calendar/parks-and-recreation/102426-monster-mash-movie-bash",
         "cc:/calendar/parks-and-recreation/102426-paradise-patch",
         "cc:/calendar/parks-and-recreation/102626-boo-bridge",
