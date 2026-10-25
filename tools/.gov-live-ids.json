@@ -1,10 +1,8 @@
 {
-  "ranAt": "2026-10-24T18:16:26.409Z",
+  "ranAt": "2026-10-25T18:31:05.416Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12398",
-        "colv:12440",
         "colv:12621",
         "colv:12522",
         "colv:12421",
@@ -29,8 +27,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/parks-and-recreation/102426-monster-mash-movie-bash",
-        "cc:/calendar/parks-and-recreation/102426-paradise-patch",
         "cc:/calendar/parks-and-recreation/102626-boo-bridge",
         "cc:/calendar/parks-and-recreation/102626-moapa-valley-halloween-party",
         "cc:/calendar/parks-and-recreation/102826-helen-meyer-trunk-or-treat",
@@ -40,6 +36,23 @@
         "cc:/calendar/parks-and-recreation/110726-fall-o-ween"
       ],
       "maxStart": "2026-11-07T13:00:00-07:00"
+    },
+    "City of Henderson": {
+      "ids": [
+        "series:City of Henderson|art exhibit henderson creates|city of henderson",
+        "series:City of Henderson|early voting kids vote general election|city of henderson",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
+        "hen:6462:2026-11-03",
+        "hen:6500:2026-11-04",
+        "series:City of Henderson|henderson farmers market|fox ridge park",
+        "hen:6416:2026-11-07",
+        "hen:6512:2026-11-15",
+        "hen:6492:2026-11-16",
+        "hen:6308:2026-11-20",
+        "hen:6414:2026-11-20",
+        "hen:6418:2026-11-21"
+      ],
+      "maxStart": "2026-11-21T09:00:00-07:00"
     }
   }
 }
