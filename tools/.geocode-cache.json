@@ -358,5 +358,29 @@
   "240 S Water St. Henderson, NV, 89015": {
     "lat": 36.0297535,
     "lng": -114.9825517
+  },
+  "Mirabelli Park, 6200 Hargrove Ave., Las Vegas, NV": {
+    "lat": 36.1732287,
+    "lng": -115.2270419
+  },
+  "Mirabelli Community Center, 6200 Hargrove Ave, Las Vegas, NV 89107, USA": {
+    "lat": 36.1732287,
+    "lng": -115.2270419
+  },
+  "Rainbow Library Rainbow Library, Las Vegas, NV": {
+    "lat": 36.2173101,
+    "lng": -115.259304
+  },
+  "Sunrise Library Sunrise Library, Las Vegas, NV": {
+    "lat": 36.1783664,
+    "lng": -115.054783
+  },
+  "East Las Vegas Library East Las Vegas Library": {
+    "lat": 36.1730199,
+    "lng": -115.110159
+  },
+  "4605 W Charleston Blvd, Las Vegas, NV, 89102": {
+    "lat": 36.1592036,
+    "lng": -115.202945
   }
 }
