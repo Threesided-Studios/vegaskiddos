@@ -15,7 +15,6 @@ export const GUIDES: GuideMeta[] = [
     title: "Thanksgiving to New Year's with kids in Las Vegas",
     description:
       "A plain parent guide to the holiday season around the valley: lights, parades, Noon Year's Eve and winter break, sorted by age, free vs paid, and neighborhood.",
-    draftForReview: true,
   },
   {
     slug: "fall-halloween-guide-2026",
