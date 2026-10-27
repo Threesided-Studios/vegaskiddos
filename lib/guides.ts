@@ -11,6 +11,12 @@ export interface GuideMeta {
 
 export const GUIDES: GuideMeta[] = [
   {
+    slug: "holiday-guide-2026",
+    title: "Thanksgiving to New Year's with kids in Las Vegas",
+    description:
+      "A plain parent guide to the holiday season around the valley: lights, parades, Noon Year's Eve and winter break, sorted by age, free vs paid, and neighborhood.",
+  },
+  {
     slug: "fall-halloween-guide-2026",
     title: "Fall and Halloween with kids in Las Vegas",
     description:
