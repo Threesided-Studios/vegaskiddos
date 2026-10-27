@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-10-26T20:39:46.181Z",
+  "ranAt": "2026-10-27T20:09:59.172Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -30,8 +30,6 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/parks-and-recreation/102626-boo-bridge",
-        "cc:/calendar/parks-and-recreation/102626-moapa-valley-halloween-party",
         "cc:/calendar/parks-and-recreation/102826-helen-meyer-trunk-or-treat",
         "cc:/calendar/parks-and-recreation/102826-tales-from-the-dales",
         "cc:/calendar/parks-and-recreation/102926-hallow-harvest-festival",
@@ -47,6 +45,7 @@
         "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6462:2026-11-03",
         "hen:6500:2026-11-04",
+        "series:City of Henderson|vegas thrill youth camp|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",
         "hen:6416:2026-11-07",
         "hen:6512:2026-11-15",
