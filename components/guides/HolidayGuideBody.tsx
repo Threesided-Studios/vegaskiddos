@@ -141,7 +141,7 @@ export function HolidayGuideBody() {
               </li>
               <li>
                 <GuideLink href={HOLIDAY_URLS.downtownSummerlin}>Downtown Summerlin</GuideLink>{" "}
-                weekend parade with snowfall (2026 dates not posted yet)
+                weekend parade with snowfall (2026 dates not posted yet; check before you go)
               </li>
               <li>
                 Bellagio Conservatory holiday display on the Strip: free, open around the clock;
@@ -166,11 +166,11 @@ export function HolidayGuideBody() {
               </li>
               <li>
                 <GuideLink href={HOLIDAY_URLS.glitteringLights}>Glittering Lights</GuideLink> (per
-                car, from $39 cash)
+                car, $39 cash or $44 card)
               </li>
               <li>
-                <GuideLink href={HOLIDAY_URLS.magicalForest}>Magical Forest</GuideLink> (2026
-                prices not out yet; 3 and under free)
+                <GuideLink href={HOLIDAY_URLS.magicalForest}>Magical Forest</GuideLink> (3 and
+                under free; 2026 prices not posted yet, check before you go)
               </li>
               <li>
                 <GuideLink href={HOLIDAY_URLS.springsPreserve}>Springs Preserve</GuideLink> (Nevada
@@ -333,8 +333,8 @@ export function HolidayGuideBody() {
       <GuideSection title="What we are not listing yet" wash="white">
         <p className="text-ink/80">
           Pop-up Santa photo ops, unofficial light displays, and anything without a public date or
-          address. When Downtown Summerlin, Magical Forest, and the museum post their 2026
-          details, we update this page.
+          address. When Downtown Summerlin and the museum post their 2026 schedules and Magical
+          Forest posts ticket prices, we update this page.
         </p>
       </GuideSection>
 

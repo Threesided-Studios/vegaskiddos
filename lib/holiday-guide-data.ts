@@ -12,7 +12,7 @@ import {
 /** External + VK URLs (checked 2026-10-27). */
 export const HOLIDAY_URLS = {
   glitteringLights: "https://glitteringlightslasvegas.com/",
-  magicalForest: "https://www.magicalforest.com",
+  magicalForest: "https://www.opportunityvillage.org/ovevents/magical-forest",
   ethelM: "https://www.ethelm.com/en-us/locations/henderson-flagship/cactus-garden/holiday-cactus-garden",
   winterfest: "https://www.cityofhenderson.com/residents/special-interest/winterfest/",
   downtownSummerlin: "https://summerlin.com/downtown-summerlin-kicks-off-2025-holiday-season/",
@@ -37,9 +37,9 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     hoods: ["north"],
     featured: true,
     facts: [
-      { label: "Dates", value: "Nov 6, 2026–Jan 3, 2027 (third-party listing, Oct 22; official site had not posted 2026 dates on Oct 27)" },
-      { label: "Hours", value: "Opens 5 p.m. nightly; listing says to 9 p.m. Sun–Thu, 10 p.m. Fri–Sat" },
-      { label: "Price", value: "Per car: from $39 cash at the gate, $44 by card (official FAQ); Fast Pass extra" },
+      { label: "Dates", value: "Nov 6, 2026–Jan 3, 2027, nightly, holidays included (official fact sheet)" },
+      { label: "Hours", value: "Opens 5 p.m. nightly; closing time not posted, check before you go" },
+      { label: "Price", value: "Per car: $39 cash at the gate, $44 by card; Fast Pass $64; Santa Tram $25 a person on select nights" },
       { label: "Where", value: "Las Vegas Motor Speedway, far north end of the valley" },
     ],
   },
@@ -54,10 +54,10 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     hoods: ["central"],
     featured: true,
     facts: [
-      { label: "Dates", value: "Nov 27, 2026–Jan 1, 2027; closed Nov 30–Dec 2 and Dec 25 (third-party listing, Oct 22)" },
+      { label: "Dates", value: "Nov 27–29, Dec 3–24 and Dec 26–Jan 1 (Opportunity Village)" },
       { label: "Hours", value: "5:30–9 p.m. Sun–Thu; 5:30–9:30 p.m. Fri–Sat" },
-      { label: "Price", value: "2026 prices not announced yet; children 3 and under free" },
-      { label: "Tickets", value: "Date-specific at MagicalForest.com" },
+      { label: "Price", value: "Children 3 and under free. 2026 ticket prices not posted yet; check before you go" },
+      { label: "Tickets", value: "Sales open this fall; box office closes 30 minutes before the park" },
       { label: "Address", value: "6300 W Oakey Blvd" },
     ],
   },
@@ -104,7 +104,7 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     price: "free",
     hoods: ["west"],
     facts: [
-      { label: "2026", value: "Schedule not posted yet (checked Oct 27)" },
+      { label: "2026", value: "Schedule not posted yet; check before you go" },
       { label: "Last season", value: "Parade Fri–Sat 6 p.m., Nov 21–Dec 20, free" },
       { label: "Extras", value: "Rock Rink skate rentals from $18; Santa photo packages from $39.99; train rides $5" },
       { label: "Tip", value: "Last year's Santa Chalet had a sensory-friendly morning; watch for it again" },
@@ -152,7 +152,7 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     hoods: ["downtown"],
     featured: true,
     facts: [
-      { label: "When", value: "Held Dec 31 last year; 2026 details not posted yet" },
+      { label: "When", value: "Held Dec 31 last year, countdown to a noon balloon drop; 2026 not posted yet, check before you go" },
       { label: "Hours", value: "Tue–Sat 10 a.m.–5 p.m., Sun noon–5 p.m.; also open Mondays over winter break" },
       { label: "Closed", value: "Thanksgiving, Christmas Eve, Christmas, New Year's Day" },
     ],
