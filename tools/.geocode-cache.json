@@ -382,5 +382,25 @@
   "4605 W Charleston Blvd, Las Vegas, NV, 89102": {
     "lat": 36.1592036,
     "lng": -115.202945
+  },
+  "Aliante Library, 2400 Deer Springs Way, North Las Vegas, NV 89084, USA": {
+    "lat": 36.2848262,
+    "lng": -115.1755563
+  },
+  "1950 J Street, Las Vegas, 89106": {
+    "lat": 36.1945908,
+    "lng": -115.1564201
+  },
+  "SkyView Multi-Generational Center, 3050 E Centennial Pkwy, North Las Vegas, NV 89081, USA": {
+    "lat": 36.2773998,
+    "lng": -115.1066061
+  },
+  "3690 N. Rancho Drive, Las Vegas, NV 89130": {
+    "lat": 36.2258433,
+    "lng": -115.219821
+  },
+  "Aliante Library, 2400 W. Deer Springs Way North Las Vegas, Nevada 89084": {
+    "lat": 36.2848262,
+    "lng": -115.1755563
   }
 }
