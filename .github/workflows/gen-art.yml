@@ -52,6 +52,7 @@ jobs:
         if: ${{ github.event.inputs.mode == 'sample' }}
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 3
           name: art-samples
           path: art-samples/
           if-no-files-found: warn
