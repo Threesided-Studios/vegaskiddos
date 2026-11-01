@@ -1,9 +1,8 @@
 {
-  "ranAt": "2026-10-31T19:25:19.782Z",
+  "ranAt": "2026-11-01T19:50:22.682Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12624",
         "colv:12421",
         "colv:12429",
         "series:City of Las Vegas|rainbow company youth theatre presents sense sensibility|charleston heights arts center",
@@ -34,11 +33,11 @@
     "City of Henderson": {
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6462:2026-11-03",
         "hen:6500:2026-11-04",
         "series:City of Henderson|vegas thrill youth camp|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6416:2026-11-07",
         "hen:6512:2026-11-15",
         "hen:6492:2026-11-16",
