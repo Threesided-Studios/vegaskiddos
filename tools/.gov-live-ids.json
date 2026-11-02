@@ -1,14 +1,14 @@
 {
-  "ranAt": "2026-11-01T19:50:22.682Z",
+  "ranAt": "2026-11-02T23:09:57.123Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12421",
         "colv:12429",
         "series:City of Las Vegas|rainbow company youth theatre presents sense sensibility|charleston heights arts center",
         "colv:12430",
         "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12622",
+        "colv:12632",
         "colv:12433",
         "colv:12434",
         "colv:12413",
@@ -43,9 +43,16 @@
         "hen:6492:2026-11-16",
         "hen:6308:2026-11-20",
         "hen:6414:2026-11-20",
-        "hen:6418:2026-11-21"
+        "hen:6418:2026-11-21",
+        "hen:6376:2026-12-05",
+        "hen:6426:2026-12-05",
+        "hen:6450:2026-12-05",
+        "hen:6530:2026-12-09",
+        "hen:6538:2026-12-15",
+        "hen:6434:2026-12-18",
+        "hen:6526:2026-12-19"
       ],
-      "maxStart": "2026-11-21T09:00:00-07:00"
+      "maxStart": "2026-12-19T10:00:00-07:00"
     }
   }
 }
