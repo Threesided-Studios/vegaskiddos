@@ -28,7 +28,7 @@ if (!AT || !BASE) { console.error("AIRTABLE_TOKEN / AIRTABLE_BASE_ID required");
 const PAGE_ID = (process.env.FB_PAGE_ID || "").trim(), PAGE_TOKEN = (process.env.FB_PAGE_TOKEN || "").trim();
 const SITE = "https://vegaskiddos.com";
 const GRAPH = "https://graph.facebook.com/v21.0";
-import { isFbPostRelevant } from "./fb-post-filter.mjs";
+import { isFbPostRelevant, fmtEventWhen } from "./fb-post-filter.mjs";
 import {
   eventOgImageUrl,
   eventPageUrl,
@@ -89,14 +89,6 @@ async function airtableAll(table, params = "") {
 }
 
 // Friendly date / recurrence line (Pacific time).
-const fmtWhen = (iso, rec) => {
-  if (rec) return String(rec);
-  if (!iso) return "";
-  return new Date(iso).toLocaleString("en-US", {
-    weekday: "long", month: "long", day: "numeric", hour: "numeric", minute: "2-digit",
-    timeZone: "America/Los_Angeles",
-  });
-};
 const priceOf = (f) => f.PriceText || (f.PriceTier === "free" ? "Free" : "");
 const HASHTAGS = "#LasVegas #VegasKids #ThingsToDoInVegas #FamilyFun #VegasFamilies #KidFriendly #EventosLasVegas";
 
@@ -149,9 +141,9 @@ function eventPost(rec) {
   const price = priceOf(f);
   const message = [
     `🌵 ${f.Title}`,
-    `📅 ${fmtWhen(f.Start, f.Recurrence)}${f.Venue ? `   📍 ${f.Venue}` : ""}${price ? `   ·   ${price}` : ""}`,
+    `📅 ${fmtEventWhen(f)}${f.Venue ? `   📍 ${f.Venue}` : ""}${price ? `   ·   ${price}` : ""}`,
     "",
-    `Find this and every kid-safe event in Vegas — sorted by age, price & neighborhood 👇`,
+    `Find this and every kid-safe event in Vegas, sorted by age, price & neighborhood 👇`,
     url,
     "",
     HASHTAGS,
@@ -357,11 +349,11 @@ async function runRoundup() {
 
   const bullets = events.map((f) => {
     const price = priceOf(f);
-    return `• ${f.Title}${f.Venue ? ` — ${f.Venue}` : ""}${price ? ` (${price})` : ""}`;
+    return `• ${f.Title}${f.Venue ? `, ${f.Venue}` : ""}${price ? ` (${price})` : ""}`;
   }).join("\n");
   const link = `${SITE}/this-weekend`;
   const message = [
-    `🌵 This weekend in Las Vegas — ${events.length} kid-friendly picks!`,
+    `🌵 This weekend in Las Vegas: ${events.length} kid-friendly picks!`,
     "",
     bullets,
     "",

@@ -1,6 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
+  fmtEventWhen,
+  startedBeforeAndEndsToday,
   postableTitle,
   seasonallyRelevant,
   isFbPostRelevant,
@@ -149,13 +151,14 @@ describe("past-event guard (America/Los_Angeles)", () => {
     assert.equal(isFbPostRelevant({ Title: "Spring Fair", Start: "2027-03-01T10:00:00-08:00" }, at, { mode: "daily" }), false);
   });
 
-  it("a multi-day event is eligible through the end of its End date (PT)", () => {
+  it("a multi-day event is eligible while it runs past today, not on its final day (PT)", () => {
     const f = { Title: "Fall Harvest Festival", Start: "2026-10-16T10:00:00-07:00", End: "2026-10-19T18:00:00-07:00" };
     assert.equal(isFbPostRelevant(f, new Date("2026-10-18T11:00:00-07:00"), { mode: "daily" }), true);
-    assert.equal(isFbPostRelevant(f, new Date("2026-10-19T23:30:00-07:00"), { mode: "daily" }), true); // end date, after End time
+    assert.equal(isFbPostRelevant(f, new Date("2026-10-19T23:30:00-07:00"), { mode: "daily" }), false); // final day: skipped since 2026-11-02
     assert.equal(isFbPostRelevant(f, new Date("2026-10-20T00:01:00-07:00"), { mode: "daily" }), false);
     const allDay = { Title: "Pumpkin Patch", Start: "2026-10-10", End: "2026-10-31" };
-    assert.equal(isFbPostRelevant(allDay, new Date("2026-10-31T21:00:00-07:00"), { mode: "daily" }), true);
+    assert.equal(isFbPostRelevant(allDay, new Date("2026-10-30T21:00:00-07:00"), { mode: "daily" }), true);
+    assert.equal(isFbPostRelevant(allDay, new Date("2026-10-31T21:00:00-07:00"), { mode: "daily" }), false);
     assert.equal(isFbPostRelevant(allDay, new Date("2026-11-01T08:00:00-07:00"), { mode: "daily" }), false);
   });
 
@@ -172,5 +175,32 @@ describe("ptMonth", () => {
   it("uses America/Los_Angeles", () => {
     assert.equal(ptMonth(new Date("2026-09-15T17:00:00-07:00")), 9);
     assert.equal(ptMonth(new Date("2026-07-01T12:00:00-07:00")), 7);
+  });
+});
+
+// ── 2026-11-02 regressions: started-yesterday festival + "12:00 AM" times ──
+describe("2026-11-02 regressions", () => {
+  const a = assert, t = it, _fmt = fmtEventWhen, _sbe = startedBeforeAndEndsToday;
+  const mon = new Date("2026-11-03T00:49:00Z"); // Mon Nov 2, 4:49 PM PT
+  const fest = { Title: "Day of the Dead Festival", Start: "2026-11-01T07:00:00.000Z", End: "2026-11-03T06:59:59.000Z" };
+  t("multi-day event that started yesterday and ends today is skipped", () => {
+    a.equal(_sbe(fest, mon), true);
+    a.equal(isFbPostRelevant(fest, mon, { mode: "daily" }), false);
+  });
+  t("multi-day event still running after today is allowed and reads 'Now through'", () => {
+    const f = { ...fest, End: "2026-11-05T06:59:59.000Z" };
+    a.equal(isFbPostRelevant(f, mon, { mode: "daily" }), true);
+    a.equal(_fmt(f, mon), "Now through Wednesday, November 4");
+  });
+  t("single-day event from yesterday is skipped", () => {
+    a.equal(isFbPostRelevant({ Title: "X", Start: "2026-11-01T18:00:00.000Z" }, mon, { mode: "daily" }), false);
+  });
+  t("midnight / date-only starts read 'All day', never 12:00 AM", () => {
+    a.equal(_fmt({ Start: "2026-11-04T08:00:00.000Z" }, mon), "Wednesday, November 4, All day");
+    a.equal(_fmt({ Start: "2026-11-04" }, mon), "Wednesday, November 4, All day");
+    a.equal(_fmt(fest, new Date("2026-10-30T19:00:00Z")), "Sunday, November 1 through Monday, November 2");
+  });
+  t("real times still render", () => {
+    a.equal(_fmt({ Start: "2026-11-04T18:30:00.000Z" }, mon), "Wednesday, November 4, 10:30 AM");
   });
 });
