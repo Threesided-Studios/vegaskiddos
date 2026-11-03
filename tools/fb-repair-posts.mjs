@@ -9,6 +9,7 @@
 //
 // Env: AIRTABLE_TOKEN, AIRTABLE_BASE_ID, FB_PAGE_ID, FB_PAGE_TOKEN
 import fs from "node:fs";
+import { fmtEventWhen } from "./fb-post-filter.mjs";
 import { isDedicatedOgUrl } from "./og-image.mjs";
 
 try {
@@ -64,18 +65,6 @@ const FIELDS = [
   "attachments{media,type,unshimmed_url,title,description}",
 ].join(",");
 
-const fmtWhen = (iso, rec) => {
-  if (rec) return String(rec);
-  if (!iso) return "";
-  return new Date(iso).toLocaleString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/Los_Angeles",
-  });
-};
 const priceOf = (f) => f.PriceText || (f.PriceTier === "free" ? "Free" : "");
 
 function eventPost(rec) {
@@ -84,9 +73,9 @@ function eventPost(rec) {
   const price = priceOf(f);
   const message = [
     `🌵 ${f.Title}`,
-    `📅 ${fmtWhen(f.Start, f.Recurrence)}${f.Venue ? `   📍 ${f.Venue}` : ""}${price ? `   ·   ${price}` : ""}`,
+    `📅 ${fmtEventWhen(f)}${f.Venue ? `   📍 ${f.Venue}` : ""}${price ? `   ·   ${price}` : ""}`,
     "",
-    `Find this and every kid-safe event in Vegas — sorted by age, price & neighborhood 👇`,
+    `Find this and every kid-safe event in Vegas, sorted by age, price & neighborhood 👇`,
     url,
     "",
     HASHTAGS,

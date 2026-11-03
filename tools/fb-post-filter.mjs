@@ -132,10 +132,55 @@ export function isFbPostRelevant(fields, postAt, opts = {}) {
   // 24h grace after Start let a Fri 6 PM event through on Sat afternoon.)
   if (eventIsPast(fields, postAt)) return false;
 
+  // Never promote an event whose Start PT date is before today, unless it is a
+  // multi-day event that keeps running AFTER today. (2026-11-02: a Sun-Mon
+  // festival went out Mon 4:49 PM showing "Sunday 12:00 AM", its last evening.)
+  if (startedBeforeAndEndsToday(fields, postAt)) return false;
+
   if (mode === "schedule") return true;
 
   const start = parseEventTime(fields.Start);
   const startMs = start.allDay ? Date.parse(`${start.day}T00:00:00-08:00`) : start.ms;
   if (startMs > postAt.getTime() + MAX_AHEAD_MS) return false;
   return true;
+}
+
+/** Start PT date is before `at`'s PT date and the event does not run past today. */
+export function startedBeforeAndEndsToday(fields, at) {
+  const start = parseEventTime(fields?.Start);
+  if (!start) return true;
+  const today = ptDateKey(at);
+  if (start.day >= today) return false;
+  const end = parseEventTime(fields?.End);
+  return !(end && end.day > today);
+}
+
+const fmtDay = (day) => new Date(`${day}T12:00:00Z`).toLocaleDateString("en-US", {
+  weekday: "long", month: "long", day: "numeric", timeZone: "UTC",
+});
+
+/** PT wall-clock "HH:MM" for an instant. */
+function ptClock(ms) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: LA, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(ms));
+}
+
+/**
+ * Friendly when-line for a post. Recurrence text wins. Midnight-PT or
+ * date-only starts have no real time, so they read "All day" (never
+ * "12:00 AM"). Multi-day events that already started read "Now through ...".
+ */
+export function fmtEventWhen(fields, at = new Date()) {
+  const rec = fields?.Recurrence && String(fields.Recurrence).trim();
+  if (rec) return rec;
+  const start = parseEventTime(fields?.Start);
+  if (!start) return "";
+  const end = parseEventTime(fields?.End);
+  const multi = end && end.day > start.day;
+  const today = ptDateKey(at);
+  if (multi && start.day < today) return `Now through ${fmtDay(end.day)}`;
+  const noTime = start.allDay || ptClock(start.ms) === "00:00";
+  if (multi && noTime) return `${fmtDay(start.day)} through ${fmtDay(end.day)}`;
+  if (noTime) return `${fmtDay(start.day)}, All day`;
+  const time = new Date(start.ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: LA });
+  return `${fmtDay(start.day)}, ${time}`;
 }
