@@ -1,9 +1,8 @@
 {
-  "ranAt": "2026-11-05T21:31:00.887Z",
+  "ranAt": "2026-11-06T20:58:44.406Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
-        "colv:12429",
         "series:City of Las Vegas|rainbow company youth theatre presents sense sensibility|charleston heights arts center",
         "colv:12430",
         "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
@@ -28,9 +27,34 @@
     "Clark County": {
       "ids": [
         "cc:/calendar/parks-and-recreation/110726-fall-o-ween",
-        "cc:/calendar/county-commissioners-district-f/110726-mighty-motor-mania"
+        "cc:/calendar/county-commissioners-district-f/110726-mighty-motor-mania",
+        "cc:/calendar/events/110826-foster-care-roadmap",
+        "cc:/calendar/county-commissioners-district-e/110726-dia-de-los-muertos"
       ],
-      "maxStart": "2026-11-07T13:00:00-07:00"
+      "maxStart": "2026-11-08T11:00:00-07:00"
+    },
+    "City of Henderson": {
+      "ids": [
+        "series:City of Henderson|art exhibit henderson creates|city of henderson",
+        "series:City of Henderson|henderson farmers market|fox ridge park",
+        "series:City of Henderson|henderson farmers market|cornerstone park",
+        "hen:6416:2026-11-07",
+        "hen:6512:2026-11-15",
+        "hen:6492:2026-11-16",
+        "series:City of Henderson|art exhibit nevada s cultural landscapes|city of henderson",
+        "series:City of Henderson|vegas thrill youth camp|city of henderson",
+        "hen:6308:2026-11-20",
+        "hen:6414:2026-11-20",
+        "hen:6418:2026-11-21",
+        "hen:6376:2026-12-05",
+        "hen:6426:2026-12-05",
+        "hen:6450:2026-12-05",
+        "hen:6530:2026-12-09",
+        "hen:6538:2026-12-15",
+        "hen:6434:2026-12-18",
+        "hen:6526:2026-12-19"
+      ],
+      "maxStart": "2026-12-19T10:00:00-07:00"
     }
   }
 }
