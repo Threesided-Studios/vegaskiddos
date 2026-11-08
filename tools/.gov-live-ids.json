@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-07T19:31:15.649Z",
+  "ranAt": "2026-11-08T19:50:42.001Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -26,10 +26,7 @@
     },
     "Clark County": {
       "ids": [
-        "cc:/calendar/parks-and-recreation/110726-fall-o-ween",
-        "cc:/calendar/county-commissioners-district-f/110726-mighty-motor-mania",
-        "cc:/calendar/events/110826-foster-care-roadmap",
-        "cc:/calendar/county-commissioners-district-e/110726-dia-de-los-muertos"
+        "cc:/calendar/events/110826-foster-care-roadmap"
       ],
       "maxStart": "2026-11-08T11:00:00-07:00"
     },
@@ -37,7 +34,6 @@
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
         "series:City of Henderson|henderson farmers market|cornerstone park",
-        "hen:6416:2026-11-07",
         "hen:6512:2026-11-15",
         "hen:6492:2026-11-16",
         "series:City of Henderson|art exhibit nevada s cultural landscapes|city of henderson",
