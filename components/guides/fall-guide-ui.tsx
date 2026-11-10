@@ -27,7 +27,7 @@ export function VenueCard({ venue }: { venue: GuideVenue }) {
       data-age={venue.ages.join(" ")}
       data-price={venue.price}
       data-hood={venue.hoods.join(" ")}
-      className={`rounded-blob border-2 bg-white p-5 shadow-card ${
+      className={`scroll-mt-24 rounded-blob border-2 bg-white p-5 shadow-card ${
         venue.featured ? "border-coral/30" : "border-ink/10"
       }`}
     >
