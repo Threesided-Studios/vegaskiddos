@@ -1,6 +1,9 @@
 // Editorial parent guides — static content pages at /guides/[slug].
 // Collections (lib/collections.ts) are event-filter feeds; guides are long-form.
 
+import type { Lang } from "./i18n";
+import { HOLIDAY_ES_META } from "./holiday-guide-es";
+
 export interface GuideMeta {
   slug: string;
   title: string;
@@ -24,8 +27,13 @@ export const GUIDES: GuideMeta[] = [
   },
 ];
 
-export function getGuideMeta(slug: string): GuideMeta | undefined {
-  return GUIDES.find((g) => g.slug === slug);
+export function getGuideMeta(slug: string, lang: Lang = "en"): GuideMeta | undefined {
+  const meta = GUIDES.find((g) => g.slug === slug);
+  if (!meta) return;
+  if (lang === "es" && slug === "holiday-guide-2026") {
+    return { ...meta, title: HOLIDAY_ES_META.title, description: HOLIDAY_ES_META.description };
+  }
+  return meta;
 }
 
 export function getAllGuideSlugs(): string[] {
