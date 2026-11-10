@@ -65,6 +65,8 @@ export type GuideVenue = {
   hoods: GuideHood[];
   facts: GuideFact[];
   featured?: boolean;
+  /** Optional card image, typically 1200x800 WebP under /guides/... */
+  image?: { src: string; alt: string };
 };
 
 export type GuideBoardItem = {

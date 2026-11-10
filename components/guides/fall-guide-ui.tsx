@@ -31,6 +31,17 @@ export function VenueCard({ venue }: { venue: GuideVenue }) {
         venue.featured ? "border-coral/30" : "border-ink/10"
       }`}
     >
+      {venue.image && (
+        <img
+          src={venue.image.src}
+          alt={venue.image.alt}
+          width={1200}
+          height={800}
+          loading="lazy"
+          decoding="async"
+          className="mb-4 aspect-[3/2] h-auto w-full max-w-full rounded-[1.5rem] object-cover"
+        />
+      )}
       <div className="flex items-start gap-3">
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sunny/30 text-xl"
@@ -44,11 +55,11 @@ export function VenueCard({ venue }: { venue: GuideVenue }) {
           </h4>
           {venue.blurb && <p className="mt-1 text-sm text-ink/70">{venue.blurb}</p>}
           {venue.facts.length > 0 && (
-            <dl className="mt-3 space-y-1.5 text-sm">
+            <dl className="mt-3 min-w-0 space-y-1.5 text-sm">
               {venue.facts.map((f) => (
-                <div key={f.label} className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+                <div key={f.label} className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-3 gap-y-0.5">
                   <dt className="font-700 text-ink/60">{f.label}</dt>
-                  <dd className="text-ink/80">
+                  <dd className="min-w-0 break-words text-ink/80">
                     {f.label === "Tickets" && f.value.includes("HallOVeen") ? (
                       <>
                         Date-specific at{" "}
