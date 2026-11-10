@@ -1,4 +1,5 @@
 import { Cloud, Star } from "@/components/Doodles";
+import type { GuideAge, GuideVenue } from "@/lib/fall-guide-data";
 import {
   HOLIDAY_AGE_BANDS,
   HOLIDAY_BOARD_ITEMS,
@@ -14,7 +15,37 @@ import {
   FallGuideFilterEmpty,
   FallGuideNeighborhoodMap,
 } from "./FallGuideFilterProvider";
-import { GuideLink, GuideSection, VenueCard } from "./fall-guide-ui";
+import { GuideLink, GuideSection, VenueCard, linkClass } from "./fall-guide-ui";
+
+function guideItemProps(venue: Pick<GuideVenue, "ages" | "price" | "hoods">) {
+  return {
+    "data-guide-item": true,
+    "data-age": venue.ages.join(" "),
+    "data-price": venue.price,
+    "data-hood": venue.hoods.join(" "),
+  };
+}
+
+function venueItemProps(id: string) {
+  const venue = holidayVenueById(id);
+  if (!venue) throw new Error(`Missing holiday venue ${id}`);
+  return guideItemProps(venue);
+}
+
+function VenueNameList({ age }: { age: GuideAge }) {
+  const venues = HOLIDAY_VENUES.filter((venue) => venue.ages.includes(age));
+  return (
+    <ul className="mt-2 list-disc space-y-1 pl-6 text-ink/80">
+      {venues.map((venue) => (
+        <li key={venue.id} {...guideItemProps(venue)}>
+          <a href={`#${venue.id}`} className={linkClass}>
+            {venue.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function HolidayGuideBody() {
   return (
@@ -82,21 +113,29 @@ export function HolidayGuideBody() {
               <>
                 <p className="mt-3 font-700 text-ink/80">Good fits (verify before you go):</p>
                 <ul className="mt-2 list-disc space-y-1 pl-6 text-ink/80">
-                  <li>
-                    <GuideLink href={HOLIDAY_URLS.glitteringLights}>Glittering Lights</GuideLink>{" "}
+                  <li {...venueItemProps("glittering-lights")}>
+                    <a href="#glittering-lights" className={linkClass}>
+                      Glittering Lights
+                    </a>{" "}
                     from the car seat, pajamas on
                   </li>
-                  <li>
-                    <GuideLink href={HOLIDAY_URLS.ethelM}>Ethel M cactus garden</GuideLink> (under
-                    2 free, short loop)
+                  <li {...venueItemProps("ethel-m")}>
+                    <a href="#ethel-m" className={linkClass}>
+                      Ethel M cactus garden
+                    </a>{" "}
+                    (under 2 free, short loop)
                   </li>
-                  <li>
-                    <GuideLink href={HOLIDAY_URLS.discoveryKids}>Noon Year&apos;s Eve</GuideLink> at
-                    DISCOVERY Children&apos;s Museum
+                  <li {...venueItemProps("discovery-noon")}>
+                    <a href="#discovery-noon" className={linkClass}>
+                      Noon Year&apos;s Eve
+                    </a>{" "}
+                    at DISCOVERY Children&apos;s Museum
                   </li>
-                  <li>
-                    <GuideLink href={HOLIDAY_URLS.bellagio}>Bellagio Conservatory</GuideLink> holiday
-                    display (free, indoor, leave whenever you need)
+                  <li {...venueItemProps("bellagio-conservatory")}>
+                    <a href="#bellagio-conservatory" className={linkClass}>
+                      Bellagio Conservatory
+                    </a>{" "}
+                    holiday display (free, indoor, leave whenever you need)
                   </li>
                   <li>
                     Library storytimes and pajama nights (check your branch on{" "}
@@ -112,36 +151,40 @@ export function HolidayGuideBody() {
             {band.id === "kids" && (
               <>
                 <p className="mt-3 font-700 text-ink/80">Good fits:</p>
-                <div className="mt-3 space-y-4">
-                  {HOLIDAY_VENUES.filter((v) => v.ages.includes("kids")).map((v) => (
-                    <VenueCard key={v.id} venue={v} />
-                  ))}
-                </div>
+                <VenueNameList age="kids" />
               </>
             )}
 
             {band.id === "tweens" && (
               <>
                 <p className="mt-3 font-700 text-ink/80">Good fits:</p>
-                <div className="mt-3 space-y-4">
-                  {HOLIDAY_VENUES.filter((v) => v.ages.includes("tweens")).map((v) => (
-                    <VenueCard key={v.id} venue={v} />
-                  ))}
-                  <div
-                    data-guide-item
-                    data-age="tweens"
-                    data-price="free"
-                    data-hood="west north downtown henderson"
-                    className="rounded-blob border border-ink/10 bg-white/80 p-4 text-ink/80"
-                  >
-                    Library teen hangouts and game nights over winter break (free; recurring on{" "}
-                    <GuideLink href={HOLIDAY_URLS.vkHome}>vegaskiddos.com</GuideLink>)
-                  </div>
-                </div>
+                <VenueNameList age="tweens" />
+                <p
+                  {...guideItemProps({
+                    ages: ["tweens"],
+                    price: "free",
+                    hoods: ["west", "north", "downtown", "henderson"],
+                  })}
+                  className="mt-3 text-ink/80"
+                >
+                  Library teen hangouts and game nights over winter break (free; recurring on{" "}
+                  <GuideLink href={HOLIDAY_URLS.vkHome}>vegaskiddos.com</GuideLink>)
+                </p>
               </>
             )}
           </div>
         ))}
+      </GuideSection>
+
+      <GuideSection id="the-events" title="The events" wash="white" matchRequired>
+        <p className="text-ink/80">
+          Each event is written up once. The names in the age bands jump to that card.
+        </p>
+        <div className="mt-4 space-y-4">
+          {HOLIDAY_VENUES.map((venue) => (
+            <VenueCard key={venue.id} venue={venue} />
+          ))}
+        </div>
       </GuideSection>
 
       <GuideSection title="Free vs paid" wash="teal" matchRequired>
