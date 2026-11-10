@@ -410,5 +410,9 @@
   "628 W. Craig Road, North Las Vegas, NV 89032": {
     "lat": 36.2393518,
     "lng": -115.1866552
+  },
+  "50+, Las Vegas, NV": {
+    "lat": 36.1058564,
+    "lng": -115.2243706
   }
 }

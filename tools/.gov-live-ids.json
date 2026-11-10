@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-08T19:50:42.001Z",
+  "ranAt": "2026-11-09T23:49:46.089Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -8,6 +8,7 @@
         "series:City of Las Vegas|farmers market|las vegas civic center outdoor plaza",
         "colv:12622",
         "colv:12632",
+        "colv:12640",
         "colv:12433",
         "colv:12434",
         "colv:12634",
@@ -16,6 +17,7 @@
         "colv:12453",
         "colv:12412",
         "colv:12435",
+        "colv:12638",
         "colv:12491",
         "series:City of Las Vegas|phantom of charleston heights arts center a night of sir andrew lloyd webber|charleston heights arts center",
         "series:City of Las Vegas|rainbow company youth theatre presents shrek the musical|charleston heights arts center",
@@ -23,12 +25,6 @@
         "colv:12461"
       ],
       "maxStart": "2027-05-01T19:30:00-07:00"
-    },
-    "Clark County": {
-      "ids": [
-        "cc:/calendar/events/110826-foster-care-roadmap"
-      ],
-      "maxStart": "2026-11-08T11:00:00-07:00"
     },
     "City of Henderson": {
       "ids": [
@@ -42,11 +38,14 @@
         "hen:6308:2026-11-20",
         "hen:6414:2026-11-20",
         "hen:6418:2026-11-21",
+        "series:City of Henderson|christmas story time cooking|city of henderson",
         "hen:6376:2026-12-05",
         "hen:6426:2026-12-05",
         "hen:6450:2026-12-05",
         "hen:6530:2026-12-09",
         "hen:6538:2026-12-15",
+        "hen:6558:2026-12-16",
+        "hen:6565:2026-12-16",
         "hen:6434:2026-12-18",
         "hen:6526:2026-12-19"
       ],
