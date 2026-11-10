@@ -15,11 +15,27 @@ import {
   NEIGHBORHOODS,
   filtersToSearch,
   parseFiltersFromSearch,
+  type GuideAge,
   type GuideFilters,
   type GuideHood,
 } from "@/lib/fall-guide-data";
 import { applyGuideFilters } from "@/lib/fall-guide-filter-dom";
-import { FallGuideValleyMap } from "./FallGuideValleyMap";
+import { FallGuideValleyMap, type ValleyMapLabels } from "./FallGuideValleyMap";
+
+export type GuideFilterLabels = {
+  aria: string;
+  age: string;
+  allAges: string;
+  ages: Record<GuideAge, string>;
+  price: string;
+  all: string;
+  free: string;
+  paid: string;
+  hood: string;
+  allValley: string;
+  hoods: Record<GuideHood, string>;
+  resetAll: string;
+};
 
 type FilterCtx = {
   filters: GuideFilters;
@@ -61,19 +77,19 @@ function FilterChip({
   );
 }
 
-export function FallGuideFilterBar() {
+export function FallGuideFilterBar({ copy }: { copy?: GuideFilterLabels } = {}) {
   const { filters, setFilter, resetFilters, hasActiveFilters } = useFallGuideFilters();
 
   return (
     <div
       className="sticky top-2 z-20 mt-6 space-y-4 rounded-blob border border-ink/10 bg-white/95 p-4 shadow-card backdrop-blur-sm"
-      aria-label="Guide filters"
+      aria-label={copy?.aria ?? "Guide filters"}
     >
       <div>
-        <p className="mb-2 text-xs font-800 uppercase tracking-wide text-ink/50">Age band</p>
+        <p className="mb-2 text-xs font-800 uppercase tracking-wide text-ink/50">{copy?.age ?? "Age band"}</p>
         <div className="flex flex-wrap gap-2">
           <FilterChip active={filters.age === "all"} onClick={() => setFilter("age", "all")}>
-            All ages
+            {copy?.allAges ?? "All ages"}
           </FilterChip>
           {AGE_BANDS.map((b) => (
             <FilterChip
@@ -81,30 +97,30 @@ export function FallGuideFilterBar() {
               active={filters.age === b.id}
               onClick={() => setFilter("age", b.id)}
             >
-              {b.emoji} {b.label}
+              {b.emoji} {copy?.ages?.[b.id] ?? b.label}
             </FilterChip>
           ))}
         </div>
       </div>
       <div>
-        <p className="mb-2 text-xs font-800 uppercase tracking-wide text-ink/50">Price</p>
+        <p className="mb-2 text-xs font-800 uppercase tracking-wide text-ink/50">{copy?.price ?? "Price"}</p>
         <div className="flex flex-wrap gap-2">
           <FilterChip active={filters.price === "all"} onClick={() => setFilter("price", "all")}>
-            All
+            {copy?.all ?? "All"}
           </FilterChip>
           <FilterChip active={filters.price === "free"} onClick={() => setFilter("price", "free")}>
-            🆓 Free / free entry
+            {copy?.free ?? "🆓 Free / free entry"}
           </FilterChip>
           <FilterChip active={filters.price === "paid"} onClick={() => setFilter("price", "paid")}>
-            💳 Paid
+            {copy?.paid ?? "💳 Paid"}
           </FilterChip>
         </div>
       </div>
       <div>
-        <p className="mb-2 text-xs font-800 uppercase tracking-wide text-ink/50">Neighborhood</p>
+        <p className="mb-2 text-xs font-800 uppercase tracking-wide text-ink/50">{copy?.hood ?? "Neighborhood"}</p>
         <div className="flex flex-wrap gap-2">
           <FilterChip active={filters.hood === "all"} onClick={() => setFilter("hood", "all")}>
-            All valley
+            {copy?.allValley ?? "All valley"}
           </FilterChip>
           {NEIGHBORHOODS.map((n) => (
             <FilterChip
@@ -112,7 +128,7 @@ export function FallGuideFilterBar() {
               active={filters.hood === n.id}
               onClick={() => setFilter("hood", n.id)}
             >
-              {n.emoji} {n.title.split(" / ")[0]}
+              {n.emoji} {copy?.hoods?.[n.id] ?? n.title.split(" / ")[0]}
             </FilterChip>
           ))}
         </div>
@@ -123,14 +139,20 @@ export function FallGuideFilterBar() {
           onClick={resetFilters}
           className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline"
         >
-          Reset all filters
+          {copy?.resetAll ?? "Reset all filters"}
         </button>
       )}
     </div>
   );
 }
 
-export function FallGuideFilterEmpty() {
+export function FallGuideFilterEmpty({
+  message = "Nothing in this combo — widen a filter.",
+  resetLabel = "Reset filters",
+}: {
+  message?: string;
+  resetLabel?: string;
+} = {}) {
   const { resetFilters } = useFallGuideFilters();
   return (
     <div
@@ -138,24 +160,25 @@ export function FallGuideFilterEmpty() {
       className="hidden rounded-blob border border-dashed border-ink/20 bg-white px-5 py-8 text-center text-ink/70"
       aria-live="polite"
     >
-      <p className="font-700">Nothing in this combo — widen a filter.</p>
+      <p className="font-700">{message}</p>
       <button
         type="button"
         onClick={resetFilters}
         className="mt-3 rounded-full bg-coral-btn px-4 py-2 text-sm font-800 text-white shadow-pop"
       >
-        Reset filters
+        {resetLabel}
       </button>
     </div>
   );
 }
 
-export function FallGuideNeighborhoodMap() {
+export function FallGuideNeighborhoodMap({ labels }: { labels?: ValleyMapLabels } = {}) {
   const { filters, setFilter } = useFallGuideFilters();
   return (
     <FallGuideValleyMap
       activeHood={filters.hood}
       onSelectHood={(hood: GuideHood | "all") => setFilter("hood", hood)}
+      labels={labels}
     />
   );
 }

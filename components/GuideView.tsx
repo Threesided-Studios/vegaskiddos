@@ -7,10 +7,12 @@ import { SITE, breadcrumbLd } from "@/lib/seo";
 export function GuideView({
   meta,
   lang = "en",
+  backLabel = "← All events",
   children,
 }: {
   meta: GuideMeta;
   lang?: Lang;
+  backLabel?: string;
   children: React.ReactNode;
 }) {
   const base = lang === "es" ? `${SITE}/es` : SITE;
@@ -34,7 +36,7 @@ export function GuideView({
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <JsonLd data={[articleLd, crumbs]} />
       <Link href="/" className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline">
-        ← All events
+        {backLabel}
       </Link>
 
       {meta.draftForReview && (

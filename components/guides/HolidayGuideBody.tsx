@@ -16,6 +16,8 @@ import {
   FallGuideNeighborhoodMap,
 } from "./FallGuideFilterProvider";
 import { GuideLink, GuideSection, VenueCard, linkClass } from "./fall-guide-ui";
+import { HolidayGuideBodyEs } from "./HolidayGuideBodyEs";
+import type { Lang } from "@/lib/i18n";
 
 function guideItemProps(venue: Pick<GuideVenue, "ages" | "price" | "hoods">) {
   return {
@@ -47,7 +49,8 @@ function VenueNameList({ age }: { age: GuideAge }) {
   );
 }
 
-export function HolidayGuideBody() {
+export function HolidayGuideBody({ lang = "en" }: { lang?: Lang }) {
+  if (lang === "es") return <HolidayGuideBodyEs />;
   return (
     <>
       <figure className="overflow-hidden rounded-blob shadow-card">

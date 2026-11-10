@@ -46,23 +46,36 @@ const ZONES: {
   },
 ];
 
+export type ValleyMapLabels = {
+  hint: string;
+  mapLabel: string;
+  zones: Record<GuideHood, string>;
+  /** Spoken before the zone name, for example "Vecindario ". */
+  zoneAriaPrefix: string;
+  /** Spoken after the zone name, for example " neighborhood". */
+  zoneAriaSuffix: string;
+  showAll: string;
+};
+
 export function FallGuideValleyMap({
   activeHood,
   onSelectHood,
+  labels,
 }: {
   activeHood: GuideHood | "all";
   onSelectHood: (hood: GuideHood | "all") => void;
+  labels?: ValleyMapLabels;
 }) {
   return (
     <div className="rounded-blob border border-ink/10 bg-white/80 p-4 shadow-card">
       <p className="mb-3 text-center text-sm font-700 text-ink/70">
-        Tap a zone to filter by neighborhood
+        {labels?.hint ?? "Tap a zone to filter by neighborhood"}
       </p>
       <svg
         viewBox="0 0 320 300"
         className="mx-auto w-full max-w-sm"
         role="img"
-        aria-label="Las Vegas valley neighborhood map"
+        aria-label={labels?.mapLabel ?? "Las Vegas valley neighborhood map"}
       >
         <defs>
           <linearGradient id="valley-bg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -73,6 +86,7 @@ export function FallGuideValleyMap({
         <rect width="320" height="300" rx="24" fill="url(#valley-bg)" />
         {ZONES.map((z) => {
           const active = activeHood === z.id;
+          const zoneLabel = labels?.zones[z.id] ?? z.label;
           return (
             <g key={z.id}>
               <path
@@ -87,7 +101,11 @@ export function FallGuideValleyMap({
                 role="button"
                 tabIndex={0}
                 aria-pressed={active}
-                aria-label={`${z.label} neighborhood`}
+                aria-label={
+                  labels
+                    ? `${labels.zoneAriaPrefix}${zoneLabel}${labels.zoneAriaSuffix}`
+                    : `${z.label} neighborhood`
+                }
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
@@ -102,7 +120,7 @@ export function FallGuideValleyMap({
                 className="pointer-events-none select-none fill-ink text-[11px] font-bold"
                 style={{ fontFamily: "var(--font-nunito), system-ui, sans-serif" }}
               >
-                {z.label}
+                {zoneLabel}
               </text>
             </g>
           );
@@ -114,7 +132,7 @@ export function FallGuideValleyMap({
           onClick={() => onSelectHood("all")}
           className="mt-3 w-full text-center text-sm font-700 text-teal-btn hover:underline"
         >
-          Show all neighborhoods
+          {labels?.showAll ?? "Show all neighborhoods"}
         </button>
       )}
     </div>
