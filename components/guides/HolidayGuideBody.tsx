@@ -19,6 +19,19 @@ import { GuideLink, GuideSection, VenueCard } from "./fall-guide-ui";
 export function HolidayGuideBody() {
   return (
     <>
+      <figure className="overflow-hidden rounded-blob shadow-card">
+        <img
+          src="/guides/holiday-2026/holiday-guide-2026-hero.webp"
+          alt="Illustrated Las Vegas valley at dusk with a glowing holiday tree, cactus wrapped in lights, a small train, an ice rink, and a car heading into a tunnel of lights"
+          width={1920}
+          height={1080}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="aspect-video h-auto w-full max-w-full object-cover"
+        />
+      </figure>
+
       <div className="relative overflow-hidden rounded-blob bg-gradient-to-br from-teal/20 via-sunny/20 to-coral/20 p-6 shadow-card">
         <Star className="pointer-events-none absolute -right-2 -top-2 h-16 w-16 rotate-12 text-sunny/30" />
         <Cloud className="pointer-events-none absolute bottom-2 left-4 h-12 w-16 text-teal/20" />
@@ -29,8 +42,8 @@ export function HolidayGuideBody() {
         <p className="relative mt-3 text-ink/80">
           A plain parent guide to Thanksgiving through New Year&apos;s around the valley, sorted by
           age, free vs paid, and neighborhood. Dates below are checked against each venue or a
-          named listing, and we say which. Several 2026 schedules are still coming out, so check
-          back.
+          named listing, and we say which. A few 2026 details are still landing, including the
+          museum&apos;s official Noon Year&apos;s Eve listing, so re-check the week you go.
         </p>
       </div>
 
@@ -80,6 +93,10 @@ export function HolidayGuideBody() {
                   <li>
                     <GuideLink href={HOLIDAY_URLS.discoveryKids}>Noon Year&apos;s Eve</GuideLink> at
                     DISCOVERY Children&apos;s Museum
+                  </li>
+                  <li>
+                    <GuideLink href={HOLIDAY_URLS.bellagio}>Bellagio Conservatory</GuideLink> holiday
+                    display (free, indoor, leave whenever you need)
                   </li>
                   <li>
                     Library storytimes and pajama nights (check your branch on{" "}
@@ -141,11 +158,11 @@ export function HolidayGuideBody() {
               </li>
               <li>
                 <GuideLink href={HOLIDAY_URLS.downtownSummerlin}>Downtown Summerlin</GuideLink>{" "}
-                weekend parade with snowfall (2026 dates not posted yet; check before you go)
+                weekend parade with snowfall, Fri–Sat 6 p.m., Nov 20–Dec 19 (no parade Nov 27)
               </li>
               <li>
-                Bellagio Conservatory holiday display on the Strip: free, open around the clock;
-                last year it ran mid-November to early January
+                <GuideLink href={HOLIDAY_URLS.bellagio}>Bellagio Conservatory</GuideLink> holiday
+                display on the Strip: free, open around the clock, Nov 14, 2026–Jan 2, 2027
               </li>
               <li>
                 Library programs, kids cafe meals, and teen hangouts:{" "}
@@ -170,7 +187,7 @@ export function HolidayGuideBody() {
               </li>
               <li>
                 <GuideLink href={HOLIDAY_URLS.magicalForest}>Magical Forest</GuideLink> (3 and
-                under free; 2026 prices not posted yet, check before you go)
+                under free; date-specific tickets on sale, confirm the price when you buy)
               </li>
               <li>
                 <GuideLink href={HOLIDAY_URLS.springsPreserve}>Springs Preserve</GuideLink> (Nevada
@@ -178,7 +195,8 @@ export function HolidayGuideBody() {
               </li>
               <li>
                 Nevada Ballet Theatre&apos;s <span className="italic">The Nutcracker</span> at The
-                Smith Center (resale sites list Dec 16–27; buy from the box office)
+                Smith Center, Dec 14–27 (not every day). Buy from the company or the box office.
+                No children under 3
               </li>
               <li>Skating, Santa photos, and train rides at Downtown Summerlin</li>
             </ul>
@@ -333,8 +351,8 @@ export function HolidayGuideBody() {
       <GuideSection title="What we are not listing yet" wash="white">
         <p className="text-ink/80">
           Pop-up Santa photo ops, unofficial light displays, and anything without a public date or
-          address. When Downtown Summerlin and the museum post their 2026 schedules and Magical
-          Forest posts ticket prices, we update this page.
+          address. When DISCOVERY posts its 2026 Noon Year&apos;s Eve listing, and when Opportunity
+          Village posts a clear base ticket price, we update those lines.
         </p>
       </GuideSection>
 

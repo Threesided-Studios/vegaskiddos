@@ -9,21 +9,31 @@ import {
   type GuideVenue,
 } from "./fall-guide-data";
 
-/** External + VK URLs (checked 2026-10-27). */
+/** External + VK URLs (rechecked 2026-11-09). */
 export const HOLIDAY_URLS = {
   glitteringLights: "https://glitteringlightslasvegas.com/",
+  glitteringLightsFactSheet: "https://glitteringlightslasvegas.com/fact-sheet/",
   magicalForest: "https://www.opportunityvillage.org/ovevents/magical-forest",
   ethelM: "https://www.ethelm.com/en-us/locations/henderson-flagship/cactus-garden/holiday-cactus-garden",
   winterfest: "https://www.cityofhenderson.com/residents/special-interest/winterfest/",
-  downtownSummerlin: "https://summerlin.com/downtown-summerlin-kicks-off-2025-holiday-season/",
+  downtownSummerlin: "https://summerlin.com/celebrate-the-holidays-at-downtown-summerlin/",
   springsPreserve: "https://www.springspreserve.org/events/",
+  springsPreserveTickets: "https://www.springspreserve.org/visitor-information/tickets.html",
+  springsPreserveVisit: "https://www.springspreserve.org/visitor-information/plan-your-visit.html",
   turkeyTrot: "https://bbscendurance.com/lasvegasturkeytrot/",
   discoveryKids: GUIDE_URLS.discoveryKids,
+  discoveryHours: "https://discoverykidslv.org/hours-directions/",
+  discoveryCalendar: "https://discoverykidslv.org/calendar/",
+  elfWeekend: "https://discoverykidslv.org/event-calendar/elf-weekend-2026/",
+  bellagio: "https://bellagio.mgmresorts.com/en/entertainment/conservatory-botanical-garden.html",
+  nutcracker: "https://nevadaballet.org/performances/the-nutcracker/",
   vkHome: GUIDE_URLS.vkHome,
   vkStorytime: GUIDE_URLS.vkStorytime,
   vkHolidaySearch: "https://vegaskiddos.com/?q=holiday",
   vkSantaSearch: "https://vegaskiddos.com/?q=Santa",
 } as const;
+
+const HOLIDAY_IMG = "/guides/holiday-2026";
 
 export const HOLIDAY_VENUES: GuideVenue[] = [
   {
@@ -36,11 +46,15 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     price: "paid",
     hoods: ["north"],
     featured: true,
+    image: {
+      src: `${HOLIDAY_IMG}/glittering-lights.webp`,
+      alt: "Illustrated family car driving through a tunnel of colorful holiday lights near a desert racetrack at dusk",
+    },
     facts: [
       { label: "Dates", value: "Nov 6, 2026–Jan 3, 2027, nightly, holidays included (official fact sheet)" },
-      { label: "Hours", value: "Opens 5 p.m. nightly; closing time not posted, check before you go" },
-      { label: "Price", value: "Per car: $39 cash at the gate, $44 by card; Fast Pass $64; Santa Tram $25 a person on select nights" },
-      { label: "Where", value: "Las Vegas Motor Speedway, far north end of the valley" },
+      { label: "Hours", value: "Sun–Thu 5–9 p.m.; Fri, Sat and holidays 5–10 p.m. (official fact sheet)" },
+      { label: "Price", value: "Per car: $39 cash at the gate, $44 by card; Fast Pass $64; Santa Tram $25 a person on select nights. Season Pass $149 covers two vehicles and includes Fast Pass" },
+      { label: "Where", value: "Las Vegas Motor Speedway, 7000 N. Las Vegas Blvd. Use I-15 exit 54 (Speedway Blvd); GPS can send you to a closed gate" },
     ],
   },
   {
@@ -53,12 +67,16 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     price: "paid",
     hoods: ["central"],
     featured: true,
+    image: {
+      src: `${HOLIDAY_IMG}/magical-forest.webp`,
+      alt: "Illustrated night path through a glowing holiday forest with a small passenger train, a carousel, and a snowy slide",
+    },
     facts: [
       { label: "Dates", value: "Nov 27–29, Dec 3–24 and Dec 26–Jan 1 (Opportunity Village)" },
       { label: "Hours", value: "5:30–9 p.m. Sun–Thu; 5:30–9:30 p.m. Fri–Sat" },
-      { label: "Price", value: "Children 3 and under free. 2026 ticket prices not posted yet; check before you go" },
-      { label: "Tickets", value: "Sales open this fall; box office closes 30 minutes before the park" },
-      { label: "Address", value: "6300 W Oakey Blvd" },
+      { label: "Price", value: "Children 3 and under free. Date-specific tickets are on sale; confirm the current price on the Opportunity Village page when you buy" },
+      { label: "Tickets", value: "Buy ahead so your night is not sold out. Box office closes 30 minutes before the park. Free parking in the College of Southern Nevada lot" },
+      { label: "Address", value: "6300 W Oakey Blvd, Las Vegas, NV 89146" },
     ],
   },
   {
@@ -71,10 +89,15 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     price: "paid",
     hoods: ["henderson"],
     featured: true,
+    image: {
+      src: `${HOLIDAY_IMG}/ethel-m.webp`,
+      alt: "Illustrated family walking a short desert path among cacti wrapped in colorful holiday lights",
+    },
     facts: [
       { label: "Dates", value: "Nov 5, 2026–Jan 3, 2027, nightly; no reservations" },
       { label: "Hours", value: "5–10 p.m.; 5–8 p.m. Dec 24, Dec 31 and Jan 1; closed Dec 25" },
       { label: "Price", value: "$3 per person; under 2 and 65+ free" },
+      { label: "Santa", value: "On site through Dec 23 (not after that date)" },
       { label: "Parking", value: "Ethel M lots or the Smith's lot across the street; nearby business-park lots tow" },
       { label: "Address", value: "2 Cactus Garden Drive, Henderson" },
     ],
@@ -88,10 +111,15 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     ages: ["toddler", "kids", "tweens"],
     price: "free",
     hoods: ["henderson"],
+    image: {
+      src: `${HOLIDAY_IMG}/winterfest.webp`,
+      alt: "Illustrated city plaza with a glowing holiday tree, a light parade, and small colorful drones in the evening sky",
+    },
     facts: [
-      { label: "Dates", value: "Dec 3–4, 2026 (City of Henderson)" },
-      { label: "Last year", value: "Night one: tree lighting and drone show, 5–7:30 p.m. Night two: electric light parade, 6:30–8:30 p.m." },
-      { label: "Price", value: "Free" },
+      { label: "Dates", value: "Dec 3–4, 2026 (City of Henderson, via FOX5 Nov 6, 2026)" },
+      { label: "Hours", value: "Thu Dec 3: tree lighting and drone show, 5–7:30 p.m. Fri Dec 4: Electric Light Parade, 6:30–8:30 p.m." },
+      { label: "Price", value: "Free. No shuttle this year; parking is limited, so arrive early" },
+      { label: "Where", value: "Water Street Plaza, 240 S. Water St., Henderson" },
     ],
   },
   {
@@ -103,11 +131,15 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     ages: ["toddler", "kids", "tweens"],
     price: "free",
     hoods: ["west"],
+    image: {
+      src: `${HOLIDAY_IMG}/downtown-summerlin.webp`,
+      alt: "Illustrated outdoor ice rink, a small holiday train, and gentle snowfall in a community plaza",
+    },
     facts: [
-      { label: "2026", value: "Schedule not posted yet; check before you go" },
-      { label: "Last season", value: "Parade Fri–Sat 6 p.m., Nov 21–Dec 20, free" },
-      { label: "Extras", value: "Rock Rink skate rentals from $18; Santa photo packages from $39.99; train rides $5" },
-      { label: "Tip", value: "Last year's Santa Chalet had a sensory-friendly morning; watch for it again" },
+      { label: "Parade", value: "Fri–Sat 6 p.m., Nov 20–Dec 19, 2026; no parade on Nov 27. Free (official 2026 announcement)" },
+      { label: "Rock Rink", value: "Nov 13, 2026–Jan 18, 2027. Skate rentals $22, with special pricing on select dates" },
+      { label: "Santa and train", value: "Santa Chalet daily Nov 13–Dec 24, photo packages from $39.99. Jupiter Express train $7 a person, beginning Nov 13" },
+      { label: "Tip", value: "Sensory-friendly Santa photos: Sat Dec 5, 10 a.m.–noon. Hanukkah with Jewish Nevada: Sun Dec 6, 4–6 p.m." },
     ],
   },
   {
@@ -119,11 +151,16 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     ages: ["toddler", "kids"],
     price: "paid",
     hoods: ["central"],
+    image: {
+      src: `${HOLIDAY_IMG}/springs-preserve.webp`,
+      alt: "Illustrated daytime desert garden with a toddler gathering under a ramada, a playground, and a butterfly enclosure",
+    },
     facts: [
-      { label: "Toddler Time", value: "Ages 5 and under, Mon, Thu and Fri, 11 a.m.–noon" },
-      { label: "Butterfly Habitat", value: "Open through Nov 23" },
-      { label: "Price", value: "Nevada residents $9.95 adults, $4.95 ages 3–17, 2 and under free" },
-      { label: "Closed", value: "Thanksgiving Day and Christmas Day" },
+      { label: "Hours", value: "Thu–Mon 9 a.m.–4 p.m.; last entry 3 p.m. Closed Tue and Wed, plus Thanksgiving Day and Christmas Day" },
+      { label: "Toddler Time", value: "Ages 5 and under, Mon, Thu and Fri, 11 a.m.–noon, included with admission" },
+      { label: "Butterfly Habitat", value: "Seasonal; open through Nov 23, 2026" },
+      { label: "Price", value: "Nevada residents $9.95 adults, $4.95 ages 3–17, 2 and under free. Cashless venue" },
+      { label: "Address", value: "333 S. Valley View Blvd, Las Vegas, NV 89107" },
     ],
   },
   {
@@ -135,9 +172,13 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     ages: ["kids", "tweens"],
     price: "paid",
     hoods: ["henderson"],
+    image: {
+      src: `${HOLIDAY_IMG}/turkey-trot.webp`,
+      alt: "Illustrated Thanksgiving morning walk on a desert railroad trail toward a historic tunnel, with a lake in the distance",
+    },
     facts: [
       { label: "When", value: "Thu, Nov 26, 2026; 5K and 1 mile start 8:15 a.m." },
-      { label: "Price", value: "1-mile stroll $50, 5K $65 at the current tier (confirm on the race site)" },
+      { label: "Price", value: "1-mile stroll $50, 5K $65 at the current late-registration tier through race day (confirm on the race site)" },
       { label: "Where", value: "Historic Railroad Trail lot, Lakeshore Rd, Boulder City" },
     ],
   },
@@ -152,9 +193,51 @@ export const HOLIDAY_VENUES: GuideVenue[] = [
     hoods: ["downtown"],
     featured: true,
     facts: [
-      { label: "When", value: "Held Dec 31 last year, countdown to a noon balloon drop; 2026 not posted yet, check before you go" },
+      { label: "When", value: "Held Dec 31 last year, with a noon balloon drop. 2026 is not posted on the museum site yet; check the calendar before you go" },
+      { label: "Also this season", value: "Elf Weekend is official: Nov 27–29, 10 a.m.–5 p.m." },
       { label: "Hours", value: "Tue–Sat 10 a.m.–5 p.m., Sun noon–5 p.m.; also open Mondays over winter break" },
       { label: "Closed", value: "Thanksgiving, Christmas Eve, Christmas, New Year's Day" },
+      { label: "Address", value: "360 Promenade Place, Las Vegas, NV 89106" },
+    ],
+  },
+  {
+    id: "bellagio-conservatory",
+    name: "Bellagio Conservatory holiday display",
+    url: HOLIDAY_URLS.bellagio,
+    emoji: "🌸",
+    blurb: "Free indoor garden on the Strip, open around the clock. Easy to duck into between other plans; strollers are fine, and you can leave in a minute.",
+    ages: ["toddler", "kids", "tweens"],
+    price: "free",
+    hoods: ["downtown"],
+    featured: true,
+    image: {
+      src: `${HOLIDAY_IMG}/bellagio-conservatory.webp`,
+      alt: "Illustrated glass-roofed conservatory with a glowing holiday tree and oversized flowers",
+    },
+    facts: [
+      { label: "Dates", value: "Nov 14, 2026–Jan 2, 2027 (official Bellagio calendar). Closed Nov 8–13 for installation" },
+      { label: "Hours", value: "Free, open around the clock" },
+      { label: "Where", value: "Bellagio Conservatory, next to the hotel lobby on the Strip. This is on the Strip, not downtown" },
+    ],
+  },
+  {
+    id: "nutcracker",
+    name: "Nevada Ballet Theatre's The Nutcracker",
+    url: HOLIDAY_URLS.nutcracker,
+    emoji: "🩰",
+    blurb: "The valley's long-running Nutcracker at The Smith Center. Buy from the company or the box office, not a resale site.",
+    ages: ["kids", "tweens"],
+    price: "paid",
+    hoods: ["downtown"],
+    featured: true,
+    image: {
+      src: `${HOLIDAY_IMG}/nutcracker.webp`,
+      alt: "Illustrated ballet on a snowy stage with a young dancer seen from behind and a toy nutcracker soldier",
+    },
+    facts: [
+      { label: "Dates", value: "Dec 14–27, 2026, at Reynolds Hall, The Smith Center. Not every day; see the official calendar for showtimes" },
+      { label: "Age", value: "No children under 3 are admitted" },
+      { label: "Tickets", value: "Buy from Nevada Ballet Theatre or The Smith Center box office" },
     ],
   },
 ];
@@ -217,10 +300,11 @@ export const HOLIDAY_NEIGHBORHOODS: GuideNeighborhood[] = [
     id: "downtown",
     title: "Downtown / Arts District",
     emoji: "🎭",
-    venueIds: ["discovery-noon"],
+    venueIds: ["discovery-noon", "nutcracker"],
     extraBullets: [
       { label: "Sunrise Library Kids Cafe", url: GUIDE_URLS.sunriseLibrary },
       { label: "Clark County Library Friday games", url: GUIDE_URLS.fridayGameDay },
+      { label: "Bellagio Conservatory holiday display (on the Strip)", url: HOLIDAY_URLS.bellagio },
     ],
   },
 ];
