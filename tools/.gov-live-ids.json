@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-09T23:49:46.089Z",
+  "ranAt": "2026-11-10T21:22:28.142Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -17,6 +17,7 @@
         "colv:12453",
         "colv:12412",
         "colv:12435",
+        "colv:12641",
         "colv:12638",
         "colv:12491",
         "series:City of Las Vegas|phantom of charleston heights arts center a night of sir andrew lloyd webber|charleston heights arts center",
@@ -25,31 +26,6 @@
         "colv:12461"
       ],
       "maxStart": "2027-05-01T19:30:00-07:00"
-    },
-    "City of Henderson": {
-      "ids": [
-        "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "series:City of Henderson|henderson farmers market|cornerstone park",
-        "hen:6512:2026-11-15",
-        "hen:6492:2026-11-16",
-        "series:City of Henderson|art exhibit nevada s cultural landscapes|city of henderson",
-        "series:City of Henderson|vegas thrill youth camp|city of henderson",
-        "series:City of Henderson|henderson farmers market|fox ridge park",
-        "hen:6308:2026-11-20",
-        "hen:6414:2026-11-20",
-        "hen:6418:2026-11-21",
-        "series:City of Henderson|christmas story time cooking|city of henderson",
-        "hen:6376:2026-12-05",
-        "hen:6426:2026-12-05",
-        "hen:6450:2026-12-05",
-        "hen:6530:2026-12-09",
-        "hen:6538:2026-12-15",
-        "hen:6558:2026-12-16",
-        "hen:6565:2026-12-16",
-        "hen:6434:2026-12-18",
-        "hen:6526:2026-12-19"
-      ],
-      "maxStart": "2026-12-19T10:00:00-07:00"
     }
   }
 }

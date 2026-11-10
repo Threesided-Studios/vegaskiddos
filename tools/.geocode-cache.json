@@ -414,5 +414,41 @@
   "50+, Las Vegas, NV": {
     "lat": 36.1058564,
     "lng": -115.2243706
+  },
+  "2255 Village Walk Dr Henderson, 89052": {
+    "lat": 36.0212639,
+    "lng": -115.0870992
+  },
+  "2240 Village Walk Drive, Henderson, 89052": {
+    "lat": 36.0215707,
+    "lng": -115.0869697
+  },
+  "2 Cactus Garden Drive, Henderson, 89014": {
+    "lat": 36.0739377,
+    "lng": -115.0721481
+  },
+  "7000 Las Vegas Blvd N,, Las Vegas, 89115": {
+    "lat": 36.1737378,
+    "lng": -115.1379642
+  },
+  "6605 S Las Vegas Blvd,, Las Vegas, 89119": {
+    "lat": 36.1436686,
+    "lng": -115.1573003
+  },
+  "7901 W. Washington Ave., Las Vegas, 89128": {
+    "lat": 36.1801036,
+    "lng": -115.2663875
+  },
+  "240 S. Water St., Henderson, 89015": {
+    "lat": 36.0297535,
+    "lng": -114.9825517
+  },
+  "1825 Festival Plaza Dr, Las Vegas, 89135": {
+    "lat": 36.1515224,
+    "lng": -115.3338103
+  },
+  "1300 W Sunset Rd, Henderson, 89014": {
+    "lat": 36.0673523,
+    "lng": -115.0426491
   }
 }
