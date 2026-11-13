@@ -62,6 +62,23 @@ function classify(tempF: number, code: number, windMph: number): Weather {
 const HOT_MOODS: Mood[] = ["very_hot", "hot"];
 const INDOOR_LINK_MOODS: Mood[] = ["very_hot", "hot", "rainy", "storm", "snow"];
 
+// Dark text on a frosted-white pill is the most legible across every mood
+// (bright sun, dark storm, snow). The ring keeps the edge crisp on the
+// colorful hero gradient.
+// bg-white/90 (no backdrop-blur): the pill sits above the WebGL hero canvas,
+// where backdrop-filter is an expensive per-frame paint. An opaque-enough
+// fill reads the same without the compositing cost.
+const PILL_BASE =
+  "inline-flex max-w-full items-center gap-2 rounded-full bg-white/90 px-3.5 py-2 text-base font-800 text-ink shadow-pop ring-1 ring-ink/10 sm:px-4 sm:py-2.5 sm:text-lg";
+
+// Below `sm` the pill is in normal flow, right-aligned on its own row, so the
+// headline starts underneath it instead of running through the corner. The
+// negative margin tucks that row into the hero padding — the same inset the
+// old `right-5 top-5` absolute spot used. From `sm` up the row leaves the flow
+// and pins to that corner again, so tablet and desktop layout stay put.
+const PILL_CORNER =
+  "z-20 mb-3 flex justify-end -mr-3 -mt-3 sm:absolute sm:right-5 sm:top-5 sm:m-0 sm:block";
+
 interface OpenMeteoCurrent {
   temperature_2m?: number;
   weather_code?: number;
@@ -117,13 +134,23 @@ export function WeatherPill() {
 
   // SSR + initial paint: render the sun doodle in the same slot it'll occupy
   // once weather loads, so the only thing that changes on hydration is the
-  // glyph (no jump in size/position).
+  // glyph (no jump in size/position). Below `sm` the pill sits in normal flow
+  // above the headline; reserve that row now so the title doesn't jump when
+  // the forecast arrives.
   if (!w) {
     return (
-      <Sun
-        className="pointer-events-none absolute right-6 top-20 z-10 h-24 w-24 animate-spin-slow opacity-45 sm:h-28 sm:w-28"
-        color="#FFFFFF"
-      />
+      <>
+        <div aria-hidden className="invisible z-20 mb-3 flex justify-end -mr-3 -mt-3 sm:hidden">
+          <div className={PILL_BASE}>
+            <span className="text-base leading-none">😎</span>
+            <span className="leading-none">Nice · 60°F</span>
+          </div>
+        </div>
+        <Sun
+          className="pointer-events-none absolute right-6 top-20 z-10 h-24 w-24 animate-spin-slow opacity-45 sm:h-28 sm:w-28"
+          color="#FFFFFF"
+        />
+      </>
     );
   }
 
@@ -140,15 +167,6 @@ export function WeatherPill() {
     </>
   );
 
-  // Dark text on a frosted-white pill is the most legible across every mood
-  // (bright sun, dark storm, snow). The ring keeps the edge crisp on the
-  // colorful hero gradient.
-  // bg-white/90 (no backdrop-blur): the pill sits above the WebGL hero canvas,
-  // where backdrop-filter is an expensive per-frame paint. An opaque-enough
-  // fill reads the same without the compositing cost.
-  const pillBase =
-    "inline-flex items-center gap-2 rounded-full bg-white/90 px-3.5 py-2 text-base font-800 text-ink shadow-pop ring-1 ring-ink/10 sm:px-4 sm:py-2.5 sm:text-lg";
-
   return (
     <>
       {/* Mood-specific animated backdrop faded into the right side of the
@@ -157,22 +175,21 @@ export function WeatherPill() {
 
       {/* Foreground pill nestled in the top-right corner. Linked to
           /beat-the-heat when it's a day families would want to pivot indoors. */}
-      {showIndoorHint ? (
-        <Link
-          href="/beat-the-heat"
-          className={`hover-pop absolute right-5 top-5 z-20 ${pillBase}`}
-          aria-label={`${label} ${w.tempF}°F — see indoor events`}
-        >
-          {pillBody}
-        </Link>
-      ) : (
-        <div
-          className={`absolute right-5 top-5 z-20 ${pillBase}`}
-          aria-label={`${label} ${w.tempF}°F`}
-        >
-          {pillBody}
-        </div>
-      )}
+      <div className={PILL_CORNER}>
+        {showIndoorHint ? (
+          <Link
+            href="/beat-the-heat"
+            className={`hover-pop ${PILL_BASE}`}
+            aria-label={`${label} ${w.tempF}°F — see indoor events`}
+          >
+            {pillBody}
+          </Link>
+        ) : (
+          <div className={PILL_BASE} aria-label={`${label} ${w.tempF}°F`}>
+            {pillBody}
+          </div>
+        )}
+      </div>
 
       {/* Larger spinning decorative doodle, tucked under the pill. Changes
           glyph by mood so the hero still has a hand-drawn flourish. */}
