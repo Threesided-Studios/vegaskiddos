@@ -41,7 +41,7 @@ so you can develop with zero configuration.
    | Start | Date (incl. time) | required |
    | End | Date (incl. time) | |
    | AgeTiers | Multiple select | `baby`, `toddler`, `kids`, `tweens` |
-   | PriceTier | Single select | `free`, `under10`, `mid`, `premium` |
+   | PriceTier | Single select | `free`, `under10`, `mid`, `premium`. Leave blank when unknown; the site must not treat a blank as free. |
    | PriceText | Single line text | e.g. "$8 / child" |
    | Url | URL | RSVP / source link |
    | Image | URL | optional |

@@ -68,24 +68,36 @@ export function neighborhoodFromZip(zip?: string | null): NeighborhoodId | null 
 
 const FREE_RE = /\bfree\b|no cost|complimentary|\$0\b/i;
 
+function pricesIn(text: string): number[] {
+  return (text.match(/\$\s*(\d+(?:\.\d{1,2})?)/g) || [])
+    .map((s) => parseFloat(s.replace(/[^\d.]/g, "")))
+    .filter((n) => !isNaN(n));
+}
+
+function tierFromAmount(max: number): PriceTierId {
+  if (max === 0) return "free";
+  if (max <= 10) return "under10";
+  if (max <= 25) return "mid";
+  return "premium";
+}
+
 export function classifyPrice(
   cost?: string | null,
   text?: string
 ): PriceTierId | null {
   const c = (cost || "").trim();
   const blob = `${c} ${text || ""}`;
+  // A paid admission, ticket, or package price wins even if the text also
+  // says "free" for a subset (for example kids under 2, or a free preview).
+  const paidCue = /admission|ticket|per person|photo package|packages?:/i.test(blob);
+  const nums = pricesIn(blob);
+  const paidNums = nums.filter((n) => n > 0);
+  if (paidCue && paidNums.length) return tierFromAmount(Math.max(...paidNums));
   if (!c && FREE_RE.test(text || "")) return "free";
-  if (!c) return null; // unknown — let the reviewer decide
-  if (FREE_RE.test(c)) return "free";
-  const nums = (c.match(/\$?\s*(\d+(?:\.\d{1,2})?)/g) || [])
-    .map((s) => parseFloat(s.replace(/[^\d.]/g, "")))
-    .filter((n) => !isNaN(n));
+  if (!c) return null; // unknown, let the reviewer decide
+  if (FREE_RE.test(c) && !paidNums.length) return "free";
   if (!nums.length) return FREE_RE.test(blob) ? "free" : null;
-  const max = Math.max(...nums);
-  if (max === 0) return "free";
-  if (max <= 10) return "under10";
-  if (max <= 25) return "mid";
-  return "premium";
+  return tierFromAmount(Math.max(...nums));
 }
 
 // Venues that charge admission — used when the feed gives no explicit price so

@@ -1,7 +1,7 @@
 import { cache } from "react";
 import type { KidEvent } from "./types";
 import { MOCK_EVENTS } from "./mock-events";
-import { NEIGHBORHOODS, type AgeTierId, type PriceTierId, type NeighborhoodId } from "./constants";
+import { NEIGHBORHOODS, parsePriceTier, type AgeTierId, type NeighborhoodId } from "./constants";
 import { nextOccurrenceISO, isListedEvent } from "./recurrence";
 import type { Lang } from "./i18n";
 import { artTypeFor, eventArtSrc } from "./eventArt";
@@ -59,7 +59,7 @@ function mapRecord(rec: AirtableRecord): KidEvent | null {
     ageTiers: (Array.isArray(f.AgeTiers) ? f.AgeTiers : [])
       .map(String)
       .filter(Boolean) as AgeTierId[],
-    priceTier: (f.PriceTier as PriceTierId) || "free",
+    priceTier: parsePriceTier(f.PriceTier),
     priceText: f.PriceText ? String(f.PriceText) : undefined,
     url: safeHttpUrl(f.Url ? String(f.Url) : undefined),
     image: `${IMG_CDN}${eventArtSrc(rec.id, art.id)}`,

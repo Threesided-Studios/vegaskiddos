@@ -27,8 +27,10 @@ export function CollectionView({ meta, events, lang = "en" }: { meta: Collection
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <JsonLd data={[ld, crumbs]} />
-      <Link href="/" className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline">← All events</Link>
-      <header className="mt-3">
+      {meta.slug !== "free" && (
+        <Link href="/" className="inline-flex min-h-[44px] items-center text-sm font-700 text-teal-btn hover:underline">← All events</Link>
+      )}
+      <header className={meta.slug === "free" ? "" : "mt-3"}>
         <h1 className="font-display text-3xl font-700 sm:text-4xl">
           {meta.emoji} {meta.heading}
         </h1>
@@ -38,12 +40,12 @@ export function CollectionView({ meta, events, lang = "en" }: { meta: Collection
       {events.length === 0 ? (
         <div className="mt-6 rounded-blob border border-dashed border-ink/20 bg-white py-16 text-center text-ink/70">
           <p className="text-2xl">🗓️</p>
-          <p className="mt-2 font-700">Nothing here right now — check back soon!</p>
+          <p className="mt-2 font-700">Nothing here right now. Check back soon!</p>
         </div>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {events.map((e, i) => (
-            <EventCard key={e.id} event={e} index={i} lang={lang} priority={i === 0} />
+            <EventCard key={e.id} event={e} index={i} lang={lang} priority={i === 0} showRegistration={meta.slug === "free"} />
           ))}
         </div>
       )}
