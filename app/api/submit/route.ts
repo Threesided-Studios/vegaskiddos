@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { allowRequest } from "@/lib/rateLimit";
 import { adminUrl, escHtml, notifyAdmin } from "@/lib/notifyAdmin";
 import { safeHttpUrl } from "@/lib/httpUrl";
+import { parsePriceTier } from "@/lib/constants";
 
 // Receives a community event submission and writes it to Airtable as an
 // unapproved record (Approved=false) for admin review. If Airtable isn't
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
   const base = process.env.AIRTABLE_BASE_ID;
   const table = process.env.AIRTABLE_TABLE_NAME || "Events";
 
+  const submittedPrice = parsePriceTier(body.priceTier);
   const fields = {
     Title: String(body.title),
     Description: String(body.description || ""),
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
     Neighborhood: String(body.neighborhood || ""),
     Start: String(body.start),
     AgeTiers: Array.isArray(body.ageTiers) ? body.ageTiers.map(String) : [],
-    PriceTier: String(body.priceTier || "free"),
+    ...(submittedPrice === "unknown" ? {} : { PriceTier: submittedPrice }),
     Url: String(body.url || ""),
     Source: "Community",
     SubmitterEmail: String(body.submitterEmail || ""),
@@ -106,7 +108,7 @@ export async function POST(req: Request) {
             <tr><td style="padding:6px 0;color:#666">Venue</td><td>${escHtml(fields.Venue)}</td></tr>
             <tr><td style="padding:6px 0;color:#666">Address</td><td>${escHtml(fields.Address) || "—"}</td></tr>
             <tr><td style="padding:6px 0;color:#666">Area</td><td>${escHtml(fields.Neighborhood) || "—"}</td></tr>
-            <tr><td style="padding:6px 0;color:#666">Price</td><td>${escHtml(fields.PriceTier)}</td></tr>
+            <tr><td style="padding:6px 0;color:#666">Price</td><td>${escHtml(submittedPrice === "unknown" ? "" : submittedPrice)}</td></tr>
             <tr><td style="padding:6px 0;color:#666">Ages</td><td>${escHtml(fields.AgeTiers.join(", ") || "—")}</td></tr>
             <tr><td style="padding:6px 0;color:#666">From</td><td>${escHtml(submitter)}</td></tr>
           </table>

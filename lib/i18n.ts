@@ -39,6 +39,7 @@ export const STRINGS = {
   // footer
   foot_tagline: { en: "A free, kid-safe guide to Las Vegas family events — sorted by age, price, and neighborhood.", es: "Una guía gratuita y segura de eventos familiares en Las Vegas — por edad, precio y vecindario." },
   foot_explore: { en: "Explore", es: "Explorar" },
+  foot_holiday_guide: { en: "Holiday Guide", es: "Guía de fiestas" },
   foot_more: { en: "More", es: "Más" },
   foot_madeby: { en: "Made with", es: "Hecho con" },
   foot_confirm: { en: "Always confirm details with the venue.", es: "Confirma siempre los detalles con el lugar." },
@@ -246,6 +247,7 @@ export const STRINGS = {
 
   // ── Cancelled-event banner ──
   cancel_badge: { en: "Canceled", es: "Cancelado" },
+  registration_required: { en: "Registration required", es: "Se requiere inscripción" },
   cancel_banner: { en: "This event has been canceled", es: "Este evento ha sido cancelado" },
   cancel_note: {
     en: "The source pulled this event after we listed it, so don't head out — and always confirm details with the venue.",
@@ -304,6 +306,7 @@ const PRICE_ES: Record<PriceTierId, string> = {
   under10: "$1–10",
   mid: "$11–25",
   premium: "$25+",
+  unknown: "Consulta el lugar",
 };
 const HOOD_ES: Record<NeighborhoodId, string> = {
   summerlin: "Summerlin / Oeste",
@@ -321,7 +324,7 @@ export function ageLabel(lang: Lang, id: AgeTierId): { label: string; sublabel: 
 }
 export function priceLabel(lang: Lang, id: PriceTierId): string {
   if (lang === "es") return PRICE_ES[id];
-  return PRICE_TIERS.find((x) => x.id === id)!.label;
+  return PRICE_TIERS.find((x) => x.id === id)?.label ?? "See venue";
 }
 export function hoodLabel(lang: Lang, id: NeighborhoodId): string {
   if (id === "unknown") return "Las Vegas";

@@ -5,6 +5,7 @@ import { nextOccurrenceISO } from "@/lib/recurrence";
 import { t, ageLabel, priceLabel, hoodLabel, type Lang } from "@/lib/i18n";
 import { eventPath } from "@/lib/eventUrl";
 import { cardPlaceLabel } from "@/lib/eventPlace";
+import { eventRequiresRegistration } from "@/lib/registration";
 import { EventThumb } from "./EventThumb";
 import { FavButton } from "./FavButton";
 
@@ -13,6 +14,7 @@ export const PRICE_BG: Record<string, string> = {
   sunny: "bg-sunny text-ink",
   coral: "bg-coral-btn text-white",
   grape: "bg-grape text-white",
+  ink: "bg-ink/10 text-ink/80",
 };
 
 export function formatWhen(iso: string, lang: Lang = "en") {
@@ -27,18 +29,22 @@ export function formatWhen(iso: string, lang: Lang = "en") {
   });
 }
 
-export function EventCard({ event, index = 0, distanceMi, lang = "en", priority = false }: { event: KidEvent; index?: number; distanceMi?: number; lang?: Lang; priority?: boolean }) {
+export function EventCard({ event, index = 0, distanceMi, lang = "en", priority = false, showRegistration = false }: { event: KidEvent; index?: number; distanceMi?: number; lang?: Lang; priority?: boolean; showRegistration?: boolean }) {
   const price = priceTier(event.priceTier);
   const hoodName = hoodLabel(lang, event.neighborhood);
   const place = cardPlaceLabel(event);
   const when = nextOccurrenceISO(event.start, event.recurrence, event.canceledDates);
   // Stagger the dramatic entrance within each loaded batch.
   const delay = (index % 30) * 45;
+  // Long lists (the /free collection renders ~190 cards) spent seconds of main
+  // thread laying out and painting cards far below the fold. Let the browser
+  // skip rendering off-screen cards until they scroll near the viewport.
+  const offscreen = index >= 6 ? " [content-visibility:auto] [contain-intrinsic-size:auto_420px]" : "";
   return (
     <Link
       href={eventPath(event.id, lang)}
       style={{ animationDelay: `${delay}ms` }}
-      className={`animate-card-in group flex h-full flex-col overflow-hidden rounded-blob border bg-white shadow-card transition-shadow hover:-translate-y-1 hover:shadow-lg ${event.canceled ? "border-coral-dark/40" : "border-ink/10"}`}
+      className={`animate-card-in group flex h-full flex-col overflow-hidden rounded-blob border bg-white shadow-card transition-shadow hover:-translate-y-1 hover:shadow-lg ${event.canceled ? "border-coral-dark/40" : "border-ink/10"}${offscreen}`}
     >
       <div className="relative">
         <div className={event.canceled ? "grayscale-[55%]" : ""}>
@@ -96,6 +102,12 @@ export function EventCard({ event, index = 0, distanceMi, lang = "en", priority 
             </span>
           )}
         </div>
+
+        {showRegistration && eventRequiresRegistration(event) && (
+          <p className="mt-3 text-xs font-700 leading-snug text-ink/70">
+            📝 {t(lang, "registration_required")}
+          </p>
+        )}
 
         {place && (
           <p className="mt-3 border-t border-ink/10 pt-3 text-xs font-700 leading-snug text-ink/70">

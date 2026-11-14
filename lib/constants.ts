@@ -16,7 +16,17 @@ export const PRICE_TIERS = [
   { id: "premium", label: "$25+", emoji: "✨", color: "grape" },
 ] as const;
 
-export type PriceTierId = (typeof PRICE_TIERS)[number]["id"];
+export const UNKNOWN_PRICE = { id: "unknown", label: "See venue", emoji: "💲", color: "ink" } as const;
+
+export type PriceTierId = (typeof PRICE_TIERS)[number]["id"] | typeof UNKNOWN_PRICE.id;
+
+const KNOWN_PRICE_IDS = new Set<string>(PRICE_TIERS.map((p) => p.id));
+
+/** Map an Airtable PriceTier (or a missing value) to a safe app tier. Missing is never treated as free. */
+export function parsePriceTier(raw: unknown): PriceTierId {
+  const id = String(raw || "").trim();
+  return KNOWN_PRICE_IDS.has(id) ? (id as PriceTierId) : "unknown";
+}
 
 export const NEIGHBORHOODS = [
   { id: "summerlin", label: "Summerlin / West", center: [36.1716, -115.3286] },
@@ -79,7 +89,7 @@ export const venueSlug = (v: string) =>
   (v || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export function priceTier(id: PriceTierId) {
-  return PRICE_TIERS.find((p) => p.id === id)!;
+  return PRICE_TIERS.find((p) => p.id === id) ?? UNKNOWN_PRICE;
 }
 export function ageTier(id: AgeTierId) {
   return AGE_TIERS.find((a) => a.id === id)!;
