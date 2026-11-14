@@ -34,11 +34,15 @@ export function EventCard({ event, index = 0, distanceMi, lang = "en", priority 
   const when = nextOccurrenceISO(event.start, event.recurrence, event.canceledDates);
   // Stagger the dramatic entrance within each loaded batch.
   const delay = (index % 30) * 45;
+  // Long lists (the /free collection renders ~190 cards) spent seconds of main
+  // thread laying out and painting cards far below the fold. Let the browser
+  // skip rendering off-screen cards until they scroll near the viewport.
+  const offscreen = index >= 6 ? " [content-visibility:auto] [contain-intrinsic-size:auto_420px]" : "";
   return (
     <Link
       href={eventPath(event.id, lang)}
       style={{ animationDelay: `${delay}ms` }}
-      className={`animate-card-in group flex h-full flex-col overflow-hidden rounded-blob border bg-white shadow-card transition-shadow hover:-translate-y-1 hover:shadow-lg ${event.canceled ? "border-coral-dark/40" : "border-ink/10"}`}
+      className={`animate-card-in group flex h-full flex-col overflow-hidden rounded-blob border bg-white shadow-card transition-shadow hover:-translate-y-1 hover:shadow-lg ${event.canceled ? "border-coral-dark/40" : "border-ink/10"}${offscreen}`}
     >
       <div className="relative">
         <div className={event.canceled ? "grayscale-[55%]" : ""}>
