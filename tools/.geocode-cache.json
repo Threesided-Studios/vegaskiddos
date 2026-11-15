@@ -450,5 +450,29 @@
   "1300 W Sunset Rd, Henderson, 89014": {
     "lat": 36.0673523,
     "lng": -115.0426491
+  },
+  "1650 S Pavilion Center Dr,, Las Vegas, 89135": {
+    "lat": 36.152704,
+    "lng": -115.3294897
+  },
+  "15 Costa Di Lago, Henderson, 89011": {
+    "lat": 36.103076,
+    "lng": -114.9295858
+  },
+  "2050 Bonnie Ln, Las Vegas, 89156": {
+    "lat": 36.196884,
+    "lng": -115.0460985
+  },
+  "601 Yucca Street, Boulder City": {
+    "lat": 35.9702863,
+    "lng": -114.8567508
+  },
+  "9855 Gilespie St., Las Vegas, 89183": {
+    "lat": 36.0436852,
+    "lng": -115.1636956
+  },
+  "1575 Galleria Dr., Henderson, 89014": {
+    "lat": 36.0709801,
+    "lng": -115.0549421
   }
 }
