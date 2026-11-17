@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-16T23:47:35.717Z",
+  "ranAt": "2026-11-17T23:02:22.864Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -12,7 +12,6 @@
         "colv:12413",
         "colv:12437",
         "colv:12453",
-        "colv:12412",
         "colv:12435",
         "colv:12641",
         "colv:12638",
@@ -27,7 +26,6 @@
     "City of Henderson": {
       "ids": [
         "series:City of Henderson|art exhibit henderson creates|city of henderson",
-        "hen:6492:2026-11-16",
         "series:City of Henderson|art exhibit nevada s cultural landscapes|city of henderson",
         "series:City of Henderson|vegas thrill youth camp|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",

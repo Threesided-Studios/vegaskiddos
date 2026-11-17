@@ -474,5 +474,17 @@
   "1575 Galleria Dr., Henderson, 89014": {
     "lat": 36.0709801,
     "lng": -115.0549421
+  },
+  "6501 W. Lake Mead Blvd., Las Vegas, NV, Las Vegas, 89108": {
+    "lat": 36.1958191,
+    "lng": -115.2359816
+  },
+  "2250 Las Vegas Blvd. North North Las Vegas, NV 89030": {
+    "lat": 36.2013211,
+    "lng": -115.1216192
+  },
+  "1755 W. Alexander Rd., Las Vegas, NV": {
+    "lat": 36.2337077,
+    "lng": -115.2796691
   }
 }
