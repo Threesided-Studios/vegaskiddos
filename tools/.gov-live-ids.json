@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-18T22:39:29.039Z",
+  "ranAt": "2026-11-19T22:43:24.118Z",
   "sources": {
     "City of Las Vegas": {
       "ids": [
@@ -17,7 +17,14 @@
         "colv:12638",
         "colv:12491",
         "series:City of Las Vegas|phantom of charleston heights arts center a night of sir andrew lloyd webber|charleston heights arts center",
+        "colv:12658",
         "series:City of Las Vegas|rainbow company youth theatre presents shrek the musical|charleston heights arts center",
+        "colv:12660",
+        "colv:12657",
+        "colv:12661",
+        "colv:12662",
+        "colv:12663",
+        "colv:12664",
         "series:City of Las Vegas|rainbow company youth theatre presents she kills monsters|charleston heights arts center",
         "colv:12461"
       ],
@@ -25,15 +32,16 @@
     },
     "City of Henderson": {
       "ids": [
-        "series:City of Henderson|art exhibit henderson creates|city of henderson",
+        "hen:6404:2026-11-19",
         "series:City of Henderson|art exhibit nevada s cultural landscapes|city of henderson",
-        "series:City of Henderson|vegas thrill youth camp|city of henderson",
         "series:City of Henderson|henderson farmers market|fox ridge park",
         "hen:6308:2026-11-20",
         "hen:6414:2026-11-20",
         "series:City of Henderson|henderson farmers market|cornerstone park",
         "hen:6418:2026-11-21",
         "series:City of Henderson|christmas story time cooking|city of henderson",
+        "series:City of Henderson|vegas thrill youth camp|city of henderson",
+        "series:City of Henderson|art exhibit six ways of seeing|city of henderson",
         "hen:6376:2026-12-05",
         "hen:6426:2026-12-05",
         "hen:6450:2026-12-05",
