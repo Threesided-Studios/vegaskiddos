@@ -43,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...COLLECTIONS.map((c) => entry(`/${c.slug}`, { changeFrequency: "daily", priority: 0.8 })),
     ...GUIDES.map((g) => entry(`/guides/${g.slug}`, { changeFrequency: "weekly", priority: 0.7 })),
     entry("/about", { changeFrequency: "monthly", priority: 0.4 }),
+    entry("/partners", { changeFrequency: "monthly", priority: 0.4 }),
     entry("/submit", { changeFrequency: "monthly", priority: 0.5 }),
     entry("/donate", { changeFrequency: "yearly", priority: 0.3 }),
     ...venueSlugs.map((slug) => entry(`/venue/${slug}`, { changeFrequency: "weekly", priority: 0.5 })),

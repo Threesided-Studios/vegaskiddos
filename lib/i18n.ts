@@ -40,6 +40,7 @@ export const STRINGS = {
   foot_tagline: { en: "A free, kid-safe guide to Las Vegas family events — sorted by age, price, and neighborhood.", es: "Una guía gratuita y segura de eventos familiares en Las Vegas — por edad, precio y vecindario." },
   foot_explore: { en: "Explore", es: "Explorar" },
   foot_holiday_guide: { en: "Holiday Guide", es: "Guía de fiestas" },
+  foot_partners: { en: "Partners", es: "Socios" },
   foot_more: { en: "More", es: "Más" },
   foot_madeby: { en: "Made with", es: "Hecho con" },
   foot_confirm: { en: "Always confirm details with the venue.", es: "Confirma siempre los detalles con el lugar." },
