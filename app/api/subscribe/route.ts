@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { unsubToken } from "@/lib/unsubToken";
 import { allowRequest } from "@/lib/rateLimit";
 import { hasBadTld, suggestEmail } from "@/lib/emailTypo";
+import { adminUrl, escHtml, notifyAdmin } from "@/lib/notifyAdmin";
 
 const SITE = "https://vegaskiddos.com";
 
@@ -106,6 +107,20 @@ export async function POST(req: Request) {
     if (!res.ok) {
       console.error("subscribe failed:", res.status, await res.text());
       return NextResponse.json({ error: "Could not subscribe — try again." }, { status: 502 });
+    }
+    // Only ping Adam for a brand-new address (upsert returns createdRecords);
+    // a repeat signup of an existing subscriber stays quiet.
+    const out = (await res.json().catch(() => ({}))) as { createdRecords?: string[] };
+    if (out.createdRecords?.length) {
+      const hood = String(body.neighborhood || "");
+      await notifyAdmin({
+        subject: `New signup on Vegas Kiddos: ${email}`,
+        replyTo: email,
+        html: `<p style="font:14px/1.5 -apple-system,Segoe UI,sans-serif">New weekly-digest subscriber.<br>` +
+          `Email: ${escHtml(email)}<br>Language: ${lang}${hood ? `<br>Neighborhood: ${escHtml(hood)}` : ""}<br>` +
+          `When: ${new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles", dateStyle: "medium", timeStyle: "short" })} PT<br>` +
+          `<a href="${adminUrl()}">Admin</a></p>`,
+      });
     }
     await sendWelcome(email, lang, base);
     return NextResponse.json({ ok: true });
