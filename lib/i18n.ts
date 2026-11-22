@@ -37,7 +37,7 @@ export const STRINGS = {
   },
   cta_share: { en: "Love it? Share Vegas Kiddos with other parents", es: "¿Te gusta? Comparte Vegas Kiddos con otros papás" },
   // footer
-  foot_tagline: { en: "A free, kid-safe guide to Las Vegas family events — sorted by age, price, and neighborhood.", es: "Una guía gratuita y segura de eventos familiares en Las Vegas — por edad, precio y vecindario." },
+  foot_tagline: { en: "A free, kid-safe guide to Las Vegas family events, sorted by age, price, and neighborhood.", es: "Una guía gratuita y segura de eventos familiares en Las Vegas, por edad, precio y vecindario." },
   foot_explore: { en: "Explore", es: "Explorar" },
   foot_holiday_guide: { en: "Holiday Guide", es: "Guía de fiestas" },
   foot_partners: { en: "Partners", es: "Socios" },
