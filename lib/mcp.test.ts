@@ -200,3 +200,13 @@ describe("date ranges and long runs", () => {
     assert.match(lego.when, /^Sun, Nov 29, 4:00/);
   });
 });
+
+describe("rate limit layering", () => {
+  it("the local cap applies even when the binding allows everything", async () => {
+    const always = { limit: async () => ({ success: true }) };
+    const opts = { loadRecords: async () => RECORDS, limiter: always, localLimiter: new LocalRateLimiter(1, 60_000) };
+    const req = () => new Request("https://vegaskiddos.com/mcp", { method: "POST", headers: { "content-type": "application/json", "cf-connecting-ip": "5.5.5.5" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ping" }) });
+    assert.equal((await handleMcpRequest(req(), opts)).status, 200);
+    assert.equal((await handleMcpRequest(req(), opts)).status, 429);
+  });
+});

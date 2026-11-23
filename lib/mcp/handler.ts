@@ -57,6 +57,7 @@ function rpcError(status: number, code: number, message: string, extra: Record<s
 export interface McpHandlerOptions {
   loadRecords: RecordLoader;
   limiter: RateLimitBinding;
+  localLimiter?: RateLimitBinding;
   now?: () => Date;
 }
 
@@ -72,6 +73,9 @@ export async function handleMcpRequest(request: Request, opts: McpHandlerOptions
   } catch {
     allowed = true; // a limiter outage must not take the endpoint down
   }
+  // The Workers binding is eventually consistent per location, so also keep
+  // a strict per-isolate cap.
+  if (allowed && opts.localLimiter) allowed = (await opts.localLimiter.limit({ key: ip })).success;
   if (!allowed) return rpcError(429, -32000, "Too many requests. Try again in a minute.", { "retry-after": "60" });
 
   const len = Number(request.headers.get("content-length") ?? "0");

@@ -27,5 +27,9 @@ export async function serveMcp(request: Request, env: Env): Promise<Response> {
     memo = { at: Date.now(), records: snap.records as SnapshotRecord[] };
     return memo.records;
   };
-  return handleMcpRequest(request, { loadRecords, limiter: env.MCP_RATE_LIMITER ?? fallbackLimiter });
+  return handleMcpRequest(request, {
+    loadRecords,
+    limiter: env.MCP_RATE_LIMITER ?? fallbackLimiter,
+    localLimiter: env.MCP_RATE_LIMITER ? fallbackLimiter : undefined,
+  });
 }
