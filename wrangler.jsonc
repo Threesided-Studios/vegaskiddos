@@ -17,6 +17,10 @@
     { "binding": "DATA_BUCKET", "bucket_name": "vegaskiddos-data" }
   ],
   // Daily import at 17:00 UTC (10:00 PDT / 09:00 PST), after the 08:30 PT scrape.
+  // Per-IP limit for the read-only /mcp endpoint (lib/mcp/entry.ts).
+  "ratelimits": [
+    { "name": "MCP_RATE_LIMITER", "namespace_id": "4101", "simple": { "limit": 60, "period": 60 } }
+  ],
   "triggers": { "crons": ["0 17 * * *"] },
   "observability": { "enabled": true }
 }

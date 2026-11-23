@@ -24,8 +24,26 @@
 // app/[lang] (lang="something.php") and rendered a ~600 KB 404 in several
 // seconds; bots and browsers' automatic icon probes hit that constantly. Only
 // the real dynamic metadata routes below are let through.
+//
+// 4) /mcp: read-only MCP server (lib/mcp). Handled here, before OpenNext and
+// the edge HTML cache, so Next caching never sees it. Cloudflare's WebMCP
+// bridge reads its tools/list and exposes the tools to in-browser agents; it
+// also works as a remote MCP server for assistants.
 import handler from "./.open-next/worker.js";
 import { refreshSnapshot } from "./lib/snapshotStore.mjs";
+import { isMcpPath, serveMcp } from "./lib/mcp/entry.ts";
+
+// Chrome WebMCP origin trial token (public; expires 2027-03-29; covers subdomains).
+const ORIGIN_TRIAL =
+  "Aql8U0FT3r4OGYQUQBny0JAyfPZBG1P8TCC7vZ/6+l2f8YJidQtBdkz351kZX07MDf+q+tgD7BoEf7A6RFxYxAIAAABieyJvcmlnaW4iOiJodHRwczovL3ZlZ2Fza2lkZG9zLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxODA2MzY0ODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZX0=";
+
+function withOriginTrial(res) {
+  const ct = res.headers.get("content-type") || "";
+  if (!ct.includes("text/html")) return res;
+  const out = new Response(res.body, res);
+  out.headers.set("Origin-Trial", ORIGIN_TRIAL);
+  return out;
+}
 
 const FILE_ROUTES = new Set(["/sitemap.xml", "/robots.txt", "/manifest.webmanifest", "/icon.svg", "/favicon.ico"]);
 
@@ -62,6 +80,7 @@ function storable(res) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (isMcpPath(url.pathname)) return serveMcp(request, env);
     const first = url.pathname.split("/")[1] || "";
     if (first.includes("%")) {
       return new Response("Not found", {
@@ -83,7 +102,7 @@ export default {
     }
 
     if (!edgeCacheable(request, url) || typeof caches === "undefined") {
-      return handler.fetch(request, env, ctx);
+      return withOriginTrial(await handler.fetch(request, env, ctx));
     }
 
     const cache = caches.default;
@@ -95,11 +114,11 @@ export default {
       res.headers.delete("x-vk-origin-cc");
       res.headers.set("x-vk-edge", "HIT");
       if (isSpanishPath(url.pathname)) res.headers.append("set-cookie", ES_COOKIE);
-      return res;
+      return withOriginTrial(res);
     }
 
     const res = await handler.fetch(request, env, ctx);
-    if (!storable(res)) return res;
+    if (!storable(res)) return withOriginTrial(res);
 
     const out = new Response(res.body, res);
     out.headers.set("x-vk-edge", "MISS");
@@ -109,7 +128,7 @@ export default {
     stored.headers.set("cache-control", `public, max-age=${EDGE_TTL}`);
     stored.headers.delete("set-cookie");
     ctx.waitUntil(cache.put(key, stored).catch(() => {}));
-    return out;
+    return withOriginTrial(out);
   },
 
   // Daily Airtable import (wrangler.jsonc triggers.crons). Public pages read
