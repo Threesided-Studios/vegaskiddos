@@ -1,27 +1,14 @@
 name: Deploy (Cloudflare Workers)
 
-# Builds the OpenNext bundle and deploys the Worker via wrangler — the same
-# path as a local `npm run cf:deploy`, which is the only deploy method that has
-# ever worked here (every successful deploy shows source: wrangler). Replaces
-# the flaky Cloudflare native git-build. Runtime secrets already live on the
-# Worker and persist across deploys; CI only needs build-time env below.
-#
-# Auto-deploy on push to main is ENABLED. It was broken 2026-06-28 → fixed
-# 2026-07-13: opennextjs-cloudflare's R2 cache-populate fetch (open-next.config.ts
-# → r2IncrementalCache → api.cloudflare.com/.../r2/buckets) died with "Premature
-# close" on GitHub-hosted runners. Root cause: GH runners have no working IPv6
-# route to api.cloudflare.com, and OpenNext's fetch client reaches for IPv6
-# without falling back to IPv4 the way plain fetch/curl do. Fix = the "Pin
-# api.cloudflare.com to IPv4" step below, which forces every client on the
-# runner onto the IPv4 path. Confirmed green (Version cbdd6bb1). Bot image-sync
-# commits carry [skip ci], so they don't trigger a deploy.
+# TEMPORARY preview-only dispatch for PR #54. Do not merge this file.
+# Production traffic is not changed. Versions upload + preview alias only.
 on:
   push:
     branches: [main]
   workflow_dispatch: {}
 
 concurrency:
-  group: deploy-main
+  group: preview-security-next
   cancel-in-progress: false
 
 jobs:
@@ -34,28 +21,18 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
-      # GH runners have no working IPv6 route to api.cloudflare.com and OpenNext's
-      # R2 populate fetch reaches for IPv6 → "Premature close". Pin the hostname to
-      # its current IPv4 (resolved fresh each run) so every client (incl. OpenNext's
-      # fetch) uses the path that works. This is the load-bearing fix — do not remove.
       - name: Pin api.cloudflare.com to IPv4
         run: |
           IP=$(getent ahostsv4 api.cloudflare.com | awk '{print $1; exit}')
           echo "$IP api.cloudflare.com" | sudo tee -a /etc/hosts
           echo "pinned api.cloudflare.com -> $IP"
-      - name: Build + deploy (OpenNext → Workers)
+      - name: Build + upload preview version (no production traffic)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # Build-time env (data for SSG/sitemap + public VAPID key).
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
           AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
           NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
-        run: npm run cf:deploy
-      # OpenNext's ISR cache is per-build, so every page is cold right after a
-      # deploy. Pre-render them so visitors don't pay 4–10 s first-hit renders.
-      - name: Warm page cache
-        if: success()
-        continue-on-error: true
-        timeout-minutes: 20
-        run: node tools/warm-cache.mjs https://vegaskiddos.com 6
+        run: |
+          npm run cf:build
+          npx wrangler versions upload --keep-vars --preview-alias security-next --tag security-next --message "PR 54 Next.js 16.4.6 security preview. Do not deploy to production."
