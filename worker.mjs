@@ -24,8 +24,14 @@
 // app/[lang] (lang="something.php") and rendered a ~600 KB 404 in several
 // seconds; bots and browsers' automatic icon probes hit that constantly. Only
 // the real dynamic metadata routes below are let through.
+//
+// 4) /mcp: read-only MCP server (lib/mcp). Handled here, before OpenNext and
+// the edge HTML cache, so Next caching never sees it. Cloudflare's WebMCP
+// bridge reads its tools/list and exposes the tools to in-browser agents; it
+// also works as a remote MCP server for assistants.
 import handler from "./.open-next/worker.js";
 import { refreshSnapshot } from "./lib/snapshotStore.mjs";
+import { isMcpPath, serveMcp } from "./lib/mcp/entry.ts";
 
 const FILE_ROUTES = new Set(["/sitemap.xml", "/robots.txt", "/manifest.webmanifest", "/icon.svg", "/favicon.ico"]);
 
@@ -62,6 +68,7 @@ function storable(res) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (isMcpPath(url.pathname)) return serveMcp(request, env);
     const first = url.pathname.split("/")[1] || "";
     if (first.includes("%")) {
       return new Response("Not found", {

@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AGE_TIERS, PRICE_TIERS, NEIGHBORHOODS } from "@/lib/constants";
+import { readSubmitPrefill } from "@/lib/submitPrefill";
 
 export default function SubmitPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">(
     "idle"
   );
   const [ages, setAges] = useState<string[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Optional prefill from a shared link (?title=&venue=&start=...).
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    for (const [name, value] of Object.entries(readSubmitPrefill(window.location.search))) {
+      const el = form.elements.namedItem(name);
+      if ((el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) && !el.value) el.value = value;
+    }
+  }, []);
 
   function toggleAge(id: string) {
     setAges((prev) =>
@@ -75,7 +87,7 @@ export default function SubmitPage() {
         before it goes live.
       </p>
 
-      <form onSubmit={onSubmit} className="relative mt-8 space-y-5">
+      <form ref={formRef} onSubmit={onSubmit} className="relative mt-8 space-y-5">
         <Labeled label="Event title *">
           <input name="title" required className={field} placeholder="Toddler Storytime" />
         </Labeled>
