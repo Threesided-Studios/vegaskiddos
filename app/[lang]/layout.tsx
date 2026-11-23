@@ -144,6 +144,7 @@ export default async function RootLayout({
                   ["/stem", "STEM & science"],
                   ["/features", "Vote on features"],
                   ["/about", "About"],
+                  ["/partners", t(lang, "foot_partners")],
                 ].map(([href, label]) => (
                   <li key={href}>
                     <Link href={href} className="inline-flex min-h-[44px] items-center hover:text-coral">{label}</Link>
