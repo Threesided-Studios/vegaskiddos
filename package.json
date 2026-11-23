@@ -38,7 +38,7 @@
     "@sentry/nextjs": "^10.76.2",
     "leaflet": "1.9.4",
     "leaflet.markercluster": "^1.5.3",
-    "next": "^16.4.2",
+    "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "three": "^0.171.0",
