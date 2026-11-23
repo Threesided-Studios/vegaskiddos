@@ -180,3 +180,23 @@ describe("MCP HTTP handler", () => {
     assert.equal((await handleMcpRequest(post(init, "3.3.3.3"), tight)).status, 200);
   });
 });
+
+describe("date ranges and long runs", () => {
+  const long: SnapshotRecord = { id: "recAAAAAAAAAAAAA6", fields: { Title: "Fall Stroll", Venue: "Downtown", Start: "2026-10-24T22:00:00.000Z", End: "2026-12-27T01:00:00.000Z", PriceTier: "free" } };
+  const short: SnapshotRecord = { id: "recAAAAAAAAAAAAA7", fields: { Title: "Craft Fair", Venue: "Expo", Start: "2026-11-27T17:00:00.000Z", End: "2026-11-29T23:00:00.000Z", PriceTier: "free" } };
+  it("long open-ended runs do not count as this weekend, short multi-day runs do", async () => {
+    const server = createVegasKiddosServer(async () => [...RECORDS, long, short], () => NOW);
+    const [a, b] = InMemoryTransport.createLinkedPair();
+    await server.connect(a);
+    const c = new Client({ name: "t", version: "1" });
+    await c.connect(b);
+    const r = parse(await call(c, "events_this_weekend", {}));
+    const ids = r.results.map((x: { id: string }) => x.id);
+    assert.ok(!ids.includes("recAAAAAAAAAAAAA6"));
+    assert.ok(ids.includes("recAAAAAAAAAAAAA7"));
+    const fair = r.results.find((x: { id: string }) => x.id === "recAAAAAAAAAAAAA7");
+    assert.match(fair.when, /^Sat, Nov 28 \(runs Fri, Nov 27 to Sun, Nov 29\)$/);
+    const lego = r.results.find((x: { id: string }) => x.id === "recAAAAAAAAAAAAA3");
+    assert.match(lego.when, /^Sun, Nov 29, 4:00/);
+  });
+});

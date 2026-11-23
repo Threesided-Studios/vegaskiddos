@@ -115,6 +115,21 @@ export function weekendRange(now: Date = new Date()): { from: string; to: string
   return { from: sat, to: addDays(sat, 1) };
 }
 
+// Multi-day runs longer than this are treated like the site's /this-weekend
+// page does (by start date only), so stale or open-ended ranges do not flood
+// date searches. They still show up in plain searches.
+export const MAX_SPAN_DAYS = 14;
+
+/** LA end date of a short multi-day event, or null. */
+export function multiDayEndKey(e: McpEvent): string | null {
+  if (isRecurring(e.recurrence) || !e.end) return null;
+  const startMs = Date.parse(e.start);
+  const endMs = Date.parse(e.end);
+  if (!Number.isFinite(endMs) || endMs <= startMs || endMs - startMs > MAX_SPAN_DAYS * 86_400_000) return null;
+  const endKey = laDateKey(new Date(endMs));
+  return endKey > laDateKey(new Date(startMs)) ? endKey : null;
+}
+
 /** First LA date in [from, to] on which the event happens, or null. */
 export function firstDateInRange(e: McpEvent, from: string, to: string): string | null {
   if (isRecurring(e.recurrence)) {
@@ -127,8 +142,7 @@ export function firstDateInRange(e: McpEvent, from: string, to: string): string 
     return null;
   }
   const startKey = laDateKey(new Date(e.start));
-  const endMs = e.end ? Date.parse(e.end) : NaN;
-  const endKey = Number.isFinite(endMs) && endMs > Date.parse(e.start) ? laDateKey(new Date(endMs)) : startKey;
+  const endKey = multiDayEndKey(e) ?? startKey;
   if (endKey < from || startKey > to) return null;
   return startKey > from ? startKey : from;
 }

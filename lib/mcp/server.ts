@@ -12,6 +12,7 @@ import {
   eventPageUrl,
   firstDateInRange,
   listedEvents,
+  multiDayEndKey,
   todayKey,
   venuePageUrl,
   weekendRange,
@@ -61,6 +62,33 @@ function laTime(iso: string, lang: Lang): string {
   }).format(new Date(iso));
 }
 
+function laDay(key: string, lang: Lang): string {
+  return new Intl.DateTimeFormat(lang === "es" ? "es-US" : "en-US", {
+    timeZone: "UTC",
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(`${key}T12:00:00Z`));
+}
+
+function laClock(iso: string, lang: Lang): string {
+  return new Intl.DateTimeFormat(lang === "es" ? "es-US" : "en-US", {
+    timeZone: "America/Los_Angeles",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
+
+/** Human "when" for the occurrence on a given LA date. */
+function whenOn(e: McpEvent, on: string, lang: Lang): string {
+  const span = multiDayEndKey(e);
+  if (span) {
+    const startKey = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date(e.start));
+    return `${laDay(on, lang)} (${lang === "es" ? "del" : "runs"} ${laDay(startKey, lang)} ${lang === "es" ? "al" : "to"} ${laDay(span, lang)})`;
+  }
+  return `${laDay(on, lang)}, ${laClock(e.start, lang)}`;
+}
+
 function priceLabel(e: McpEvent): string {
   const tier = PRICE_TIERS.find((p) => p.id === e.priceTier) ?? UNKNOWN_PRICE;
   return e.priceText ? `${tier.label} (${e.priceText})` : tier.label;
@@ -75,9 +103,8 @@ function summary(e: McpEvent, lang: Lang, on?: string) {
   return {
     id: e.id,
     title: e.title,
-    when: laTime(next, lang),
-    next_start: next,
-    ...(on ? { on_date: on } : {}),
+    when: on ? whenOn(e, on, lang) : laTime(next, lang),
+    ...(on ? { on_date: on } : { next_start: next }),
     repeats: e.recurrence || undefined,
     venue: e.venue,
     area: hoodLabel(e.neighborhood),
