@@ -486,5 +486,17 @@
   "1755 W. Alexander Rd., Las Vegas, NV": {
     "lat": 36.2337077,
     "lng": -115.2796691
+  },
+  "West Las Vegas Arts Center 951 W. Lake Mead Blvd.": {
+    "lat": 36.1951258,
+    "lng": -115.1542464
+  },
+  "West Las Vegas Arts Center, 951 W. Lake Mead Blvd.": {
+    "lat": 36.1951258,
+    "lng": -115.1542464
+  },
+  "1717 S Decatur Blvd, Las Vegas, NV 89102": {
+    "lat": 36.1507085,
+    "lng": -115.2056172
   }
 }
