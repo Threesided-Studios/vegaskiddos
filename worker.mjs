@@ -29,6 +29,9 @@
 // the edge HTML cache, so Next caching never sees it. Cloudflare's WebMCP
 // bridge reads its tools/list and exposes the tools to in-browser agents; it
 // also works as a remote MCP server for assistants.
+//
+// 5) WebMCP bridge tag: see BRIDGE_TAG below. Added after the edge cache, so
+// cached HTML never stores it twice.
 import handler from "./.open-next/worker.js";
 import { refreshSnapshot } from "./lib/snapshotStore.mjs";
 import { isMcpPath, serveMcp } from "./lib/mcp/entry.ts";
@@ -37,12 +40,22 @@ import { isMcpPath, serveMcp } from "./lib/mcp/entry.ts";
 const ORIGIN_TRIAL =
   "Aql8U0FT3r4OGYQUQBny0JAyfPZBG1P8TCC7vZ/6+l2f8YJidQtBdkz351kZX07MDf+q+tgD7BoEf7A6RFxYxAIAAABieyJvcmlnaW4iOiJodHRwczovL3ZlZ2Fza2lkZG9zLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxODA2MzY0ODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZX0=";
 
+// Cloudflare's WebMCP injection adds /.webmcp/bridge.js without data-packs, so
+// the bridge loads but registers no site tools. Append a second, configured tag
+// that turns on the mcp-server-client pack for /mcp. The query string gives it
+// its own module URL, so the bridge reads this tag's data attributes.
+const BRIDGE_TAG =
+  '<script type="module" async src="/.webmcp/bridge.js?packs=mcp-server-client" data-packs="mcp-server-client" data-mcp-url="/mcp"></script>';
+
 function withOriginTrial(res) {
   const ct = res.headers.get("content-type") || "";
   if (!ct.includes("text/html")) return res;
   const out = new Response(res.body, res);
   out.headers.set("Origin-Trial", ORIGIN_TRIAL);
-  return out;
+  if (res.status !== 200 || typeof HTMLRewriter === "undefined") return out;
+  return new HTMLRewriter()
+    .on("head", { element(el) { el.append(BRIDGE_TAG, { html: true }); } })
+    .transform(out);
 }
 
 const FILE_ROUTES = new Set(["/sitemap.xml", "/robots.txt", "/manifest.webmanifest", "/icon.svg", "/favicon.ico"]);
